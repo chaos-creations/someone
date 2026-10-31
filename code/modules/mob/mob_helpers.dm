@@ -123,12 +123,12 @@ GLOBAL_LIST_INIT(limb_types_by_name, list(
 	var/message_length = length(message)
 	var/index = 1
 	while(index <= message_length)
-		var/char = copytext(message, index, index + 1)
+		var/char = message[index] // CHAOS-EDIT: the whole character, which is several bytes for Cyrillic
 		if(char == " " || prob(clear_char_probability))
 			output_message += char
 		else
 			output_message += "*"
-		index++
+		index += length(char) // CHAOS-EDIT: the whole character, which is several bytes for Cyrillic
 	return output_message
 
 /**
@@ -183,7 +183,11 @@ GLOBAL_LIST_INIT(limb_types_by_name, list(
 	var/newphrase=""
 	var/newletter=""
 	while(counter>=1)
-		newletter=copytext(phrase,(leng-counter)+1,(leng-counter)+2)
+		// CHAOS-EDIT START: the whole character, which is several bytes for Cyrillic
+		// newletter=copytext(phrase,(leng-counter)+1,(leng-counter)+2)
+		newletter=phrase[(leng-counter)+1]
+		var/char_length=length(newletter)
+		// CHAOS-EDIT END
 		if(rand(1,3)==3)
 			if(lowertext(newletter)=="o")
 				newletter="u"
@@ -203,7 +207,7 @@ GLOBAL_LIST_INIT(limb_types_by_name, list(
 			//if(9,10) newletter="<b>[newletter]</b>"
 			//if(11,12) newletter="<big>[newletter]</big>"
 			//if(13) newletter="<small>[newletter]</small>"
-		newphrase+="[newletter]";counter-=1
+		newphrase+="[newletter]";counter-=char_length // CHAOS-EDIT: the whole character, which is several bytes for Cyrillic
 	return newphrase
 
 /proc/stutter(phrase, strength = 1)
@@ -264,9 +268,9 @@ GLOBAL_LIST_INIT(limb_types_by_name, list(
 /proc/Gibberish(t, p)//t is the inputted message, and any value higher than 70 for p will cause letters to be replaced instead of added
 	/* Turn text into complete gibberish! */
 	var/returntext = ""
-	for(var/i = 1, i <= length(t), i++)
+	for(var/i = 1, i <= length(t), i += length(t[i])) // CHAOS-EDIT: the whole character, which is several bytes for Cyrillic
 
-		var/letter = copytext(t, i, i+1)
+		var/letter = t[i] // CHAOS-EDIT: the whole character, which is several bytes for Cyrillic
 		if(prob(50))
 			if(p >= 70)
 				letter = ""

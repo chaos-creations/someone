@@ -30,6 +30,8 @@
 	} \
 } while (FALSE)
 
+#include "cyrillic_text.dm"
+
 #undef TEST_ASSERT
 #undef TEST_ASSERT_EQUAL
 #undef TEST_ASSERT_NOTEQUAL

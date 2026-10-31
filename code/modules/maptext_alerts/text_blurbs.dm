@@ -145,6 +145,10 @@ but should see their own spawn message even if the player already dropped as USC
 			continue
 		if(i in html_tags)
 			continue
+		// CHAOS-EDIT START: skip the bytes inside a multi-byte character (text2ascii() gives U+FFFD there), cutting there shows "�"
+		if(i <= length(message) && text2ascii(message, i) == 0xFFFD)
+			continue
+		// CHAOS-EDIT END
 		T.maptext = "<span style=\"[style]\">[copytext(message,1,i)]</span>"
 		sleep(speed)
 

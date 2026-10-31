@@ -59,12 +59,12 @@
 //Runs sanitize and strip_html_simple
 //I believe strip_html_simple() is required to run first to prevent '<' from displaying as '&lt;' after sanitize() calls byond's html_encode()
 /proc/strip_html(text, limit=MAX_MESSAGE_LEN)
-	return copytext((sanitize(strip_html_simple(text))), 1, limit)
+	return copytext_char((sanitize(strip_html_simple(text))), 1, limit) // CHAOS-EDIT: a cut by bytes turns a Cyrillic letter into "�"
 
 //Runs byond's sanitization proc along-side strip_html_simple
 //I believe strip_html_simple() is required to run first to prevent '<' from displaying as '&lt;' that html_encode() would cause
 /proc/adminscrub(text, limit=MAX_MESSAGE_LEN)
-	return copytext((html_encode(strip_html_simple(text))), 1, limit)
+	return copytext_char((html_encode(strip_html_simple(text))), 1, limit) // CHAOS-EDIT: a cut by bytes turns a Cyrillic letter into "�"
 
 //Returns null if there is any bad text in the string
 /proc/reject_bad_text(text, max_length=512)
@@ -232,7 +232,13 @@
 
 //Returns a string with the first element of the string capitalized.
 /proc/capitalize(t as text)
-	return uppertext(copytext(t, 1, 2)) + copytext(t, 2)
+	// CHAOS-EDIT START: t[1] is the whole first character, copytext(t, 1, 2) only its first byte, which turns a Cyrillic letter into "�"
+	// return uppertext(copytext(t, 1, 2)) + copytext(t, 2)
+	if(!t)
+		return ""
+	var/first_char = t[1]
+	return uppertext(first_char) + copytext(t, 1 + length(first_char))
+	// CHAOS-EDIT END
 
 /proc/stringpercent(text,character = "*")
 //This proc returns the number of chars of the string that is the character
