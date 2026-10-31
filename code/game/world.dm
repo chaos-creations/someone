@@ -40,6 +40,7 @@ GLOBAL_LIST_INIT(reboot_sfx, file2list("config/reboot_sfx.txt"))
 
 	var/latest_changelog = file("[global.config.directory]/../html/changelogs/archive/" + time2text(world.timeofday, "YYYY-MM") + ".yml")
 	GLOB.changelog_hash = fexists(latest_changelog) ? md5(latest_changelog) : 0 //for telling if the changelog has changed recently
+	GLOB.changelog_hash = "[GLOB.changelog_hash][get_purgatory_changelog_hash()]" // CHAOS-EDIT: new Purgatory changelog entries bold the button too
 
 	initialize_tgs()
 

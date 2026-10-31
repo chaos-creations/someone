@@ -6,6 +6,7 @@ on:
       - closed
     branches:
       - master
+      - purgatory # CHAOS-EDIT: the fork's main branch
 permissions:
   contents: write
 jobs:

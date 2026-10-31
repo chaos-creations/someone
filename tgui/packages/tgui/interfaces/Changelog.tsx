@@ -12,6 +12,7 @@ import {
   Section,
   Stack,
   Table,
+  Tabs, // CHAOS-EDIT: Purgatory tab
   Tooltip,
 } from 'tgui/components';
 import { Window } from 'tgui/layouts';
@@ -49,7 +50,13 @@ const changeTypes = {
   unknown: { icon: 'info-circle', color: 'label', desc: 'Unknown' },
 };
 
-type Data = { dates: string[] };
+// CHAOS-EDIT START: Purgatory tab, the fork's own changelog (modular_chaos/code/datums/changelog.dm)
+// type Data = { dates: string[] };
+type Data = { dates: string[]; purgatory_dates: string[] };
+
+const PURGATORY_SOURCE = 'purgatory';
+const UPSTREAM_SOURCE = 'upstream';
+// CHAOS-EDIT END
 
 export class Changelog extends Component<
   {},
@@ -61,6 +68,7 @@ export class Changelog extends Component<
   }
 > {
   dateChoices: string[];
+  source: string; // CHAOS-EDIT: Purgatory tab, PURGATORY_SOURCE or UPSTREAM_SOURCE
   constructor(props) {
     super(props);
     this.state = {
@@ -69,7 +77,27 @@ export class Changelog extends Component<
       selectedIndex: 0,
     };
     this.dateChoices = [];
+    this.source = UPSTREAM_SOURCE; // CHAOS-EDIT: Purgatory tab
   }
+
+  // CHAOS-EDIT START: Purgatory tab
+  selectSource(source) {
+    const { data } = useBackend<Data>();
+    const dates =
+      (source === PURGATORY_SOURCE ? data.purgatory_dates : data.dates) || [];
+
+    this.source = source;
+    this.dateChoices = dates.map((date) => dateformat(date, 'mmmm yyyy', true));
+    this.setSelectedIndex(0);
+    this.setSelectedDate(this.dateChoices[0]);
+    if (dates.length > 0) {
+      this.setData('Loading changelog data...');
+      this.getData(dates[0]);
+    } else {
+      this.setData('No changelog entries yet.');
+    }
+  }
+  // CHAOS-EDIT END
 
   setData(data) {
     this.setState({ data });
@@ -94,9 +122,21 @@ export class Changelog extends Component<
       );
     }
 
-    act('get_month', { date });
+    // CHAOS-EDIT START: Purgatory tab
+    // act('get_month', { date });
+    //
+    // fetch(resolveAsset(date + '.yml')).then(async (changelogData) => {
+    const source = this.source;
+    const purgatory = source === PURGATORY_SOURCE;
+    act(purgatory ? 'get_purgatory_month' : 'get_month', { date });
 
-    fetch(resolveAsset(date + '.yml')).then(async (changelogData) => {
+    const assetName = (purgatory ? 'purgatory-' : '') + date + '.yml';
+    fetch(resolveAsset(assetName)).then(async (changelogData) => {
+      // The other tab was selected while this month was loading
+      if (self.source !== source) {
+        return;
+      }
+      // CHAOS-EDIT END
       const result = await changelogData.text();
       const errorRegex = /^Cannot find/;
 
@@ -114,24 +154,40 @@ export class Changelog extends Component<
   };
 
   componentDidMount() {
+    // CHAOS-EDIT START: Purgatory tab, opened first when it has entries
+    // const {
+    //   data: { dates = [] },
+    // } = useBackend<Data>();
+    //
+    // if (dates) {
+    //   dates.forEach((date) =>
+    //     this.dateChoices.push(dateformat(date, 'mmmm yyyy', true)),
+    //   );
+    //   this.setSelectedDate(this.dateChoices[0]);
+    //   this.getData(dates[0]);
+    // }
     const {
-      data: { dates = [] },
+      data: { purgatory_dates = [] },
     } = useBackend<Data>();
 
-    if (dates) {
-      dates.forEach((date) =>
-        this.dateChoices.push(dateformat(date, 'mmmm yyyy', true)),
-      );
-      this.setSelectedDate(this.dateChoices[0]);
-      this.getData(dates[0]);
-    }
+    this.selectSource(
+      purgatory_dates.length > 0 ? PURGATORY_SOURCE : UPSTREAM_SOURCE,
+    );
+    // CHAOS-EDIT END
   }
 
   render() {
     const { data, selectedDate, selectedIndex } = this.state;
+    // CHAOS-EDIT START: Purgatory tab
+    // const {
+    //   data: { dates },
+    // } = useBackend<Data>();
     const {
-      data: { dates },
+      data: { dates: upstreamDates, purgatory_dates },
     } = useBackend<Data>();
+    const dates =
+      this.source === PURGATORY_SOURCE ? purgatory_dates : upstreamDates;
+    // CHAOS-EDIT END
     const { dateChoices } = this;
 
     const dateDropdown = dateChoices.length > 0 && (
@@ -221,6 +277,22 @@ export class Changelog extends Component<
           {'You can also join our discord '}
           <a href="https://discord.gg/cmss13">here</a>.
         </p>
+        {/* CHAOS-EDIT START: Purgatory tab */}
+        <Tabs>
+          <Tabs.Tab
+            selected={this.source === PURGATORY_SOURCE}
+            onClick={() => this.selectSource(PURGATORY_SOURCE)}
+          >
+            Purgatory
+          </Tabs.Tab>
+          <Tabs.Tab
+            selected={this.source === UPSTREAM_SOURCE}
+            onClick={() => this.selectSource(UPSTREAM_SOURCE)}
+          >
+            CM-SS13
+          </Tabs.Tab>
+        </Tabs>
+        {/* CHAOS-EDIT END */}
         {dateDropdown}
       </Section>
     );

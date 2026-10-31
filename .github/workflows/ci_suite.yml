@@ -3,6 +3,12 @@ on:
   pull_request:
     branches:
     - master
+    - purgatory # CHAOS-EDIT: the fork's main branch
+  # CHAOS-EDIT START: work lands on purgatory as direct commits, not only through pull requests
+  push:
+    branches:
+    - purgatory
+  # CHAOS-EDIT END
   merge_group:
 jobs:
   run_linters:

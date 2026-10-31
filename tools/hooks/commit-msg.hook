@@ -1,0 +1,3 @@
+#!/bin/sh
+# Fork-only: requires a :cl: changelog or [no cl] in the message of a commit that changes game files
+exec tools/bootstrap/python modular_chaos/tools/changelog.py check "$@"

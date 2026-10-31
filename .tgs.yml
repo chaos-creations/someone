@@ -1,5 +1,5 @@
 version: 1
-byond: "515.1627"
+byond: "516.1687" # CHAOS-EDIT: upstream left this behind dependencies.sh, keep the two in sync
 static_files:
   - name: config
   - name: data
