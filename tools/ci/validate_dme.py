@@ -101,3 +101,72 @@ for (index, line) in enumerate(lines):
         print(f"The include at line {index + offset} is out of order ({line}, expected {sorted_lines[index]})")
         print(f"::error file=tgstation.dme,line={index+offset},title=DME Validator::The include at line {index + offset} is out of order ({line}, expected {sorted_lines[index]})")
         sys.exit(1)
+
+# CHAOS-EDIT START: also validate modular_chaos/includes.dm, which lists the fork's own files relative to modular_chaos/
+MODULAR_DIR = "modular_chaos"
+MODULAR_INCLUDES = f"{MODULAR_DIR}/includes.dm"
+
+MODULAR_FORBID_INCLUDE = [
+    # Included by modular_chaos/code/modules/unit_tests/_unit_tests.dm
+    r'code/modules/unit_tests/[!_]*.dm',
+]
+
+modular_include_path = MODULAR_INCLUDES.replace('/', '\\')
+if f"#include \"{modular_include_path}\"" not in lines:
+    print(f"{MODULAR_INCLUDES} is not included")
+    print(f"::error file=colonialmarines.dme,line=1,title=DME Validator::{MODULAR_INCLUDES} is not included")
+    sys.exit(1)
+
+modular_lines = []
+modular_line_numbers = []
+with open(MODULAR_INCLUDES) as modular_includes:
+    for line_number, line in enumerate(modular_includes, start = 1):
+        line = line.strip()
+        if not line.startswith("#include"):
+            continue
+        modular_lines.append(line)
+        modular_line_numbers.append(line_number)
+
+fail_no_include = False
+
+for modular_file in glob.glob(f"{MODULAR_DIR}/**/*.dm", recursive=True):
+    modular_file = modular_file.replace('\\', '/')
+    if modular_file == MODULAR_INCLUDES:
+        continue
+
+    relative_path = modular_file[len(MODULAR_DIR) + 1:]
+    dm_path = relative_path.replace('/', '\\')
+
+    included = f"#include \"{dm_path}\"" in modular_lines
+    forbid_include = False
+
+    for forbid in MODULAR_FORBID_INCLUDE:
+        if not fnmatch.fnmatch(relative_path, forbid):
+            continue
+
+        forbid_include = True
+
+        if included:
+            print(f"{modular_file} should not be included in {MODULAR_INCLUDES}")
+            print(f"::error file={modular_file},line=1,title=DME Validator::File should not be included in {MODULAR_INCLUDES}")
+            fail_no_include = True
+
+    if forbid_include:
+        continue
+
+    if not included:
+        print(f"{modular_file} is not included in {MODULAR_INCLUDES}")
+        print(f"::error file={modular_file},line=1,title=DME Validator::File is not included in {MODULAR_INCLUDES}")
+        fail_no_include = True
+
+if fail_no_include:
+    sys.exit(1)
+
+sorted_modular_lines = sorted(modular_lines, key = functools.cmp_to_key(compare_lines))
+for (index, line) in enumerate(modular_lines):
+    if sorted_modular_lines[index] != line:
+        line_number = modular_line_numbers[index]
+        print(f"The include at line {line_number} of {MODULAR_INCLUDES} is out of order ({line}, expected {sorted_modular_lines[index]})")
+        print(f"::error file={MODULAR_INCLUDES},line={line_number},title=DME Validator::The include at line {line_number} is out of order ({line}, expected {sorted_modular_lines[index]})")
+        sys.exit(1)
+# CHAOS-EDIT END

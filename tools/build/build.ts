@@ -100,6 +100,7 @@ export const DmTarget = new Juke.Target({
     "html/**",
     "icons/**",
     "interface/**",
+    "modular_chaos/**", // CHAOS-EDIT: rebuild when the fork's modular code changes
     "sound/**",
     "tgui/public/tgui.html",
     `${DME_NAME}.dme`,
