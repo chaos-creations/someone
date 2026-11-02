@@ -1,0 +1,5 @@
+/mob/living/carbon/human/set_species(new_species, default_color, default_species = "Human")
+	CAN_BE_REDEFINED(TRUE)
+	. = ..()
+	if(.)
+		SEND_SIGNAL(src, COMSIG_HUMAN_SET_SPECIES, new_species)

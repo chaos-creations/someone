@@ -1,0 +1,7 @@
+/client/Destroy()
+	CAN_BE_REDEFINED(TRUE)
+	QDEL_NULL(human_ai_menu)
+	QDEL_NULL(human_faction_menu)
+	QDEL_NULL(human_defense_menu)
+	QDEL_NULL(human_spawn_menu)
+	return ..()

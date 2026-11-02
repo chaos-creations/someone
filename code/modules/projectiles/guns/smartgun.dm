@@ -662,7 +662,7 @@
 
 /obj/item/weapon/gun/smartgun/wield(mob/living/user)
 	. = ..()
-	user.client.images |= autoshot_image
+	user.client?.images |= autoshot_image // CHAOS-EDIT: human AI wields smartguns without a client
 
 /obj/item/weapon/gun/smartgun/unwield(mob/user)
 	. = ..()

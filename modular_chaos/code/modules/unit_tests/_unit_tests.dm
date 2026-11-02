@@ -31,6 +31,7 @@
 } while (FALSE)
 
 #include "cyrillic_text.dm"
+#include "human_ai.dm"
 
 #undef TEST_ASSERT
 #undef TEST_ASSERT_EQUAL

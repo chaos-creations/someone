@@ -24,7 +24,7 @@
 
 /mob/proc/do_click(atom/atom_clicked, location, params)
 	// We'll be sending a lot of signals and things later on, this will save time.
-	if(!client)
+	if(!client && !is_ai_controlled()) // CHAOS-EDIT: human AI clicks without a client
 		return
 	// No clicking on atoms with the NOINTERACT flag
 	if ((atom_clicked.flags_atom & NOINTERACT))
@@ -52,7 +52,7 @@
 	if(mods[DRAG])
 		return
 
-	if(SEND_SIGNAL(client, COMSIG_CLIENT_PRE_CLICK, atom_clicked, mods) & COMPONENT_INTERRUPT_CLICK)
+	if(client && SEND_SIGNAL(client, COMSIG_CLIENT_PRE_CLICK, atom_clicked, mods) & COMPONENT_INTERRUPT_CLICK) // CHAOS-EDIT: human AI clicks without a client
 		return
 
 	if(SEND_SIGNAL(src, COMSIG_MOB_PRE_CLICK, atom_clicked, mods) & COMPONENT_INTERRUPT_CLICK)
@@ -62,7 +62,7 @@
 		atom_clicked.clicked(src, mods)
 		return
 
-	if(client.click_intercept)
+	if(client?.click_intercept) // CHAOS-EDIT: human AI clicks without a client
 		if(istype(atom_clicked, /atom/movable/screen/buildmode))
 			atom_clicked.clicked(src, mods)
 			return
@@ -112,7 +112,7 @@
 		return
 
 	//Self-harm preference. isxeno check because xeno clicks on self are redirected to the turf below the pointer.
-	if(atom_clicked == src && client.prefs && client.prefs.toggle_prefs & TOGGLE_IGNORE_SELF && a_intent != INTENT_HELP && !isxeno(src))
+	if(atom_clicked == src && client?.prefs && client.prefs.toggle_prefs & TOGGLE_IGNORE_SELF && a_intent != INTENT_HELP && !isxeno(src)) // CHAOS-EDIT: human AI clicks without a client
 		if(object_used)
 			if(object_used.force && (!object_used || !(object_used.flags_item & (NOBLUDGEON|ITEM_ABSTRACT))))
 				if(world.time % 3)

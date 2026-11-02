@@ -95,7 +95,7 @@ export function getRoutedComponent() {
     return routingError('notFound', name);
   }
 
-  const Component = esModule[name];
+  const Component = esModule[name.split('/').pop()!]; // CHAOS-EDIT: fork interfaces in interfaces/chaos/ are opened as "chaos/<Name>" and export <Name>
   if (!Component) {
     return routingError('missingExport', name);
   }
