@@ -62,6 +62,20 @@ const ALTERNATE_ACTIONS: Record<string, AlternateAction> = {
   },
 };
 
+// CHAOS-EDIT START: opening worn storage through the strip menu
+type StorageAction = {
+  icon: string;
+  text: string;
+};
+
+const STORAGE_ACTIONS: Record<string, StorageAction> = {
+  open_storage: {
+    icon: 'briefcase',
+    text: 'Open storage',
+  },
+};
+// CHAOS-EDIT END
+
 type Slot = {
   displayName: string;
   gridSpot: GridSpotKey;
@@ -215,6 +229,7 @@ type StripMenuItem =
           icon: string;
           name: string;
           alternate: string;
+          storage: string | null; // CHAOS-EDIT: opening worn storage through the strip menu
         }
       | {
           obscured: ObscuringLevel;
@@ -295,6 +310,7 @@ export const StripMenu = (props) => {
                   const slot = SLOTS[keyAtSpot];
 
                   let alternateAction: AlternateAction | undefined;
+                  let storageAction: StorageAction | undefined; // CHAOS-EDIT: opening worn storage through the strip menu
 
                   let content;
                   let tooltip;
@@ -303,6 +319,9 @@ export const StripMenu = (props) => {
                     tooltip = slot.displayName;
                   } else if ('name' in item) {
                     alternateAction = ALTERNATE_ACTIONS[item.alternate];
+                    if (item.storage) {
+                      storageAction = STORAGE_ACTIONS[item.storage]; // CHAOS-EDIT: opening worn storage through the strip menu
+                    }
                     tooltip = item.name;
                   } else if ('obscured' in item) {
                     tooltip = `obscured ${slot.displayName}`;
@@ -365,6 +384,21 @@ export const StripMenu = (props) => {
                             <Icon name={alternateAction.icon} />
                           </Button>
                         )}
+                        {/* CHAOS-EDIT START: opening worn storage through the strip menu */}
+                        {storageAction !== undefined && (
+                          <Button
+                            onClick={() => {
+                              act('storage', {
+                                key: keyAtSpot,
+                              });
+                            }}
+                            tooltip={storageAction.text}
+                            className="StripMenu__storageaction"
+                          >
+                            <Icon name={storageAction.icon} />
+                          </Button>
+                        )}
+                        {/* CHAOS-EDIT END */}
                       </Box>
                     </Stack.Item>
                   );

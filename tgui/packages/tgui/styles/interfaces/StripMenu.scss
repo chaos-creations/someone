@@ -65,3 +65,13 @@ $background-color: hsla(0, 0%, 0%, 0.33) !default;
   right: 0;
   z-index: 2;
 }
+
+// CHAOS-EDIT START: opening worn storage through the strip menu
+.StripMenu__storageaction {
+  background: hsla(0, 0%, 0%, 0.6);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+}
+// CHAOS-EDIT END
