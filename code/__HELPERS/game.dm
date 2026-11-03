@@ -192,6 +192,12 @@
 /proc/get_alien_candidates(datum/hive_status/hive=null, sorted=TRUE, abomination=FALSE)
 	var/list/candidates = list()
 
+	// CHAOS-EDIT START: no larva pool in modes without xeno join (global proc, cannot be overridden)
+	if(SSticker.mode && !SSticker.mode.xeno_join_allowed)
+		GLOB.larva_pool_candidate_count = 0
+		return candidates
+	// CHAOS-EDIT END
+
 	for(var/mob/dead/observer/cur_obs as anything in GLOB.observer_list)
 		// Preference check
 		if(!cur_obs.client || !cur_obs.client.prefs || !(cur_obs.client.prefs.be_special & BE_ALIEN))
