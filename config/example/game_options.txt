@@ -75,3 +75,8 @@ ANNOUNCEMENT_MAX_CLARITY 95
 ## Block nuclear device invocation until more marines than this percentage are alive. (0-100)
 NUCLEAR_LOCK_MARINES_PERCENTAGE 0
 
+# CHAOS-EDIT START: the Hunter Ship is optional in the fork
+## Remove the # in front of this config option to load the Hunter Ship at round start. Without it predators cannot join.
+#LOAD_HUNTER_SHIP
+# CHAOS-EDIT END
+
