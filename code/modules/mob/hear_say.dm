@@ -51,6 +51,7 @@
 		var/mob/living/carbon/human/H = speaker
 		speaker_name = H.GetVoice()
 		comm_paygrade = H.get_paygrade()
+		comm_paygrade = H.get_accent_glyph() + comm_paygrade // CHAOS-EDIT: accent glyph before the name
 
 	if(italics)
 		message = "<i>[message]</i>"
@@ -114,6 +115,7 @@
 	if(!no_paygrade && istype(speaker, /mob/living/carbon/human))
 		var/mob/living/carbon/human/H = speaker
 		comm_paygrade = H.get_paygrade()
+		comm_paygrade = H.get_accent_glyph() + comm_paygrade // CHAOS-EDIT: accent glyph before the name
 		if(H.voice)
 			speaker_name = H.voice
 

@@ -460,7 +460,7 @@
 	var/old_icon = attack_icon.icon_state
 	var/old_pix_x = attack_icon.pixel_x
 	var/old_pix_y = attack_icon.pixel_y
-	addtimer(CALLBACK(istype(target, /mob/living) ? target : src, TYPE_PROC_REF(/mob/living, finish_attack_overlay), target, old_icon, old_pix_x, old_pix_y), duration) // CHAOS-EDIT: the bare /mob/living/proc/finish_attack_overlay path kept every grabbed or meleed mob from being garbage collected after deletion
+	addtimer(CALLBACK(istype(target, /mob/living) ? target : src, TYPE_PROC_REF(/mob/living, finish_attack_overlay), target, old_icon, old_pix_x, old_pix_y), duration) // CHAOS-EDIT: the bare /mob/living/proc/finish_attack_overlay path kept every grabbed or meleed mob from being garbage collected after deletion; upstream bug, drop the edit once upstream fixes it
 
 /mob/living/proc/finish_attack_overlay(atom/target, old_icon, old_pix_x, old_pix_y)
 	if(!attack_icon || !target)

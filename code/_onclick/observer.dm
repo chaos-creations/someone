@@ -13,7 +13,7 @@
 
 /mob/dead/observer/do_click(atom/A, location, params)
 	. = ..()
-	// CHAOS-EDIT START: ..() already offers the click to the click intercepts, so a second offer made them act twice (double spawns from the human AI panels, double buildmode actions)
+	// CHAOS-EDIT START: ..() already offers the click to the click intercepts, so a second offer made them act twice (double spawns from the human AI panels, double buildmode actions); upstream bug from #8963, drop the edit once upstream fixes it
 	// if(check_click_intercept(params, A))
 	// 	return
 	// CHAOS-EDIT END

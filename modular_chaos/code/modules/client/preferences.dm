@@ -7,17 +7,24 @@
 #define MENU_MENTOR "mentor"
 #define MENU_SETTINGS "settings"
 #define MENU_SPECIAL "special"
-#define MENU_ORIGIN "origin"
 
 /datum/preferences
+	origin = ORIGIN_CHAOS_TEMPLATE
 	/// Paper doll loadout editor, shared by all players like the other pickers
 	var/static/datum/loadout_doll/loadout_doll = new
+	/// Origin, accent and glyph picker, shared by all players like the other pickers
+	var/static/datum/origin_picker/origin_picker = new
+	/// Name of the character's accent in GLOB.accents, one the origin allows (see sanitize_origin())
+	var/accent = ACCENT_TEMPLATE
+	/// Glyph before the character's name in chat (one of GLOB.accent_glyphs), or "" for a random one each round
+	var/accent_glyph = ""
 
 /**
  * Shows the character setup window.
  *
  * Re-implements the upstream proc without calling it (the menus are one monolithic proc): Human only keeps appearance,
- * underwear and fluff, origin and religion moved to the Origin tab, the loadout to the window the Loadout tab opens (the paper doll), and
+ * underwear and fluff, origin and religion moved to the window the Origin tab opens (with the accent and glyph), the loadout to the window
+ * the Loadout tab opens (the paper doll), and
  * the night vision color to Settings. Backpack type, preferred armor, corporate relation, preferred squad and specialist
  * priority are not shown. Keep the rest in sync with ShowChoices() in code/modules/client/preferences.dm.
  */
@@ -49,7 +56,7 @@
 
 	dat += "<center>"
 	dat += "<a[current_menu == MENU_MARINE ? " class='linkOff'" : ""] href=\"byond://?src=\ref[user];preference=change_menu;menu=[MENU_MARINE]\"><b>Human</b></a> - "
-	dat += "<a[current_menu == MENU_ORIGIN ? " class='linkOff'" : ""] href=\"byond://?src=\ref[user];preference=change_menu;menu=[MENU_ORIGIN]\"><b>Origin</b></a> - "
+	dat += "<a href=\"byond://?src=\ref[user];preference=origin_picker\"><b>Origin</b></a> - "
 	dat += "<a href=\"byond://?src=\ref[user];preference=loadout_doll\"><b>Loadout</b></a> - "
 	dat += "<a[current_menu == MENU_XENOMORPH ? " class='linkOff'" : ""] href=\"byond://?src=\ref[user];preference=change_menu;menu=[MENU_XENOMORPH]\"><b>Xenomorph</b></a> - "
 	if(owner.check_whitelist_status(WHITELIST_COMMANDER))
@@ -138,13 +145,6 @@
 				dat += "<b>Records:</b> <a href=\"byond://?src=\ref[user];preference=records;record=1\"><b>Character Records</b></a><br>"
 
 			dat += "<b>Flavor Text:</b> <a href='byond://?src=\ref[user];preference=flavor_text;task=open'><b>[TextPreview(flavor_texts["general"], 15)]</b></a><br>"
-			dat += "</div>"
-
-		if(MENU_ORIGIN)
-			dat += "<div id='column1'>"
-			dat += "<h2><b><u>Background Information:</u></b></h2>"
-			dat += "<b>Origin:</b> <a href='byond://?_src_=prefs;preference=origin;task=input'><b>[origin]</b></a><br/>"
-			dat += "<b>Religion:</b> <a href='byond://?_src_=prefs;preference=religion;task=input'><b>[religion]</b></a><br/>"
 			dat += "</div>"
 
 		if(MENU_XENOMORPH)
@@ -391,10 +391,43 @@
 
 /datum/preferences/process_link(mob/user, list/href_list)
 	CAN_BE_REDEFINED(TRUE)
-	if(href_list["preference"] == "loadout_doll")
-		loadout_doll.tgui_interact(user)
-		return TRUE
-	return ..()
+	switch(href_list["preference"])
+		if("loadout_doll")
+			loadout_doll.tgui_interact(user)
+			return TRUE
+		if("origin_picker")
+			origin_picker.tgui_interact(user)
+			return TRUE
+	. = ..()
+	// Loading a slot changes the origin
+	SStgui.try_update_ui(user, origin_picker)
+	return .
+
+/datum/preferences/copy_all_to(mob/living/carbon/human/character, job_title, is_late_join = FALSE, check_datacore = FALSE)
+	CAN_BE_REDEFINED(TRUE)
+	// The origin may have been set through upstream's input, which offers origins the fork doesn't
+	sanitize_origin()
+	. = ..()
+	if(!istype(character))
+		return .
+	character.accent = accent
+	character.accent_glyph = accent_glyph
+	return .
+
+/**
+ * Makes the origin, accent and glyph valid for the character setup
+ *
+ * Resets an origin players can't pick (upstream's ones, from old saves) to the first one of GLOB.chaos_player_origins,
+ * an accent the origin doesn't allow to the origin's default accent, and an unknown glyph to "" (random each round).
+ */
+/datum/preferences/proc/sanitize_origin()
+	if(!(origin in GLOB.chaos_player_origins))
+		origin = GLOB.chaos_player_origins[1]
+	var/datum/origin/character_origin = GLOB.origins[origin]
+	if(!character_origin.can_have_accent(accent))
+		accent = character_origin.default_accent
+	if(!(accent_glyph in GLOB.accent_glyphs))
+		accent_glyph = ""
 
 #undef MENU_MARINE
 #undef MENU_XENOMORPH
@@ -404,4 +437,3 @@
 #undef MENU_MENTOR
 #undef MENU_SETTINGS
 #undef MENU_SPECIAL
-#undef MENU_ORIGIN

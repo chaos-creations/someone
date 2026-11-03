@@ -65,3 +65,26 @@
 		to_chat(src, SPAN_WARNING("You can't do that right now."))
 		return
 	AddComponent(/datum/component/pixel_shifting)
+
+/**
+ * Returns the glyph shown before this human's name in chat, as HTML colored by their accent and followed by a space
+ *
+ * Human AI that no player controls shows HUMAN_AI_ACCENT_GLYPH. A human without a glyph gets a random one here and keeps it.
+ * Returns "" if the human has no accent, picked or from the origin.
+ */
+/mob/living/carbon/human/proc/get_accent_glyph()
+	var/datum/accent/speaker_accent = accent ? GLOB.accents[accent] : null
+	if(!speaker_accent)
+		var/datum/origin/speaker_origin = origin ? GLOB.origins[origin] : null
+		if(speaker_origin?.default_accent)
+			speaker_accent = GLOB.accents[speaker_origin.default_accent]
+	if(!speaker_accent)
+		return ""
+
+	var/glyph = accent_glyph
+	if(!client && is_ai_controlled())
+		glyph = HUMAN_AI_ACCENT_GLYPH
+	else if(!glyph)
+		accent_glyph = pick(GLOB.accent_glyphs)
+		glyph = accent_glyph
+	return "<b style='color:[speaker_accent.glyph_color]'>[html_encode(glyph)]</b> "

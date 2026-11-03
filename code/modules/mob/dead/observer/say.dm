@@ -43,6 +43,7 @@
 		var/mob/living/carbon/human/human_speaker = speaker
 		speaker_name = human_speaker.GetVoice()
 		comm_paygrade = human_speaker.get_paygrade()
+		comm_paygrade = human_speaker.get_accent_glyph() + comm_paygrade // CHAOS-EDIT: accent glyph before the name
 
 	if(italics)
 		message = "<i>[message]</i>"

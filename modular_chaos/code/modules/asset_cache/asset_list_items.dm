@@ -26,3 +26,14 @@
 		Insert(sprite_name, icon_sprite)
 
 	return ..()
+
+/// Homeworld pictures of the origins ([/datum/origin/var/planet_image]) for the origin picker
+/datum/asset/simple/origin_planets
+
+/datum/asset/simple/origin_planets/register()
+	for(var/origin_name in GLOB.origins)
+		var/datum/origin/origin = GLOB.origins[origin_name]
+		var/asset_name = origin.get_planet_asset_name()
+		if(asset_name)
+			assets[asset_name] = origin.planet_image
+	return ..()
