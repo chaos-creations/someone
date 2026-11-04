@@ -18,9 +18,6 @@
 /datum/origin_picker/ui_state(mob/user)
 	return GLOB.always_state
 
-/datum/origin_picker/ui_assets(mob/user)
-	return list(get_asset_datum(/datum/asset/simple/origin_planets))
-
 /datum/origin_picker/ui_static_data(mob/user)
 	. = ..()
 	var/list/origins = list()
@@ -35,10 +32,41 @@
 		origins += list(list(
 			"name" = origin.name,
 			"desc" = origin.desc,
-			"planet" = origin.get_planet_asset_name(),
+			"planet_type" = origin.planet_type,
+			"planet_seed" = origin.planet_seed,
+			"planet_size" = origin.planet_size,
+			"planet_colors" = origin.planet_colors,
+			"planet_random_colors" = origin.planet_random_colors,
+			"planet_spin" = origin.planet_spin,
+			"planet_tilt" = origin.planet_tilt,
+			"moon_of" = origin.moon_of,
 			"accents" = origin_accents,
 		))
 	.["origins"] = origins
+	// Systems with origins on their orbits, the closest first, and the moons
+	var/list/systems = list()
+	for(var/system_name in GLOB.star_systems)
+		var/datum/star_system/star_system = GLOB.star_systems[system_name]
+		var/list/system_origins = list()
+		for(var/origin_name in GLOB.chaos_player_origins)
+			var/datum/origin/origin = GLOB.origins[origin_name]
+			if(origin?.star_system == system_name)
+				system_origins += origin_name
+		if(!length(system_origins))
+			continue
+		systems += list(list(
+			"name" = star_system.name,
+			"origins" = system_origins,
+			"star_seed" = star_system.star_seed,
+			"star_size" = star_system.star_size,
+			"star_colors" = star_system.star_colors,
+			"star_spin" = star_system.star_spin,
+			"background_seed" = star_system.background_seed,
+			"background_colorscheme" = star_system.background_colorscheme,
+			"background_darken" = star_system.background_darken,
+			"background_planets" = star_system.background_planets,
+		))
+	.["systems"] = systems
 
 	var/list/accents = list()
 	for(var/accent_name in GLOB.accents)

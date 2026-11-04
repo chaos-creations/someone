@@ -1,5 +1,7 @@
 // Origins
 GLOBAL_LIST_INIT(chaos_player_origins, CHAOS_PLAYER_ORIGINS)
+/// Star systems of the origin picker by name
+GLOBAL_REFERENCE_LIST_INDEXED(star_systems, /datum/star_system, name)
 
 /// Accents by name
 GLOBAL_REFERENCE_LIST_INDEXED(accents, /datum/accent, name)

@@ -39,6 +39,7 @@
 #include "code\datums\keybinding\human.dm"
 #include "code\datums\origin\accent.dm"
 #include "code\datums\origin\origin.dm"
+#include "code\datums\origin\star_system.dm"
 #include "code\game\gamemodes\cm_initialize.dm"
 #include "code\game\gamemodes\extended\event.dm"
 #include "code\game\objects\items.dm"

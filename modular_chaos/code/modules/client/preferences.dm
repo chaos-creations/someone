@@ -9,7 +9,7 @@
 #define MENU_SPECIAL "special"
 
 /datum/preferences
-	origin = ORIGIN_CHAOS_TEMPLATE
+	origin = CHAOS_DEFAULT_ORIGIN
 	/// Paper doll loadout editor, shared by all players like the other pickers
 	var/static/datum/loadout_doll/loadout_doll = new
 	/// Origin, accent and glyph picker, shared by all players like the other pickers
@@ -417,12 +417,12 @@
 /**
  * Makes the origin, accent and glyph valid for the character setup
  *
- * Resets an origin players can't pick (upstream's ones, from old saves) to the first one of GLOB.chaos_player_origins,
+ * Resets an origin players can't pick (upstream's ones, from old saves) to CHAOS_DEFAULT_ORIGIN,
  * an accent the origin doesn't allow to the origin's default accent, and an unknown glyph to "" (random each round).
  */
 /datum/preferences/proc/sanitize_origin()
 	if(!(origin in GLOB.chaos_player_origins))
-		origin = GLOB.chaos_player_origins[1]
+		origin = CHAOS_DEFAULT_ORIGIN
 	var/datum/origin/character_origin = GLOB.origins[origin]
 	if(!character_origin.can_have_accent(accent))
 		accent = character_origin.default_accent
