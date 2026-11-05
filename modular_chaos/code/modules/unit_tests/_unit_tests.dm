@@ -32,9 +32,8 @@
 
 #include "cyrillic_text.dm"
 #include "human_ai.dm"
-#include "nightmare_inserts.dm"
 #include "origins.dm"
-#include "pixel_shift.dm"
+#include "races.dm"
 
 #undef TEST_ASSERT
 #undef TEST_ASSERT_EQUAL

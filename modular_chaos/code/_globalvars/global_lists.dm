@@ -13,3 +13,8 @@ GLOBAL_LIST_INIT(accent_glyphs, list(
 	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
 	"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
 ))
+
+// Races
+GLOBAL_LIST_INIT(chaos_player_races, CHAOS_PLAYER_RACES)
+/// Playable races by id
+GLOBAL_REFERENCE_LIST_INDEXED(playable_races, /datum/playable_race, id)

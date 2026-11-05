@@ -1,12 +1,6 @@
 // Values must match upstream's MENU_* defines in code/modules/client/preferences.dm, which are #undef'd at its end
 #define MENU_MARINE "marine"
-#define MENU_XENOMORPH "xeno"
-#define MENU_CO "co"
-#define MENU_SYNTHETIC "synth"
-#define MENU_YAUTJA "yautja"
-#define MENU_MENTOR "mentor"
 #define MENU_SETTINGS "settings"
-#define MENU_SPECIAL "special"
 
 /datum/preferences
 	origin = CHAOS_DEFAULT_ORIGIN
@@ -14,6 +8,16 @@
 	var/static/datum/loadout_doll/loadout_doll = new
 	/// Origin, accent and glyph picker, shared by all players like the other pickers
 	var/static/datum/origin_picker/origin_picker = new
+	/// Race and race options picker, shared by all players like the other pickers
+	var/static/datum/race_picker/race_picker = new
+	/// Id of the character's race in GLOB.playable_races, one of GLOB.chaos_player_races (see sanitize_race())
+	var/race = CHAOS_DEFAULT_RACE
+	/**
+	 * Option values of the races the character has set: list("race id" = list("option key" = value))
+	 *
+	 * Kept for every race, so trying another one loses nothing; see /datum/race_option.
+	 */
+	var/list/race_options = list()
 	/// Name of the character's accent in GLOB.accents, one the origin allows (see sanitize_origin())
 	var/accent = ACCENT_TEMPLATE
 	/// Glyph before the character's name in chat (one of GLOB.accent_glyphs), or "" for a random one each round
@@ -23,10 +27,13 @@
  * Shows the character setup window.
  *
  * Re-implements the upstream proc without calling it (the menus are one monolithic proc): Human only keeps appearance,
- * underwear and fluff, origin and religion moved to the window the Origin tab opens (with the accent and glyph), the loadout to the window
- * the Loadout tab opens (the paper doll), and
+ * underwear and fluff, origin and religion moved to the window the Origin link under Fluff Information opens (with the accent
+ * and glyph), the loadout to the window the Loadout tab opens (the paper doll), and
  * the night vision color to Settings. Backpack type, preferred armor, corporate relation, preferred squad and specialist
- * priority are not shown. Keep the rest in sync with ShowChoices() in code/modules/client/preferences.dm.
+ * priority are not shown, and the only other tab is Settings: Xenomorph, Commanding Officer, Synthetic, Yautja, Mentor
+ * and Special Roles are gone, their preferences keep the saved or default values. The Race link under the name opens
+ * the race picker, and the body settings are hidden for a species that doesn't use them. Keep the rest in sync with
+ * ShowChoices() in code/modules/client/preferences.dm.
  */
 /datum/preferences/ShowChoices(mob/user)
 	CAN_BE_REDEFINED(TRUE)
@@ -56,19 +63,8 @@
 
 	dat += "<center>"
 	dat += "<a[current_menu == MENU_MARINE ? " class='linkOff'" : ""] href=\"byond://?src=\ref[user];preference=change_menu;menu=[MENU_MARINE]\"><b>Human</b></a> - "
-	dat += "<a href=\"byond://?src=\ref[user];preference=origin_picker\"><b>Origin</b></a> - "
 	dat += "<a href=\"byond://?src=\ref[user];preference=loadout_doll\"><b>Loadout</b></a> - "
-	dat += "<a[current_menu == MENU_XENOMORPH ? " class='linkOff'" : ""] href=\"byond://?src=\ref[user];preference=change_menu;menu=[MENU_XENOMORPH]\"><b>Xenomorph</b></a> - "
-	if(owner.check_whitelist_status(WHITELIST_COMMANDER))
-		dat += "<a[current_menu == MENU_CO ? " class='linkOff'" : ""] href=\"byond://?src=\ref[user];preference=change_menu;menu=[MENU_CO]\"><b>Commanding Officer</b></a> - "
-	if(owner.check_whitelist_status(WHITELIST_SYNTHETIC))
-		dat += "<a[current_menu == MENU_SYNTHETIC ? " class='linkOff'" : ""] href=\"byond://?src=\ref[user];preference=change_menu;menu=[MENU_SYNTHETIC]\"><b>Synthetic</b></a> - "
-	if(owner.check_whitelist_status(WHITELIST_YAUTJA))
-		dat += "<a[current_menu == MENU_YAUTJA ? " class='linkOff'" : ""] href=\"byond://?src=\ref[user];preference=yautja\"><b>Yautja</b></a> - "
-	if(owner.check_whitelist_status(WHITELIST_MENTOR))
-		dat += "<a[current_menu == MENU_MENTOR ? " class='linkOff'" : ""] href=\"byond://?src=\ref[user];preference=change_menu;menu=[MENU_MENTOR]\"><b>Mentor</b></a> - "
-	dat += "<a[current_menu == MENU_SETTINGS ? " class='linkOff'" : ""] href=\"byond://?src=\ref[user];preference=change_menu;menu=[MENU_SETTINGS]\"><b>Settings</b></a> - "
-	dat += "<a[current_menu == MENU_SPECIAL ? " class='linkOff'" : ""] href=\"byond://?src=\ref[user];preference=change_menu;menu=[MENU_SPECIAL]\"><b>Special Roles</b></a>"
+	dat += "<a[current_menu == MENU_SETTINGS ? " class='linkOff'" : ""] href=\"byond://?src=\ref[user];preference=change_menu;menu=[MENU_SETTINGS]\"><b>Settings</b></a>"
 	dat += "</center>"
 
 	dat += "<hr>"
@@ -79,6 +75,8 @@
 			dat += "<h1><u><b>Name:</b></u> "
 			dat += "<a href='byond://?_src_=prefs;preference=name;task=input'><b>[real_name]</b></a>"
 			dat += "<a href='byond://?_src_=prefs;preference=name;task=random'>&reg</A></h1>"
+			var/datum/playable_race/character_race = GLOB.playable_races[race]
+			dat += "<b>Race:</b> <a href=\"byond://?src=\ref[user];preference=race_picker\"><b>[character_race.name]</b></a><br>"
 			dat += "<b>Always Pick Random Name:</b> <a href='byond://?_src_=prefs;preference=rand_name'><b>[be_random_name ? "Yes" : "No"]</b></a><br>"
 			dat += "<b>Always Pick Random Appearance:</b> <a href='byond://?_src_=prefs;preference=rand_body'><b>[be_random_body ? "Yes" : "No"]</b></a><br><br>"
 
@@ -87,10 +85,15 @@
 			dat += "<b>Age:</b> <a href='byond://?_src_=prefs;preference=age;task=input'><b>[age]</b></a><br>"
 			dat += "<b>Gender:</b> <a href='byond://?_src_=prefs;preference=gender'><b>[gender == PLURAL ? "Non-Binary" : gender == MALE ? "Male" : "Female"]</b></a><br>"
 
-			dat += "<b>Skin Color:</b> [skin_color]<br>"
-			dat += "<b>Body Size:</b> [body_size]<br>"
-			dat += "<b>Body Muscularity:</b> [body_type]<br>"
-			dat += "<b>Edit Body:</b> <a href='byond://?_src_=prefs;preference=body;task=input'><b>Picker</b></a><br><br>"
+			// Skin color, size and muscularity are drawn only for species with skin colors (see get_limb_icon_name())
+			var/datum/species/character_species = GLOB.all_species[species]
+			if(character_species?.flags & HAS_SKIN_COLOR)
+				dat += "<b>Skin Color:</b> [skin_color]<br>"
+				dat += "<b>Body Size:</b> [body_size]<br>"
+				dat += "<b>Body Muscularity:</b> [body_type]<br>"
+				dat += "<b>Edit Body:</b> <a href='byond://?_src_=prefs;preference=body;task=input'><b>Picker</b></a><br><br>"
+			else
+				dat += "<b>Body:</b> set by the race<br><br>"
 
 			dat += "<b>Traits:</b> <a href='byond://?src=\ref[user];preference=traits'><b>Character Traits</b></a>"
 			dat += "<br>"
@@ -139,6 +142,7 @@
 
 			dat += "<div id='column3'>"
 			dat += "<h2><b><u>Fluff Information:</u></b></h2>"
+			dat += "<b>Origin:</b> <a href=\"byond://?src=\ref[user];preference=origin_picker\"><b>[origin]</b></a><br>"
 			if(jobban_isbanned(user, "Records"))
 				dat += "<b>You are banned from using character records.</b><br>"
 			else
@@ -147,54 +151,6 @@
 			dat += "<b>Flavor Text:</b> <a href='byond://?src=\ref[user];preference=flavor_text;task=open'><b>[TextPreview(flavor_texts["general"], 15)]</b></a><br>"
 			dat += "</div>"
 
-		if(MENU_XENOMORPH)
-			dat += "<div id='column1'>"
-			dat += "<h2><b><u>Xenomorph Information:</u></b></h2>"
-			var/display_prefix = xeno_prefix ? xeno_prefix : "------"
-			var/display_postfix = xeno_postfix ? xeno_postfix : "------"
-			dat += "<b>Xeno prefix:</b> <a href='byond://?_src_=prefs;preference=xeno_prefix;task=input'><b>[display_prefix]</b></a><br>"
-			dat += "<b>Xeno postfix:</b> <a href='byond://?_src_=prefs;preference=xeno_postfix;task=input'><b>[display_postfix]</b></a><br>"
-
-			dat += "<b>Show Queen Name:</b> <a href='byond://?_src_=prefs;preference=show_queen_name'><b>[show_queen_name? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Default Xeno Night Vision Level:</b> <a href='byond://?_src_=prefs;preference=xeno_vision_level_pref;task=input'><b>[xeno_vision_level_pref]</b></a><br>"
-
-			var/tempnumber = rand(1, 999)
-			var/postfix_text = xeno_postfix ? ("-"+xeno_postfix) : ""
-			var/prefix_text = xeno_prefix ? xeno_prefix : "XX"
-			var/xeno_text = "[prefix_text]-[tempnumber][postfix_text]"
-
-			dat += "<b>Xeno sample name:</b> [xeno_text]<br>"
-			dat += "<br>"
-			dat += "</div>"
-
-		if(MENU_CO)
-			if(owner.check_whitelist_status(WHITELIST_COMMANDER))
-				dat += "<div id='column1'>"
-				dat += "<h2><b><u>Commander Settings:</u></b></h2>"
-				dat += "<b>Commander Whitelist Status:</b> <a href='byond://?_src_=prefs;preference=commander_status;task=input'><b>[commander_status]</b></a><br>"
-				dat += "<b>Commander Sidearm:</b> <a href='byond://?_src_=prefs;preference=co_sidearm;task=input'><b>[commander_sidearm]</b></a><br>"
-				dat += "<b>Commander Affiliation:</b> <a href='byond://?_src_=prefs;preference=co_affiliation;task=input'><b>[affiliation]</b></a><br>"
-				dat += "<b>Commander Career Path:</b> <a href='byond://?_src_=prefs;preference=co_career_path;task=input'><b>[co_career_path]</b></a><br>"
-				dat += "</div>"
-			else
-				dat += "<b>You do not have the whitelist for this role.</b>"
-		if(MENU_SYNTHETIC)
-			if(owner.check_whitelist_status(WHITELIST_SYNTHETIC))
-				dat += "<div id='column1'>"
-				dat += "<h2><b><u>Synthetic Settings:</u></b></h2>"
-				dat += "<b>Synthetic Name:</b> <a href='byond://?_src_=prefs;preference=synth_name;task=input'><b>[synthetic_name]</b></a><br>"
-				dat += "<b>Synthetic Type:</b> <a href='byond://?_src_=prefs;preference=synth_type;task=input'><b>[synthetic_type]</b></a><br>"
-				dat += "<b>Synthetic Whitelist Status:</b> <a href='byond://?_src_=prefs;preference=synth_status;task=input'><b>[synth_status]</b></a><br>"
-				dat += "<b>Synthetic Specialisation:</b> <a href='byond://?_src_=prefs;preference=synth_specialisation;task=input'><b>[synth_specialisation]</b></a><br>"
-				dat += "</div>"
-			else
-				dat += "<b>You do not have the whitelist for this role.</b>"
-
-		if(MENU_MENTOR)
-			if(owner.check_whitelist_status(WHITELIST_MENTOR))
-				dat += "<b>New Player Ghost HUD:</b> <a href='byond://?_src_=prefs;preference=newplayer_ghost_hud'><b>[observer_huds[HUD_MENTOR_SIGHT] ? "Enabled" : "Disabled"]</b></a><br>"
-			else
-				dat += "<b>You do not have the whitelist for this role.</b>"
 		if(MENU_SETTINGS)
 			dat += "<div id='column1'>"
 			dat += "<h2><b><u>Input Settings:</u></b></h2>"
@@ -307,81 +263,6 @@
 			dat += "<a href='byond://?src=\ref[src];action=proccall;procpath=/client/proc/toggle_dualwield'>Toggle Dual Wield Functionality</a><br>"
 			dat += "<a href='byond://?src=\ref[src];action=proccall;procpath=/client/proc/toggle_auto_holotag'>Toggle Auto Holotags</a><br>"
 			dat += "<a href='byond://?src=\ref[src];action=proccall;procpath=/client/proc/toggle_auto_shove'>Toggle Auto Shove</a><br>"
-		if(MENU_SPECIAL) //wart
-			dat += "<div id='column1'>"
-			dat += "<h2><b><u>ERT Settings:</u></b></h2>"
-			dat += "<b>Spawn as Leader:</b> <a href='byond://?_src_=prefs;preference=toggles_ert;flag=[PLAY_LEADER]'><b>[toggles_ert & PLAY_LEADER ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as Medic:</b> <a href='byond://?_src_=prefs;preference=toggles_ert;flag=[PLAY_MEDIC]'><b>[toggles_ert & PLAY_MEDIC ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as Engineer:</b> <a href='byond://?_src_=prefs;preference=toggles_ert;flag=[PLAY_ENGINEER]'><b>[toggles_ert & PLAY_ENGINEER ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as Specialist:</b> <a href='byond://?_src_=prefs;preference=toggles_ert;flag=[PLAY_HEAVY]'><b>[toggles_ert & PLAY_HEAVY ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as Smartgunner:</b> <a href='byond://?_src_=prefs;preference=toggles_ert;flag=[PLAY_SMARTGUNNER]'><b>[toggles_ert & PLAY_SMARTGUNNER ? "Yes" : "No"]</b></a><br>"
-
-			if(owner.check_whitelist_status(WHITELIST_SYNTHETIC))
-				dat += "<b>Spawn as Synth:</b> <a href='byond://?_src_=prefs;preference=toggles_ert;flag=[PLAY_SYNTH]'><b>[toggles_ert & PLAY_SYNTH ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as Miscellaneous:</b> <a href='byond://?_src_=prefs;preference=toggles_ert;flag=[PLAY_MISC]'><b>[toggles_ert & PLAY_MISC ? "Yes" : "No"]</b></a><br>"
-
-			dat += "<br><h2><b><u>Special Roles:</u></b></h2>"
-
-			for(var/role_name in GLOB.be_special_flags)
-				var/flag = GLOB.be_special_flags[role_name]
-				var/ban_check_name = JOB_XENOMORPH // Ever a be_special_flags uses a different ban check, check and switch here
-
-				if(ban_check_name && jobban_isbanned(user, ban_check_name))
-					dat += "<b>Be [role_name]:</b> <font color=red><b>\[BANNED]</b></font><br>"
-				else if(!can_play_special_job(user.client, ban_check_name))
-					dat += "<b>Be [role_name]:</b> <font color=red><b>\[TIMELOCKED]</b></font><br>"
-				else
-					dat += "<b>Be [role_name]:</b> <a href='byond://?_src_=prefs;preference=be_special;num=[flag]'><b>[be_special & flag ? "Yes" : "No"]</b></a><br>"
-
-
-
-			dat += "</div>"
-			dat += "<div id='column2'>"
-			dat += "<h2><b><u>Hunting Ground ERT Settings:</u></b></h2>"
-			dat += "<b>Spawn as Mercenary:</b> <a href='byond://?_src_=prefs;preference=toggles_ert_pred;flag=[PLAY_MERC]'><b>[toggles_ert_pred & PLAY_MERC ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as Royal Marine:</b> <a href='byond://?_src_=prefs;preference=toggles_ert_pred;flag=[PLAY_TWE]'><b>[toggles_ert_pred & PLAY_TWE ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as UPP:</b> <a href='byond://?_src_=prefs;preference=toggles_ert_pred;flag=[PLAY_UPP]'><b>[toggles_ert_pred & PLAY_UPP ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as CLF:</b> <a href='byond://?_src_=prefs;preference=toggles_ert_pred;flag=[PLAY_CLF]'><b>[toggles_ert_pred & PLAY_CLF ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as PMC:</b> <a href='byond://?_src_=prefs;preference=toggles_ert_pred;flag=[PLAY_PMC]'><b>[toggles_ert_pred & PLAY_PMC ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as Miscellaneous:</b> <a href='byond://?_src_=prefs;preference=toggles_ert_pred;flag=[PLAY_HUNT_MISC]'><b>[toggles_ert_pred & PLAY_HUNT_MISC ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as Xeno T2:</b> <a href='byond://?_src_=prefs;preference=toggles_ert_pred;flag=[PLAY_XENO_T2]'><b>[toggles_ert_pred & PLAY_XENO_T2 ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as Xeno T3:</b> <a href='byond://?_src_=prefs;preference=toggles_ert_pred;flag=[PLAY_XENO_T3]'><b>[toggles_ert_pred & PLAY_XENO_T3 ? "Yes" : "No"]</b></a><br>"
-			dat += "</div>"
-			dat += "</body>"
-			if(owner.check_whitelist_status(WHITELIST_FAX_RESPONDER))
-				dat += "<div id='column3'>"
-				dat += "<h2><b><u>Fax Responder Names:</u></b></h2>"
-				dat += "<b>USCM High Command:</b> <a href='byond://?_src_=prefs;preference=fax_name;task=input;fax_faction=uscm'><b>[fax_name_uscm]</b></a><br>"
-				dat += "<b>USCM Provost:</b> <a href='byond://?_src_=prefs;preference=fax_name;task=input;fax_faction=pvst'><b>[fax_name_pvst]</b></a><br>"
-				dat += "<b>Weyland-Yutani:</b> <a href='byond://?_src_=prefs;preference=fax_name;task=input;fax_faction=wy'><b>[fax_name_wy]</b></a><br>"
-				dat += "<b>UPP Command:</b> <a href='byond://?_src_=prefs;preference=fax_name;task=input;fax_faction=upp'><b>[fax_name_upp]</b></a><br>"
-				dat += "<b>TWE Command:</b> <a href='byond://?_src_=prefs;preference=fax_name;task=input;fax_faction=twe'><b>[fax_name_twe]</b></a><br>"
-				dat += "<b>Colonial Marshal Bureau:</b> <a href='byond://?_src_=prefs;preference=fax_name;task=input;fax_faction=cmb'><b>[fax_name_cmb]</b></a><br>"
-				dat += "<b>Free Press:</b> <a href='byond://?_src_=prefs;preference=fax_name;task=input;fax_faction=press'><b>[fax_name_press]</b></a><br>"
-				dat += "<b>CLF Command:</b> <a href='byond://?_src_=prefs;preference=fax_name;task=input;fax_faction=clf'><b>[fax_name_clf]</b></a><br>"
-				dat += "</div>"
-
-
-			dat += "<div id='column2'>"
-			dat += "<h2><b><u>Survivor Settings:</u></b></h2>"
-			dat += "<b>Spawn as Hostile:</b> <a href='byond://?_src_=prefs;preference=toggles_survivor;flag=[PLAY_SURVIVOR_HOSTILE]'><b>[toggles_survivor & PLAY_SURVIVOR_HOSTILE ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as Non-Hostile:</b> <a href='byond://?_src_=prefs;preference=toggles_survivor;flag=[PLAY_SURVIVOR_NON_HOSTILE]'><b>[toggles_survivor & PLAY_SURVIVOR_NON_HOSTILE ? "Yes" : "No"]</b></a><br>"
-
-			dat += "<br><h2><b><u>Nightmare Insert Roles:</u></b></h2>"
-
-			dat += "<b>Spawn as Standard:</b> <a href='byond://?_src_=prefs;preference=toggles_insert;flag=[PLAY_INSERT_STANDARD]'><b>[toggles_insert & PLAY_INSERT_STANDARD ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as Corporate:</b> <a href='byond://?_src_=prefs;preference=toggles_insert;flag=[PLAY_INSERT_CORPORATE]'><b>[toggles_insert & PLAY_INSERT_CORPORATE ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as Leader:</b> <a href='byond://?_src_=prefs;preference=toggles_insert;flag=[PLAY_INSERT_LEADER]'><b>[toggles_insert & PLAY_INSERT_LEADER ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as Medic:</b> <a href='byond://?_src_=prefs;preference=toggles_insert;flag=[PLAY_INSERT_MEDIC]'><b>[toggles_insert & PLAY_INSERT_MEDIC ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as Engineer:</b> <a href='byond://?_src_=prefs;preference=toggles_insert;flag=[PLAY_INSERT_ENGINEER]'><b>[toggles_insert & PLAY_INSERT_ENGINEER ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as Smartgunner:</b> <a href='byond://?_src_=prefs;preference=toggles_insert;flag=[PLAY_INSERT_SMARTGUNNER]'><b>[toggles_insert & PLAY_INSERT_SMARTGUNNER ? "Yes" : "No"]</b></a><br>"
-			dat += "<b>Spawn as Specialist:</b> <a href='byond://?_src_=prefs;preference=toggles_insert;flag=[PLAY_INSERT_SPECIALIST]'><b>[toggles_insert & PLAY_INSERT_SPECIALIST ? "Yes" : "No"]</b></a><br>"
-
-			if(owner.check_whitelist_status(WHITELIST_SYNTHETIC))
-				dat += "<b>Spawn as Insert Synth:</b> <a href='byond://?_src_=prefs;preference=toggles_insert;flag=[PLAY_INSERT_SYNTH]'><b>[toggles_insert & PLAY_INSERT_SYNTH ? "Yes" : "No"]</b></a><br>"
-			if(owner.check_whitelist_status(WHITELIST_COMMANDER))
-				dat += "<b>Spawn as Insert CO:</b> <a href='byond://?_src_=prefs;preference=toggles_insert;flag=[PLAY_INSERT_CO]'><b>[toggles_insert & PLAY_INSERT_CO ? "Yes" : "No"]</b></a><br>"
-			dat += "</div>"
 
 	dat += "</div></body>"
 
@@ -398,9 +279,13 @@
 		if("origin_picker")
 			origin_picker.tgui_interact(user)
 			return TRUE
+		if("race_picker")
+			race_picker.tgui_interact(user)
+			return TRUE
 	. = ..()
-	// Loading a slot changes the origin
+	// Loading a slot changes the race and the origin, others the preview
 	SStgui.try_update_ui(user, origin_picker)
+	SStgui.try_update_ui(user, race_picker)
 	return .
 
 /datum/preferences/copy_all_to(mob/living/carbon/human/character, job_title, is_late_join = FALSE, check_datacore = FALSE)
@@ -412,17 +297,58 @@
 		return .
 	character.accent = accent
 	character.accent_glyph = accent_glyph
+	// After the appearance, and after upstream loaded the character slot assigned to the job
+	apply_race(character)
 	return .
+
+/datum/preferences/copy_appearance_to(mob/living/carbon/human/character, safety = 0)
+	CAN_BE_REDEFINED(TRUE)
+	. = ..()
+	// Only the preview shows the race: humans equipment presets dress (randomize_appearance()) keep the species of the preset
+	if(character && character == preview_dummy)
+		apply_race(character)
+	return .
+
+/**
+ * Turns the character into the race of the preferences, with its option values
+ *
+ * Call after the appearance is copied; see /datum/playable_race/proc/apply_to().
+ */
+/datum/preferences/proc/apply_race(mob/living/carbon/human/character)
+	var/datum/playable_race/character_race = GLOB.playable_races[race]
+	character_race.apply_to(character, character_race.sanitize_values(race_options[race]))
+
+/**
+ * Makes the race and the race option values valid, and the species upstream's procs read follow the race
+ *
+ * Resets a race players can't pick to CHAOS_DEFAULT_RACE, drops the values of races that don't exist and gives the
+ * options of the other races their defaults where their values are invalid. Sets the species (upstream's random hair
+ * styles read it) to the one of the race. The origin depends on the race, so call sanitize_origin() afterwards.
+ */
+/datum/preferences/proc/sanitize_race()
+	if(!(race in GLOB.chaos_player_races))
+		race = CHAOS_DEFAULT_RACE
+	var/list/saved_options = islist(race_options) ? race_options : list()
+	race_options = list()
+	for(var/race_id in saved_options)
+		var/datum/playable_race/saved_race = GLOB.playable_races[race_id]
+		if(saved_race)
+			race_options[race_id] = saved_race.sanitize_values(saved_options[race_id])
+	var/datum/playable_race/character_race = GLOB.playable_races[race]
+	race_options[race] = character_race.sanitize_values(race_options[race])
+	species = character_race.get_species(race_options[race])
 
 /**
  * Makes the origin, accent and glyph valid for the character setup
  *
- * Resets an origin players can't pick (upstream's ones, from old saves) to CHAOS_DEFAULT_ORIGIN,
+ * Resets an origin the character's race doesn't allow (upstream's ones, from old saves) to the race's default origin,
  * an accent the origin doesn't allow to the origin's default accent, and an unknown glyph to "" (random each round).
+ * Needs a valid race (sanitize_race()).
  */
 /datum/preferences/proc/sanitize_origin()
-	if(!(origin in GLOB.chaos_player_origins))
-		origin = CHAOS_DEFAULT_ORIGIN
+	var/datum/playable_race/character_race = GLOB.playable_races[race]
+	if(!character_race.can_have_origin(origin))
+		origin = character_race.default_origin
 	var/datum/origin/character_origin = GLOB.origins[origin]
 	if(!character_origin.can_have_accent(accent))
 		accent = character_origin.default_accent
@@ -430,10 +356,4 @@
 		accent_glyph = ""
 
 #undef MENU_MARINE
-#undef MENU_XENOMORPH
-#undef MENU_CO
-#undef MENU_SYNTHETIC
-#undef MENU_YAUTJA
-#undef MENU_MENTOR
 #undef MENU_SETTINGS
-#undef MENU_SPECIAL

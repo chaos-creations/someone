@@ -1,5 +1,5 @@
 /**
- * Picker of the character's origin, accent and chat glyph, opened from the Origin tab of the character setup
+ * Picker of the character's origin, accent and chat glyph, opened from the Origin link under Fluff Information in the character setup
  *
  * Shared by all players like /datum/loadout_doll; the values are kept in the user's /datum/preferences.
  * Religion is changed here too, through upstream's input in /datum/preferences/proc/process_link().
@@ -20,8 +20,15 @@
 
 /datum/origin_picker/ui_static_data(mob/user)
 	. = ..()
-	var/list/origins = list()
+	// Only the origins the character's race allows, so the race picker updates this when the race changes
+	var/datum/playable_race/character_race = GLOB.playable_races[user.client?.prefs?.race]
+	var/list/allowed_origins = list()
 	for(var/origin_name in GLOB.chaos_player_origins)
+		if(!character_race || character_race.can_have_origin(origin_name))
+			allowed_origins += origin_name
+
+	var/list/origins = list()
+	for(var/origin_name in allowed_origins)
 		var/datum/origin/origin = GLOB.origins[origin_name]
 		if(!origin)
 			continue
@@ -48,7 +55,7 @@
 	for(var/system_name in GLOB.star_systems)
 		var/datum/star_system/star_system = GLOB.star_systems[system_name]
 		var/list/system_origins = list()
-		for(var/origin_name in GLOB.chaos_player_origins)
+		for(var/origin_name in allowed_origins)
 			var/datum/origin/origin = GLOB.origins[origin_name]
 			if(origin?.star_system == system_name)
 				system_origins += origin_name
@@ -104,7 +111,8 @@
 	switch(action)
 		if("origin")
 			var/origin_name = params["name"]
-			if(!(origin_name in GLOB.chaos_player_origins))
+			var/datum/playable_race/character_race = GLOB.playable_races[prefs.race]
+			if(!character_race.can_have_origin(origin_name))
 				return
 			prefs.origin = origin_name
 			prefs.sanitize_origin()

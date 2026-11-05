@@ -7,6 +7,9 @@
 	if(islist(save_data))
 		accent = save_data["accent"]
 		accent_glyph = save_data["accent_glyph"]
+		race = save_data["race"]
+		race_options = save_data["race_options"]
+	sanitize_race()
 	sanitize_origin()
 	return .
 
@@ -21,4 +24,6 @@
 	var/list/save_data = savefile.tree[tree_key]
 	save_data["accent"] = accent
 	save_data["accent_glyph"] = accent_glyph
+	save_data["race"] = race
+	save_data["race_options"] = race_options
 	return ..()
