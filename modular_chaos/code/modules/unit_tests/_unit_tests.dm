@@ -35,6 +35,7 @@
 #include "origins.dm"
 #include "races.dm"
 #include "universes.dm"
+#include "vox.dm"
 
 #undef TEST_ASSERT
 #undef TEST_ASSERT_EQUAL

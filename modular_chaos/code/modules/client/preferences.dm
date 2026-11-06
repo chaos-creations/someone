@@ -329,7 +329,8 @@
  *
  * Resets a race players can't pick in the universe to its default race, drops the values of races that don't exist and
  * gives the options of the other races their defaults where their values are invalid. Sets the species (upstream's random
- * hair styles read it) to the one of the race. The origin depends on the race, so call sanitize_origin() afterwards.
+ * hair styles read it) to the one of the race, and gives a random style of it to a hair or facial hair style it can't have.
+ * The origin depends on the race, so call sanitize_origin() afterwards.
  */
 /datum/preferences/proc/sanitize_race()
 	var/datum/universe/universe = CURRENT_UNIVERSE
@@ -344,6 +345,13 @@
 	var/datum/playable_race/character_race = GLOB.playable_races[race]
 	race_options[race] = character_race.sanitize_values(race_options[race])
 	species = character_race.get_species(race_options[race])
+	// Styles of another species aren't drawn (the quills of a Vox on a human, human hair on a Vox), so pick one of this species
+	var/datum/sprite_accessory/hair_style = GLOB.hair_styles_list[h_style]
+	if(!hair_style || !(species in hair_style.species_allowed))
+		h_style = random_hair_style(gender, species)
+	var/datum/sprite_accessory/facial_style = GLOB.facial_hair_styles_list[f_style]
+	if(!facial_style || !(species in facial_style.species_allowed))
+		f_style = random_facial_hair_style(gender, species)
 
 /**
  * Makes the origin, accent and glyph valid for the character setup
