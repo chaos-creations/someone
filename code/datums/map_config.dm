@@ -212,7 +212,7 @@
 		if(length(open_space_bounds) != 4 || open_space_bounds[OPEN_SPACE_BOUNDS_MINX] > open_space_bounds[OPEN_SPACE_BOUNDS_MAXX] || open_space_bounds[OPEN_SPACE_BOUNDS_MINY] > open_space_bounds[OPEN_SPACE_BOUNDS_MAXY])
 			log_world("map_config open_space_bounds is invalid!")
 
-	var/dirpath = "maps/"
+	var/dirpath = load_map_root(json) // CHAOS-EDIT: maps can be outside maps/ (map_root), dirpath is local to the monolithic proc
 	if(override_map)
 		dirpath = "data/"
 		map_path = "/"

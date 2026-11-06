@@ -45,10 +45,13 @@
 /**
  * Whether the gear can be picked on the doll by the given preferences
  *
- * Only fluff gear is, and only for the role on High if the gear is role-restricted.
+ * Only fluff gear of the universe is, and only for the role on High if the gear is role-restricted.
  */
 /datum/loadout_doll/proc/can_pick(datum/gear/gear, datum/preferences/prefs)
 	if(!gear.fluff_cost || gear.loadout_cost)
+		return FALSE
+	var/datum/universe/universe = CURRENT_UNIVERSE
+	if(!universe.has_gear(gear))
 		return FALSE
 	var/job = prefs.get_high_priority_job()
 	if(job && length(gear.allowed_roles) && !(job in gear.allowed_roles))

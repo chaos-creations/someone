@@ -227,14 +227,14 @@ SUBSYSTEM_DEF(mapping)
 
 	var/datum/map_config/ground_map = configs[GROUND_MAP]
 	INIT_ANNOUNCE("Loading [ground_map.map_name]...")
-	var/ground_base_path = "maps/"
+	var/ground_base_path = ground_map.map_root // CHAOS-EDIT: maps can be outside maps/ (map_root)
 	if(ground_map.override_map)
 		ground_base_path = "data/"
 	Loadground(FailedZs, ground_map.map_name, ground_map.map_path, ground_map.map_file, ground_map.traits, ZTRAITS_GROUND, override_map_path = ground_base_path)
 
 	if(!ground_map.disable_ship_map)
 		var/datum/map_config/ship_map = configs[SHIP_MAP]
-		var/ship_base_path = "maps/"
+		var/ship_base_path = ship_map.map_root // CHAOS-EDIT: maps can be outside maps/ (map_root)
 		if(ship_map.override_map)
 			ship_base_path = "data/"
 		INIT_ANNOUNCE("Loading [ship_map.map_name]...")

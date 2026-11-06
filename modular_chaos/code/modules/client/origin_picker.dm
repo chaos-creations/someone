@@ -22,8 +22,9 @@
 	. = ..()
 	// Only the origins the character's race allows, so the race picker updates this when the race changes
 	var/datum/playable_race/character_race = GLOB.playable_races[user.client?.prefs?.race]
+	var/datum/universe/universe = CURRENT_UNIVERSE
 	var/list/allowed_origins = list()
-	for(var/origin_name in GLOB.chaos_player_origins)
+	for(var/origin_name in universe.origins)
 		if(!character_race || character_race.can_have_origin(origin_name))
 			allowed_origins += origin_name
 

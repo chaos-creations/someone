@@ -3,15 +3,14 @@
 #define MENU_SETTINGS "settings"
 
 /datum/preferences
-	origin = CHAOS_DEFAULT_ORIGIN
 	/// Paper doll loadout editor, shared by all players like the other pickers
 	var/static/datum/loadout_doll/loadout_doll = new
 	/// Origin, accent and glyph picker, shared by all players like the other pickers
 	var/static/datum/origin_picker/origin_picker = new
 	/// Race and race options picker, shared by all players like the other pickers
 	var/static/datum/race_picker/race_picker = new
-	/// Id of the character's race in GLOB.playable_races, one of GLOB.chaos_player_races (see sanitize_race())
-	var/race = CHAOS_DEFAULT_RACE
+	/// Id of the character's race in GLOB.playable_races, one of the races of the universe (see sanitize_race())
+	var/race
 	/**
 	 * Option values of the races the character has set: list("race id" = list("option key" = value))
 	 *
@@ -22,6 +21,13 @@
 	var/accent = ACCENT_TEMPLATE
 	/// Glyph before the character's name in chat (one of GLOB.accent_glyphs), or "" for a random one each round
 	var/accent_glyph = ""
+
+/// Gives a character without a save (a new player, a guest) the default race and origin of the universe; load_character() sanitizes loaded ones
+/datum/preferences/New(client/owner)
+	CAN_BE_REDEFINED(TRUE)
+	. = ..()
+	sanitize_race()
+	sanitize_origin()
 
 /**
  * Shows the character setup window.
@@ -321,13 +327,14 @@
 /**
  * Makes the race and the race option values valid, and the species upstream's procs read follow the race
  *
- * Resets a race players can't pick to CHAOS_DEFAULT_RACE, drops the values of races that don't exist and gives the
- * options of the other races their defaults where their values are invalid. Sets the species (upstream's random hair
- * styles read it) to the one of the race. The origin depends on the race, so call sanitize_origin() afterwards.
+ * Resets a race players can't pick in the universe to its default race, drops the values of races that don't exist and
+ * gives the options of the other races their defaults where their values are invalid. Sets the species (upstream's random
+ * hair styles read it) to the one of the race. The origin depends on the race, so call sanitize_origin() afterwards.
  */
 /datum/preferences/proc/sanitize_race()
-	if(!(race in GLOB.chaos_player_races))
-		race = CHAOS_DEFAULT_RACE
+	var/datum/universe/universe = CURRENT_UNIVERSE
+	if(!(race in universe.races))
+		race = universe.default_race
 	var/list/saved_options = islist(race_options) ? race_options : list()
 	race_options = list()
 	for(var/race_id in saved_options)
@@ -341,14 +348,14 @@
 /**
  * Makes the origin, accent and glyph valid for the character setup
  *
- * Resets an origin the character's race doesn't allow (upstream's ones, from old saves) to the race's default origin,
- * an accent the origin doesn't allow to the origin's default accent, and an unknown glyph to "" (random each round).
- * Needs a valid race (sanitize_race()).
+ * Resets an origin the character's race doesn't allow, or the universe doesn't have (upstream's ones, from old saves),
+ * to the race's default origin, an accent the origin doesn't allow to the origin's default accent, and an unknown glyph
+ * to "" (random each round). Needs a valid race (sanitize_race()).
  */
 /datum/preferences/proc/sanitize_origin()
 	var/datum/playable_race/character_race = GLOB.playable_races[race]
 	if(!character_race.can_have_origin(origin))
-		origin = character_race.default_origin
+		origin = character_race.get_default_origin()
 	var/datum/origin/character_origin = GLOB.origins[origin]
 	if(!character_origin.can_have_accent(accent))
 		accent = character_origin.default_accent

@@ -98,7 +98,7 @@ SET_PROTECTED_DATUM(/datum/controller/configuration)
 
 		switch(command)
 			if("map")
-				currentmap = load_map_config("maps/[data].json")
+				currentmap = load_map_config("[map_configs_directory][data].json") // CHAOS-EDIT: the secret map lists load their maps from +secret/maps/
 				if(currentmap.defaulted)
 					log_config("Failed to load map config for [data]!")
 					currentmap = null

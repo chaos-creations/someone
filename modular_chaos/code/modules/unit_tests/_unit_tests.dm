@@ -34,6 +34,7 @@
 #include "human_ai.dm"
 #include "origins.dm"
 #include "races.dm"
+#include "universes.dm"
 
 #undef TEST_ASSERT
 #undef TEST_ASSERT_EQUAL

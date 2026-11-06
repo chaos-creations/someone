@@ -1,14 +1,20 @@
-/// Every race players can pick exists, allows its default origin and turns a human into a species for each choice of its options, whose defaults are valid, and the option kinds sanitize their values
+/// Every race players can pick in a universe exists and allows its default origin there, every race turns a human into a species for each choice of its options, whose defaults are valid, and the option kinds sanitize their values
 /datum/unit_test/races
 
 /datum/unit_test/races/Run()
-	TEST_ASSERT(CHAOS_DEFAULT_RACE in GLOB.chaos_player_races, "The default race [CHAOS_DEFAULT_RACE] isn't one players can pick")
+	for(var/universe_id in GLOB.universes)
+		var/datum/universe/universe = GLOB.universes[universe_id]
+		TEST_ASSERT(universe.default_race in universe.races, "The default race [universe.default_race] of universe [universe_id] isn't one players can pick in it")
+		for(var/race_id in universe.races)
+			var/datum/playable_race/playable_race = GLOB.playable_races[race_id]
+			TEST_ASSERT(playable_race, "Race [race_id] of universe [universe_id] has no /datum/playable_race")
+			var/default_origin = playable_race.get_default_origin(universe)
+			TEST_ASSERT(playable_race.can_have_origin(default_origin, universe), "Race [race_id] can't have its default origin [default_origin] in universe [universe_id]")
+
 	var/mob/living/carbon/human/human = allocate(/mob/living/carbon/human)
-	for(var/race_id in GLOB.chaos_player_races)
+	for(var/race_id in GLOB.playable_races)
 		var/datum/playable_race/playable_race = GLOB.playable_races[race_id]
-		TEST_ASSERT(playable_race, "Player race [race_id] has no /datum/playable_race")
 		TEST_ASSERT(playable_race.name, "Race [race_id] has no name")
-		TEST_ASSERT(playable_race.can_have_origin(playable_race.default_origin), "Race [race_id] can't have its default origin [playable_race.default_origin]")
 		TEST_ASSERT_EQUAL(length(playable_race.options), length(playable_race.option_types), "Race [race_id] has options with the same key")
 
 		var/list/default_values = playable_race.sanitize_values(null)

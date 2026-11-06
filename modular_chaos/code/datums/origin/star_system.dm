@@ -1,7 +1,7 @@
 /**
  * Star system of the origin picker: the star in the middle and the space background
  *
- * The planets on its orbits are the player origins (GLOB.chaos_player_origins) whose star_system is its name, each
+ * The planets on its orbits are the origins of the universe (/datum/universe/var/origins) whose star_system is its name, each
  * drawn by its own planet_* vars, the first in the list closest to the star. Everything is generated in the window
  * from these parameters, see tgui/packages/tgui/interfaces/chaos/space/. Subtypes are the systems, in GLOB.star_systems.
  */

@@ -1,5 +1,4 @@
 // Origins
-GLOBAL_LIST_INIT(chaos_player_origins, CHAOS_PLAYER_ORIGINS)
 /// Star systems of the origin picker by name
 GLOBAL_REFERENCE_LIST_INDEXED(star_systems, /datum/star_system, name)
 
@@ -15,6 +14,9 @@ GLOBAL_LIST_INIT(accent_glyphs, list(
 ))
 
 // Races
-GLOBAL_LIST_INIT(chaos_player_races, CHAOS_PLAYER_RACES)
 /// Playable races by id
 GLOBAL_REFERENCE_LIST_INDEXED(playable_races, /datum/playable_race, id)
+
+// Universes
+/// Universes by id; the server runs in CURRENT_UNIVERSE
+GLOBAL_REFERENCE_LIST_INDEXED(universes, /datum/universe, id)

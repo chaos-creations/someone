@@ -14,19 +14,6 @@
 #define ORIGIN_URANUS "Uranus"
 #define ORIGIN_NEPTUNE "Neptune"
 
-/**
- * Origins players can pick in the character setup (in place of upstream's GLOB.player_origins)
- *
- * The origin picker puts the planets of each star system on orbits around its star in this order, the first one closest,
- * and the moons (/datum/origin/var/moon_of) around their planets in this order too.
- */
-#define CHAOS_PLAYER_ORIGINS list( \
-	ORIGIN_MERCURY, ORIGIN_VENUS, ORIGIN_EARTH, ORIGIN_LUNA, ORIGIN_MARS, ORIGIN_JUPITER, ORIGIN_SATURN, ORIGIN_URANUS, ORIGIN_NEPTUNE, \
-)
-
-/// Origin of new characters, and of characters whose origin players can't pick any more; one of CHAOS_PLAYER_ORIGINS
-#define CHAOS_DEFAULT_ORIGIN ORIGIN_EARTH
-
 // Planet types the origin picker draws (/datum/origin/var/planet_type), the planet scenes of PixelPlanets.
 // Keys of PLANET_TYPES in tgui/packages/tgui/interfaces/chaos/space/planetTypes.ts
 /// Land with rivers and clouds ("Terran Wet")

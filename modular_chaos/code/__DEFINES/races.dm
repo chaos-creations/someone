@@ -4,12 +4,6 @@
 #define RACE_HUMAN "human"
 #define RACE_SYNTHETIC "synthetic"
 
-/// Races players can pick in the character setup, in the order the race picker lists them
-#define CHAOS_PLAYER_RACES list(RACE_HUMAN, RACE_SYNTHETIC)
-
-/// Race of new characters, and of characters whose race players can't pick any more; one of CHAOS_PLAYER_RACES
-#define CHAOS_DEFAULT_RACE RACE_HUMAN
-
 // How the race picker shows a race option (/datum/race_option/var/kind), see chaos/RacePicker.tsx
 /// One of a few values, picked with buttons
 #define RACE_OPTION_CHOICE "choice"
