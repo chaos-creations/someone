@@ -34,6 +34,7 @@
 #include "human_ai.dm"
 #include "origins.dm"
 #include "races.dm"
+#include "rigs.dm"
 #include "universes.dm"
 #include "vox.dm"
 

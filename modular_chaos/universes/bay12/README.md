@@ -21,14 +21,31 @@ adds what the Vox need from upstream's systems:
 - breathing only some gases and being poisoned by others (`breathable_gases`, `poisonous_gases`), the survival gear a
   species gets after its equipment preset, the languages it always speaks, and eyes in an icon of its own (`eye_icon`).
 
-Not ported yet: the Vox weapons (and the rig modules with weapons), the rigs, and what the gizzard (eating matter),
-the cortical stack (the backup of the mind) and the hindtongue (speaking Vox-pidgin) do; the organs are there.
+It also has the rigs (`code/modules/clothing/spacesuits/rig/`): hardsuit control modules worn on the back that deploy
+and seal a suit onto the body, with the infantry rig of the Torch (`maps/torch/infantry/hardsuit.dm`) and the Vox rigs
+(`code/modules/clothing/spacesuits/rig/suits/vox.dm`, `code/bos/modules/clothing/vox/vox_rig.dm`). They are reworked
+for upstream: no access lock, wires, AI control, EMP damage or nanoUI; the suit seals in one action; the modules are
+picked from a radial menu and used with two keybindings (unbound by default); the cell is charged by a cable plugged
+into an APC, a SMES or a generator; and a storage module (every rig has the smallest) makes the rig a backpack. Their
+modules come from Baystation 12 and from [Sojourn Station](https://github.com/sojourn-13/sojourn-station) (a CEV-Eris
+downstream): storage, vision, medical, combat (the guns unfold into the hand and fire from the suit's cell, like the
+plasma caster of a Yautja) and ninja ones. The maneuvering jets and cooling units aren't ported: upstream has no zero
+gravity or overheating for them.
+
+Not ported yet: the Vox weapons other than the rig ones, and what the gizzard (eating matter), the cortical stack (the
+backup of the mind) and the hindtongue (speaking Vox-pidgin) do; the organs are there.
 
 ## License
 
 The assets are under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), like upstream's, by the
 contributors of Baystation 12 and the Proxima Project. Changes to them must stay under the same license. The code is
 under the AGPL-3.0, like the source and upstream.
+
+Two sprite files come from Sojourn Station, commit `c4d39bd4efea1cf25a61a39474b3835ade953bcd`, under CC BY-SA 3.0
+like the rest of CEV-Eris' assets, by the contributors of CEV-Eris and Sojourn Station:
+`icons/obj/items/rig_modules_sojourn.dmi` is its `icons/obj/rig_modules.dmi` and
+`icons/mob/humans/onmob/clothing/back/rig_modules_sojourn.dmi` its `icons/mob/rig_modules.dmi`, both byte-for-byte.
+`asset_sources.json` lists only the files from Proxi-BoS-Bay12.
 
 ## Layout
 
@@ -80,6 +97,12 @@ only the ones above.
 
 Files are renamed and moved as above, with lowercase names (the source names some in mixed case,
 `sound/weapons/Genhit.ogg`).
+
+`icons/obj/items/rigs_infantry.dmi` is made here for the infantry hardsuit and holds all its sprites, worn ones too
+(`contained_sprite`): the states of its pieces and back are copied from the clothing and rig sheets of the source,
+which keep them as well, and the control module, which has no sprite in the source, is the `ce_rig` of
+`icons/obj/rig_modules.dmi` recolored to the grey of the suit: without its stripe and antennas for the infantry one,
+with them for the squad leader one, whose back also gets the antennas of the worn `ce_rig`.
 
 The source has duplicate icon states in some files (`icons/mob/onmob/onmob_under.dmi`, `icons/obj/drinks.dmi` and 32
 more), which the dmi test of the CI rejects. BYOND always uses the first state of a name, so the later duplicates

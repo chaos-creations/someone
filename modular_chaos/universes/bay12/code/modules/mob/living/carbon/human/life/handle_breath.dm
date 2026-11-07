@@ -16,3 +16,16 @@
 	return FALSE
 
 #undef BREATH_POISON_DAMAGE
+
+/**
+ * Breathes from the air tank of a worn rig, which feeds the sealed helmet without a mask; any other internals go to upstream
+ */
+/mob/living/carbon/human/get_breath_from_internal()
+	CAN_BE_REDEFINED(TRUE)
+	var/obj/item/rig/rig = get_worn_rig()
+	if(!internal || !rig || internal != rig.air_supply)
+		return ..()
+	if(rig.can_supply_air())
+		return internal.return_air()
+	internal = null
+	return null
