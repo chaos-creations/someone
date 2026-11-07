@@ -44,7 +44,7 @@ under the AGPL-3.0, like the source and upstream.
 - items in `icons/obj/items/` (`food/`, `storage/`, `smoking/`, `weapons/guns/`, `weapons/melee/`), structures and
   props in `icons/obj/structures/` (`machinery/`, `doors/`, `closets/`, `props/`), pipes in `icons/obj/pipes/`,
   floors and walls in `icons/turf/floors/` and `icons/turf/walls/`, areas in `icons/turf/area_<map>.dmi`;
-- the Cadaab ambience in `sound/ambience/cadaab/`, the rest of the sounds in the folders they have in the source.
+- the Cadaab ambience in `sound/ambience/cadaab/` and the Voronezh one in `sound/ambience/voronezh/`, the rest of the sounds in the folders they have in the source.
 
 The source builds its content in layers on top of Baystation 12 (BoS, BoH, Ark, Proxima, Mithra). Where a layer has
 a file of the same kind as the base one, its name carries the layer: `uniforms.dmi` is the base Bay12 one and
@@ -62,6 +62,8 @@ spawners):
 - `maps/away/voxship`
 - `maps/away/solship`
 - `maps/away/cadaab`
+- `maps/torch` (the six decks of the Torch with the admin and transit levels, and the Voronezh in `voronezh/`, which
+  the source has in the folder but includes in no map)
 
 For each such type the whole `.dmi` files are taken: its `icon`, the icons its vars name (`item_icons`,
 `sprite_sheets`, `icon_override`, overlays) and, for items, the default on-mob icons of the source
@@ -71,7 +73,8 @@ The Vox species is here in full: body, damage and blood masks, hair, cyberlimbs,
 and their voice (`sound/voice/shriek1.ogg`).
 
 Not taken: the on-mob sheets of the other species (Unathi, Skrell, GAS, mantids, Adherent, monkeys) and the Vox
-Armalis (their body, on-mob sheets, tall template and shriek).
+Armalis (their body, on-mob sheets, tall template and shriek). Of the away sites the Torch and Castelnau include,
+only the ones above.
 
 ## Changes from the source
 
