@@ -53,8 +53,9 @@ Baystation 12 one, `uniforms_bos.dmi` the BoS one and `rig_modules_sojourn.dmi` 
 
 `asset_sources.json` maps every file from Proxi-BoS-Bay12 to its path in the source, in the source's own case.
 
-Assets are byte-for-byte copies, except that duplicate icon states, which the dmi test of the CI rejects, are removed:
-BYOND always uses the first state of a name, so only the later duplicates go and the game shows the same.
+Assets are copied as they are, except that states nothing here needs are removed, and so are duplicate icon states,
+which the dmi test of the CI rejects: BYOND always uses the first state of a name, so only the later duplicates go and
+the game shows the same.
 
 ## Rig sprites
 
