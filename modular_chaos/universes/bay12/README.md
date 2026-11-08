@@ -1,109 +1,73 @@
 # Baystation 12 universe
 
-The Baystation 12 universe (`/datum/universe/bay12`): its code, icons and sounds, ported from
-[Proxima-Project/Proxi-BoS-Bay12](https://github.com/Proxima-Project/Proxi-BoS-Bay12), branch `dev`, commit
-`409a1d918c7fc99c162104fe77fd0ebf1ddb695d` (2023-07-14).
+The Baystation 12 universe (`/datum/universe/bay12`). Its `code/` mirrors upstream's `code/` like
+`modular_chaos/code/` does and is listed in `modular_chaos/includes.dm`; `icons/` and `sound/` hold its assets.
 
-## Code
+## Sources
 
-`code/` mirrors upstream's `code/` like `modular_chaos/code/` does, and its files are listed in
-`modular_chaos/includes.dm`. It is included after `modular_chaos/code/`, so it can use the fork's defines and
-override its procs; the fork's own code can't use the defines of this folder (its unit tests use the types only).
+| Repository | What is taken |
+|---|---|
+| [baystation12/baystation12](https://github.com/baystation12/baystation12) | code, sprites (selectively) |
+| [Proxima-Project/Proxi-BoS-Bay12](https://github.com/Proxima-Project/Proxi-BoS-Bay12) | code, sprites (selectively), maps (Cadaab, Castelnau) |
+| [discordia-space/CEV-Eris](https://github.com/discordia-space/CEV-Eris) | sprites, maybe code |
+| [sojourn-13/sojourn-station](https://github.com/sojourn-13/sojourn-station) (a CEV-Eris fork) | sprites |
 
-So far it has the Vox: the species with its organs, Vox-pidgin, the shriek, the quills, the playable race with the
-five arkships as origins, their clothing, space gear, survival kit, holy books and structures, and the slug. It also
-adds what the Vox need from upstream's systems:
-
-- `/obj/item/clothing/var/species_restricted`, as in Baystation 12: the Vox wear only their own gloves, footwear and
-  masks;
-- the Vox sprite sheets on the base types of clothing, like upstream's monkey ones, and a fallback to the human sprite
-  for a state a sheet doesn't have (`/datum/species/var/sprite_sheet_fallback`);
-- breathing only some gases and being poisoned by others (`breathable_gases`, `poisonous_gases`), the survival gear a
-  species gets after its equipment preset, the languages it always speaks, and eyes in an icon of its own (`eye_icon`).
-
-It also has the rigs (`code/modules/clothing/spacesuits/rig/`): hardsuit control modules worn on the back that deploy
-and seal a suit onto the body, with the infantry rig of the Torch (`maps/torch/infantry/hardsuit.dm`) and the Vox rigs
-(`code/modules/clothing/spacesuits/rig/suits/vox.dm`, `code/bos/modules/clothing/vox/vox_rig.dm`). They are reworked
-for upstream: no access lock, wires, AI control, EMP damage or nanoUI; the suit seals in one action; the modules are
-picked from a radial menu and used with two keybindings (unbound by default); the cell is charged by a cable plugged
-into an APC, a SMES or a generator; and a storage module (every rig has the smallest) makes the rig a backpack. Their
-modules come from Baystation 12 and from [Sojourn Station](https://github.com/sojourn-13/sojourn-station) (a CEV-Eris
-downstream): storage, vision, medical, combat (the guns unfold into the hand and fire from the suit's cell, like the
-plasma caster of a Yautja) and ninja ones. The maneuvering jets and cooling units aren't ported: upstream has no zero
-gravity or overheating for them.
-
-Not ported yet: the Vox weapons other than the rig ones, and what the gizzard (eating matter), the cortical stack (the
-backup of the mind) and the hindtongue (speaking Vox-pidgin) do; the organs are there.
+Proxi-BoS-Bay12 is a Baystation 12 downstream, so most of the Baystation 12 content here came through it, from
+branch `dev`, commit `409a1d918c7fc99c162104fe77fd0ebf1ddb695d` (2023-07-14). The Sojourn Station files are from
+commit `c4d39bd4efea1cf25a61a39474b3835ade953bcd`.
 
 ## License
 
-The assets are under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), like upstream's, by the
-contributors of Baystation 12 and the Proxima Project. Changes to them must stay under the same license. The code is
-under the AGPL-3.0, like the source and upstream.
+As in all four sources and upstream, the code is under the AGPL-3.0 and the assets under
+[CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), by the contributors of the source they come from.
+Changes to the assets must stay under the same license.
 
-Two sprite files come from Sojourn Station, commit `c4d39bd4efea1cf25a61a39474b3835ade953bcd`, under CC BY-SA 3.0
-like the rest of CEV-Eris' assets, by the contributors of CEV-Eris and Sojourn Station:
-`icons/obj/items/rig_modules_sojourn.dmi` is its `icons/obj/rig_modules.dmi` and
-`icons/mob/humans/onmob/clothing/back/rig_modules_sojourn.dmi` its `icons/mob/rig_modules.dmi`, both byte-for-byte.
-`asset_sources.json` lists only the files from Proxi-BoS-Bay12.
+## What is taken
+
+Assets are taken only for what the universe needs, not everything the source's maps use:
+
+- what the code here names (the Vox, the rigs and their modules);
+- the Vox species: body, masks, hair, cyberlimbs, on-mob sheets, clothing and props;
+- Castelnau and Cadaab: the files of the maps' own folders in Proxi-BoS-Bay12 (`maps/castelnau/`,
+  `maps/away/cadaab/`), not the base Baystation 12 sprites the maps also place;
+- Lordania: its clothing, flags, banner, memorial and statues, from Proxi-BoS-Bay12 commit
+  [`e4e6c18`](https://github.com/Proxima-Project/Proxi-BoS-Bay12/commit/e4e6c1845b4e5b9b94017987a96f29eef88436af).
 
 ## Layout
 
 `icons/` and `sound/` are sorted by category the way upstream's are:
 
 - clothing in `icons/obj/items/clothing/<kind>/` and its on-mob sprites in `icons/mob/humans/onmob/clothing/<slot>/`,
-  with the clothing of a faction or a map in `<kind>_by_faction/<faction>.dmi` and `<kind>_by_map/<map>.dmi`
-  (`ftu`, `paroled`, `regulators`, `syndicate` of Castelnau, `scg`, `terran`, `lordania`, `iccgn_*`; `castelnau`,
-  `cadaab`);
+  with the clothing of a faction or a map in `<kind>_by_faction/<faction>.dmi` and `<kind>_by_map/<map>.dmi`;
 - in-hand sprites in `icons/mob/humans/onmob/inhands/` as `<name>_lefthand.dmi` and `<name>_righthand.dmi`;
-- the Vox in `icons/mob/humans/species/vox/` (on-mob sheets in its `onmob/`) and their clothing in
-  `icons/obj/items/clothing/vox/`;
+- a species in `icons/mob/humans/species/<species>/` (on-mob sheets in its `onmob/`) and its own clothing in
+  `icons/obj/items/clothing/<species>/`;
 - items in `icons/obj/items/` (`food/`, `storage/`, `smoking/`, `weapons/guns/`, `weapons/melee/`), structures and
   props in `icons/obj/structures/` (`machinery/`, `doors/`, `closets/`, `props/`), pipes in `icons/obj/pipes/`,
   floors and walls in `icons/turf/floors/` and `icons/turf/walls/`, areas in `icons/turf/area_<map>.dmi`;
-- the Cadaab ambience in `sound/ambience/cadaab/` and the Voronezh one in `sound/ambience/voronezh/`, the rest of the sounds in the folders they have in the source.
+- the ambience of a map in `sound/ambience/<map>/`, the rest of the sounds in the folders they have in the source.
 
-The source builds its content in layers on top of Baystation 12 (BoS, BoH, Ark, Proxima, Mithra). Where a layer has
-a file of the same kind as the base one, its name carries the layer: `uniforms.dmi` is the base Bay12 one and
-`uniforms_bos.dmi` the BoS one.
+File names are lowercase. Where two sources, or two layers of Proxi-BoS-Bay12 (BoS, BoH, Ark, Proxima, Mithra on top
+of Baystation 12), have a file of the same kind, the name carries the source or layer: `uniforms.dmi` is the base
+Baystation 12 one, `uniforms_bos.dmi` the BoS one and `rig_modules_sojourn.dmi` the Sojourn Station one.
 
-`asset_sources.json` lists for every file here its path in the source, in the source's own case.
+`asset_sources.json` maps every file from Proxi-BoS-Bay12 to its path in the source, in the source's own case.
 
-## What is here
+Assets are byte-for-byte copies, except that duplicate icon states, which the dmi test of the CI rejects, are removed:
+BYOND always uses the first state of a name, so only the later duplicates go and the game shows the same.
 
-Everything the following maps of the source need, found from the types the maps place, the types the maps' code
-names (jobs, outfits, loadout) and everything those spawn (closet and storage contents, vendor products, random
-spawners):
+## Rig sprites
 
-- `maps/castelnau` (both the space and the planetside Cadaab variants, with the admin and transit levels)
-- `maps/away/voxship`
-- `maps/away/solship`
-- `maps/away/cadaab`
-- `maps/torch` (the six decks of the Torch with the admin and transit levels, and the Voronezh in `voronezh/`, which
-  the source has in the folder but includes in no map)
+A rig gets one `.dmi` of its own with all its sprites, worn ones too (`contained_sprite`), as
+`icons/obj/items/rigs_infantry.dmi` does for the infantry rig and the squad leader one. For a rig whose
+`icon_state` is `<rig>`:
 
-For each such type the whole `.dmi` files are taken: its `icon`, the icons its vars name (`item_icons`,
-`sprite_sheets`, `icon_override`, overlays) and, for items, the default on-mob icons of the source
-(`icons/mob/onmob/`, `icons/mob/onmob/items/`). The sounds are the ones these types' vars and the maps' code name.
+- the control module is `<rig>` and its worn sprite `<rig>_ba`;
+- each piece is `<rig>_<piece>` (`helmet`, `chest`, `gloves`, `boots`), sealed `<rig>_<piece>_sealed`, and worn adds
+  the slot suffix of `GLOB.slot_to_contained_sprite_shorthand` (`_he`, `_su`, `_gl`, `_sh`):
+  `<rig>_helmet_sealed_he`.
 
-The Vox species is here in full: body, damage and blood masks, hair, cyberlimbs, the Vox on-mob sheets of clothing
-and their voice (`sound/voice/shriek1.ogg`).
-
-Not taken: the on-mob sheets of the other species (Unathi, Skrell, GAS, mantids, Adherent, monkeys) and the Vox
-Armalis (their body, on-mob sheets, tall template and shriek). Of the away sites the Torch and Castelnau include,
-only the ones above.
-
-## Changes from the source
-
-Files are renamed and moved as above, with lowercase names (the source names some in mixed case,
-`sound/weapons/Genhit.ogg`).
-
-`icons/obj/items/rigs_infantry.dmi` is made here for the infantry hardsuit and holds all its sprites, worn ones too
-(`contained_sprite`): the states of its pieces and back are copied from the clothing and rig sheets of the source,
-which keep them as well, and the control module, which has no sprite in the source, is the `ce_rig` of
-`icons/obj/rig_modules.dmi` recolored to the grey of the suit: without its stripe and antennas for the infantry one,
-with them for the squad leader one, whose back also gets the antennas of the worn `ce_rig`.
-
-The source has duplicate icon states in some files (`icons/mob/onmob/onmob_under.dmi`, `icons/obj/drinks.dmi` and 32
-more), which the dmi test of the CI rejects. BYOND always uses the first state of a name, so the later duplicates
-are removed; what the game shows is the same. Every other file is a byte-for-byte copy.
+The states are split into two groups, each headed by a divider state like upstream's: a movement state with one
+direction and the arrow sprite, named in capitals after the group. `OBJ` has the sprites of the objects (the control
+module and the pieces, unsealed and sealed), `ONMOB` the worn ones; several rigs in one file go one after another
+inside each group.
