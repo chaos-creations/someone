@@ -70,3 +70,23 @@
 	icon_state = "sl_infantry_rig"
 	// Its antennas stick up above the helmet when seen from behind
 	helmet_overlay_state = "sl_infantry_rig_antennas"
+
+// The rigs the Lordanian marines are issued (/datum/equipment_preset/lordania/marine): the rig takes the place of a
+// backpack, so they get a storage system as big as one, and the modules of their role
+
+/obj/item/rig/infantry/equipped
+	initial_modules = list(/obj/item/rig_module/storage/large)
+
+/obj/item/rig/infantry/equipped/medic
+	helm_type = /obj/item/clothing/head/helmet/space/rig/infantry/medic
+	initial_modules = list(/obj/item/rig_module/storage/large, /obj/item/rig_module/health_scanner)
+
+/// The helmet of the combat medic's rig, with a medical HUD built in
+/obj/item/clothing/head/helmet/space/rig/infantry/medic
+	hud_type = MOB_HUD_MEDICAL_ADVANCED
+
+/obj/item/rig/infantry/equipped/technician
+	initial_modules = list(/obj/item/rig_module/storage/large, /obj/item/rig_module/vision/meson)
+
+/obj/item/rig/infantry/sl/equipped
+	initial_modules = list(/obj/item/rig_module/storage/large)

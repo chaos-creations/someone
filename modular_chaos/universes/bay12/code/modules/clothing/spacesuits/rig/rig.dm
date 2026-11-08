@@ -347,9 +347,19 @@
 	update_cable_beam()
 	update_icon()
 
+/**
+ * Lets go of a wearer being deleted, who deletes everything they carry right after, the rig and its pieces among it
+ *
+ * Unlike clear_wearer(), it takes nothing off them: that would change the deletion signals of the wearer while they
+ * are being sent.
+ */
 /obj/item/rig/proc/on_wearer_deleted(datum/source)
 	SIGNAL_HANDLER
-	clear_wearer()
+	UnregisterSignal(wearer, list(COMSIG_PARENT_QDELETING, COMSIG_MOB_PRE_CLICK))
+	aiming_module = null
+	wearer = null
+	sealed = FALSE
+	sealing = FALSE
 
 /obj/item/rig/update_icon()
 	. = ..()
@@ -388,9 +398,12 @@
 /**
  * Deploys every piece onto the wearer and seals them one by one, which the wearer has to stand still for
  *
+ * Arguments:
+ * * instant - whether to seal every piece at once, without the seal_delay, as for a human spawned already sealed in
+ *
  * Returns TRUE once the suit is sealed.
  */
-/obj/item/rig/proc/seal_suit()
+/obj/item/rig/proc/seal_suit(instant = FALSE)
 	if(!cell || cell.charge <= 0)
 		to_chat(wearer, SPAN_WARNING("[src] has no power to seal the suit."))
 		return FALSE
@@ -407,7 +420,7 @@
 	sealing_wearer.visible_message(SPAN_NOTICE("[sealing_wearer]'s suit emits a quiet hum as it begins to adjust its seals."),
 		SPAN_NOTICE("With a quiet hum, the suit begins running checks and adjusting components."))
 	for(var/obj/item/clothing/piece as anything in get_pieces())
-		if((seal_delay && !do_after(sealing_wearer, seal_delay, INTERRUPT_ALL, BUSY_ICON_GENERIC)) || wearer != sealing_wearer || piece.loc != wearer)
+		if((!instant && seal_delay && !do_after(sealing_wearer, seal_delay, INTERRUPT_ALL, BUSY_ICON_GENERIC)) || wearer != sealing_wearer || piece.loc != wearer)
 			to_chat(sealing_wearer, SPAN_WARNING("You have to stand still while the suit adjusts its components."))
 			playsound(src, 'modular_chaos/universes/bay12/sound/machines/rigerror.ogg', 25, FALSE)
 			for(var/obj/item/clothing/sealed_piece as anything in sealed_pieces.Copy())

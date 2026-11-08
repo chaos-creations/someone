@@ -12,10 +12,24 @@
 	)
 	/// The rig it belongs to
 	var/obj/item/rig/rig
+	/// HUD built into the helmet (MOB_HUD_*), which its wearer sees while it is deployed; null for none
+	var/hud_type
 
 /obj/item/clothing/head/helmet/space/rig/Destroy()
 	rig = null
 	return ..()
+
+/obj/item/clothing/head/helmet/space/rig/equipped(mob/user, slot, silent)
+	. = ..()
+	if(hud_type && slot == WEAR_HEAD)
+		var/datum/mob_hud/hud = GLOB.huds[hud_type]
+		hud.add_hud_to(user, src)
+
+/obj/item/clothing/head/helmet/space/rig/unequipped(mob/user, slot)
+	. = ..()
+	if(hud_type && slot == WEAR_HEAD)
+		var/datum/mob_hud/hud = GLOB.huds[hud_type]
+		hud.remove_hud_from(user, src)
 
 /obj/item/clothing/head/helmet/space/rig/get_mob_overlay(mob/user_mob, slot, default_bodytype = "Default")
 	var/image/overlay = ..()
