@@ -29,7 +29,13 @@ Assets are taken only for what the universe needs, not everything the source's m
 - what the code here names (the Vox, the rigs and their modules);
 - the Vox species: body, masks, hair, cyberlimbs, on-mob sheets, clothing and props;
 - Castelnau and Cadaab: the files of the maps' own folders in Proxi-BoS-Bay12 (`maps/castelnau/`,
-  `maps/away/cadaab/`), not the base Baystation 12 sprites the maps also place;
+  `maps/away/cadaab/`), not the base Baystation 12 sprites the maps also place, which become CM counterparts;
+- for the Cadaab map, the BoS sprites it places: the city turfs, road decals and street furniture of Inax, posters and
+  the noose;
+- for the Castelnau map, the base Baystation 12 floor tiles and floor decals it places, which carry the department
+  colours of the ship: the tiles with the colour Bay gives their turf baked in (a coloured turf would tint the decals
+  on it), with the damaged and scorched states of upstream's `icons/turf/almayer.dmi`, and the decals as they are; its
+  walls, carpets, wood and machines become CM counterparts;
 - Lordania: its clothing, flags, banner, memorial and statues, from Proxi-BoS-Bay12 commit
   [`e4e6c18`](https://github.com/Proxima-Project/Proxi-BoS-Bay12/commit/e4e6c1845b4e5b9b94017987a96f29eef88436af).
 
@@ -44,18 +50,29 @@ Assets are taken only for what the universe needs, not everything the source's m
   `icons/obj/items/clothing/<species>/`;
 - items in `icons/obj/items/` (`food/`, `storage/`, `smoking/`, `weapons/guns/`, `weapons/melee/`), structures and
   props in `icons/obj/structures/` (`machinery/`, `doors/`, `closets/`, `props/`), pipes in `icons/obj/pipes/`,
-  floors and walls in `icons/turf/floors/` and `icons/turf/walls/`, areas in `icons/turf/area_<map>.dmi`;
+  floors and walls in `icons/turf/floors/` and `icons/turf/walls/`;
+- the sprites maps place are not split by map but kept in shared files by kind: floors in `icons/turf/floors/floors.dmi`,
+  floor decals in `icons/turf/floors/decals.dmi`, areas in `icons/turf/areas.dmi`, other decals (graffiti, painted
+  signs) in `icons/effects/decals.dmi`, props in `icons/obj/structures/props/props.dmi`, posters and paintings in
+  `icons/obj/structures/props/wall_decorations/`. A sprite of another size goes in a file of its own named with the
+  size (`props_48x48.dmi`), and a state whose name another map already uses gets a suffix (`engineering_alt`);
 - the ambience of a map in `sound/ambience/<map>/`, the rest of the sounds in the folders they have in the source.
 
 File names are lowercase. Where two sources, or two layers of Proxi-BoS-Bay12 (BoS, BoH, Ark, Proxima, Mithra on top
 of Baystation 12), have a file of the same kind, the name carries the source or layer: `uniforms.dmi` is the base
 Baystation 12 one, `uniforms_bos.dmi` the BoS one and `rig_modules_sojourn.dmi` the Sojourn Station one.
 
-`asset_sources.json` maps every file from Proxi-BoS-Bay12 to its path in the source, in the source's own case.
+`asset_sources.json` maps every file from Proxi-BoS-Bay12 to its path in the source, in the source's own case, or to a
+list of paths when it is put together from several files.
+
+Maps go in `maps/` like upstream's, where the map tools and the CI check them, or in `+secret/maps/` while they are
+not public (see `/datum/controller/configuration/loadmaplist()`); their areas, turfs and props are in this universe's
+`code/`.
 
 Assets are copied as they are, except that states nothing here needs are removed, and so are duplicate icon states,
 which the dmi test of the CI rejects: BYOND always uses the first state of a name, so only the later duplicates go and
-the game shows the same.
+the game shows the same. Merged into a shared file, a state keeps its name unless it clashes (see above). The tent of Cadaab has its states renamed to `tent` and `tent_open` (the closed one had no
+name).
 
 ## Rig sprites
 
