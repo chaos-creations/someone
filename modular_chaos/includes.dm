@@ -1,6 +1,6 @@
 // Fork-only code, included last in colonialmarines.dme so that its definitions come after and override upstream ones.
 // Paths are relative to this folder and mirror code/ (code\modules\foo.dm for an override of code\modules\foo.dm).
-// The code of a universe is in universes\<universe>\code\, which also mirrors code/ and comes after the fork's own code.
+// The Baystation 12 content the build targets is in universes\bay12\code\, which also mirrors code/ and comes after the fork's own code.
 // Keep the includes in the same sorted order as the DME; validate_dme.py checks both.
 #include "code\__DEFINES\__game.dm"
 #include "code\__DEFINES\cyrillic.dm"
@@ -13,7 +13,6 @@
 #include "code\__DEFINES\pixel_shift.dm"
 #include "code\__DEFINES\races.dm"
 #include "code\__DEFINES\subsystems.dm"
-#include "code\__DEFINES\universes.dm"
 #include "code\__DEFINES\dcs\signals\atom\mob\signals_mob.dm"
 #include "code\__DEFINES\dcs\signals\atom\mob\living\signals_human.dm"
 #include "code\__HELPERS\unsorted.dm"
@@ -49,8 +48,6 @@
 #include "code\datums\race\playable_race.dm"
 #include "code\datums\race\race_option.dm"
 #include "code\datums\race\synthetic_race.dm"
-#include "code\datums\universe\_universe.dm"
-#include "code\datums\universe\cm.dm"
 #include "code\game\gamemodes\cm_initialize.dm"
 #include "code\game\gamemodes\extended\event.dm"
 #include "code\game\objects\items.dm"
@@ -80,7 +77,6 @@
 #include "code\modules\client\loadout_doll.dm"
 #include "code\modules\client\origin_picker.dm"
 #include "code\modules\client\preferences.dm"
-#include "code\modules\client\preferences_gear.dm"
 #include "code\modules\client\preferences_savefile.dm"
 #include "code\modules\client\race_picker.dm"
 #include "code\modules\cm_marines\m2c.dm"
@@ -166,12 +162,12 @@
 #include "universes\bay12\code\__DEFINES\origins.dm"
 #include "universes\bay12\code\__DEFINES\races.dm"
 #include "universes\bay12\code\__DEFINES\rig.dm"
+#include "universes\bay12\code\_globalvars\global_lists.dm"
 #include "universes\bay12\code\datums\ammo\energy.dm"
 #include "universes\bay12\code\datums\factions\lordania.dm"
 #include "universes\bay12\code\datums\keybinding\human.dm"
 #include "universes\bay12\code\datums\origin\vox.dm"
 #include "universes\bay12\code\datums\race\vox_race.dm"
-#include "universes\bay12\code\datums\universe\bay12.dm"
 #include "universes\bay12\code\game\area\cadaab.dm"
 #include "universes\bay12\code\game\area\castelnau.dm"
 #include "universes\bay12\code\game\objects\objs.dm"

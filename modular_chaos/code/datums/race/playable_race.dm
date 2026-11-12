@@ -4,8 +4,7 @@
  * The race sets the species (/datum/species) the character spawns as, whatever their job, and can limit the origins
  * they can have. Settings of its own are race options (/datum/race_option): the race picker shows them and the
  * preferences keep their values per race in /datum/preferences/var/race_options, so a new setting needs only a new
- * option type. Players pick from the races of the universe (/datum/universe/var/races); the instances are in
- * GLOB.playable_races by id.
+ * option type. Players pick from GLOB.bay12_player_races; the instances are in GLOB.playable_races by id.
  */
 /datum/playable_race
 	/// Key of the race in GLOB.playable_races and in the saves (RACE_*); never change it once players have picked the race
@@ -28,9 +27,9 @@
 	var/list/option_types = list()
 	/// The race's options by key, made from option_types
 	var/list/datum/race_option/options = list()
-	/// Origins (names in GLOB.origins) a character of the race can have, or null for every origin of the universe
+	/// Origins (names in GLOB.origins) a character of the race can have, or null for every origin of GLOB.bay12_player_origins
 	var/list/allowed_origins
-	/// Origin a character of the race gets when theirs isn't allowed, or null for the universe's default origin (see get_default_origin())
+	/// Origin a character of the race gets when theirs isn't allowed, or null for BAY12_DEFAULT_ORIGIN (see get_default_origin())
 	var/default_origin
 
 /datum/playable_race/New()
@@ -48,31 +47,22 @@
 /datum/playable_race/proc/get_species(list/values)
 	return species
 
-/**
- * Returns whether a character of the race can have the origin: one of the universe the race allows
- *
- * Arguments:
- * * origin_name - a name in GLOB.origins
- * * universe - the universe to check in, by default the one the server runs in
- */
-/datum/playable_race/proc/can_have_origin(origin_name, datum/universe/universe = CURRENT_UNIVERSE)
-	if(!(origin_name in universe.origins))
+/// Returns whether a character of the race can have the origin (a name in GLOB.origins): one of GLOB.bay12_player_origins the race allows
+/datum/playable_race/proc/can_have_origin(origin_name)
+	if(!(origin_name in GLOB.bay12_player_origins))
 		return FALSE
 	return !allowed_origins || (origin_name in allowed_origins)
 
 /**
  * Returns the origin a character of the race gets when theirs isn't allowed
  *
- * That is the race's own default_origin where the race can have it in the universe, else the universe's default origin,
- * which the race may not allow (the races unit test checks that it does).
- *
- * Arguments:
- * * universe - the universe of the character, by default the one the server runs in
+ * That is the race's own default_origin where the race can have it, else BAY12_DEFAULT_ORIGIN, which the race may not
+ * allow (the races unit test checks that it does).
  */
-/datum/playable_race/proc/get_default_origin(datum/universe/universe = CURRENT_UNIVERSE)
-	if(default_origin && can_have_origin(default_origin, universe))
+/datum/playable_race/proc/get_default_origin()
+	if(default_origin && can_have_origin(default_origin))
 		return default_origin
-	return universe.default_origin
+	return BAY12_DEFAULT_ORIGIN
 
 /**
  * Returns the option values of the race by key, with a value for every option of the race and only values the options take

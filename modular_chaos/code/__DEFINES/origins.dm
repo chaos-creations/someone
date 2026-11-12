@@ -14,6 +14,9 @@
 #define ORIGIN_URANUS "Uranus"
 #define ORIGIN_NEPTUNE "Neptune"
 
+/// Origin of new characters, and of characters whose race has no default origin of its own; one of GLOB.bay12_player_origins
+#define BAY12_DEFAULT_ORIGIN ORIGIN_EARTH
+
 // Planet types the origin picker draws (/datum/origin/var/planet_type), the planet scenes of PixelPlanets.
 // Keys of PLANET_TYPES in tgui/packages/tgui/interfaces/chaos/space/planetTypes.ts
 /// Land with rivers and clouds ("Terran Wet")

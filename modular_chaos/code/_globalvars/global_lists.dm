@@ -16,7 +16,3 @@ GLOBAL_LIST_INIT(accent_glyphs, list(
 // Races
 /// Playable races by id
 GLOBAL_REFERENCE_LIST_INDEXED(playable_races, /datum/playable_race, id)
-
-// Universes
-/// Universes by id; the server runs in CURRENT_UNIVERSE
-GLOBAL_REFERENCE_LIST_INDEXED(universes, /datum/universe, id)

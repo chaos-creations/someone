@@ -36,7 +36,6 @@
 #include "origins.dm"
 #include "races.dm"
 #include "rigs.dm"
-#include "universes.dm"
 #include "vox.dm"
 
 // A live test world (live_world.dm) keeps them: hot reload expands macros as they stand at the end of the project, which would break every reloaded test using them.

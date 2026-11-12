@@ -20,9 +20,8 @@
 
 /datum/race_picker/ui_static_data(mob/user)
 	. = ..()
-	var/datum/universe/universe = CURRENT_UNIVERSE
 	var/list/races = list()
-	for(var/race_id in universe.races)
+	for(var/race_id in GLOB.bay12_player_races)
 		var/datum/playable_race/playable_race = GLOB.playable_races[race_id]
 		races += list(playable_race.get_ui_data())
 	.["races"] = races
@@ -64,8 +63,7 @@
 	switch(action)
 		if("race")
 			var/race_id = params["id"]
-			var/datum/universe/universe = CURRENT_UNIVERSE
-			if(!(race_id in universe.races))
+			if(!(race_id in GLOB.bay12_player_races))
 				return
 			prefs.race = race_id
 			prefs.sanitize_race()

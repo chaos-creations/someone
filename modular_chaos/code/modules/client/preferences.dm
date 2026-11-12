@@ -9,7 +9,7 @@
 	var/static/datum/origin_picker/origin_picker = new
 	/// Race and race options picker, shared by all players like the other pickers
 	var/static/datum/race_picker/race_picker = new
-	/// Id of the character's race in GLOB.playable_races, one of the races of the universe (see sanitize_race())
+	/// Id of the character's race in GLOB.playable_races, one of GLOB.bay12_player_races (see sanitize_race())
 	var/race
 	/**
 	 * Option values of the races the character has set: list("race id" = list("option key" = value))
@@ -22,7 +22,7 @@
 	/// Glyph before the character's name in chat (one of GLOB.accent_glyphs), or "" for a random one each round
 	var/accent_glyph = ""
 
-/// Gives a character without a save (a new player, a guest) the default race and origin of the universe; load_character() sanitizes loaded ones
+/// Gives a character without a save (a new player, a guest) the default race and origin; load_character() sanitizes loaded ones
 /datum/preferences/New(client/owner)
 	CAN_BE_REDEFINED(TRUE)
 	. = ..()
@@ -327,15 +327,14 @@
 /**
  * Makes the race and the race option values valid, and the species upstream's procs read follow the race
  *
- * Resets a race players can't pick in the universe to its default race, drops the values of races that don't exist and
- * gives the options of the other races their defaults where their values are invalid. Sets the species (upstream's random
- * hair styles read it) to the one of the race, and gives a random style of it to a hair or facial hair style it can't have.
+ * Resets a race players can't pick to BAY12_DEFAULT_RACE, drops the values of races that don't exist and gives the
+ * options of the other races their defaults where their values are invalid. Sets the species (upstream's random hair
+ * styles read it) to the one of the race, and gives a random style of it to a hair or facial hair style it can't have.
  * The origin depends on the race, so call sanitize_origin() afterwards.
  */
 /datum/preferences/proc/sanitize_race()
-	var/datum/universe/universe = CURRENT_UNIVERSE
-	if(!(race in universe.races))
-		race = universe.default_race
+	if(!(race in GLOB.bay12_player_races))
+		race = BAY12_DEFAULT_RACE
 	var/list/saved_options = islist(race_options) ? race_options : list()
 	race_options = list()
 	for(var/race_id in saved_options)
@@ -356,8 +355,8 @@
 /**
  * Makes the origin, accent and glyph valid for the character setup
  *
- * Resets an origin the character's race doesn't allow, or the universe doesn't have (upstream's ones, from old saves),
- * to the race's default origin, an accent the origin doesn't allow to the origin's default accent, and an unknown glyph
+ * Resets an origin the character's race doesn't allow, or players can't pick (upstream's ones, from old saves), to the
+ * race's default origin, an accent the origin doesn't allow to the origin's default accent, and an unknown glyph
  * to "" (random each round). Needs a valid race (sanitize_race()).
  */
 /datum/preferences/proc/sanitize_origin()

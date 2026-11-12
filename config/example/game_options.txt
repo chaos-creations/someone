@@ -80,8 +80,3 @@ NUCLEAR_LOCK_MARINES_PERCENTAGE 0
 #LOAD_HUNTER_SHIP
 # CHAOS-EDIT END
 
-# CHAOS-EDIT START: universes of the fork, see modular_chaos/code/datums/universe/
-## Universe the server runs in, which sets the races and origins players can pick: cm (Colonial Marines) or bay12 (Baystation 12). Changes only with a restart.
-UNIVERSE cm
-# CHAOS-EDIT END
-

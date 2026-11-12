@@ -1,7 +1,8 @@
 # Baystation 12 universe
 
-The Baystation 12 universe (`/datum/universe/bay12`). Its `code/` mirrors upstream's `code/` like
-`modular_chaos/code/` does and is listed in `modular_chaos/includes.dm`; `icons/` and `sound/` hold its assets.
+The Baystation 12 setting the build targets: its races, origins, species, gear and maps. Its `code/` mirrors upstream's
+`code/` like `modular_chaos/code/` does and is listed in `modular_chaos/includes.dm` after it; `icons/` and `sound/` hold
+its assets. The races and origins players can pick are listed in `code/_globalvars/global_lists.dm`.
 
 ## Sources
 
