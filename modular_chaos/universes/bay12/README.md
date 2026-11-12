@@ -15,7 +15,8 @@ its assets. The races and origins players can pick are listed in `code/_globalva
 
 Proxi-BoS-Bay12 is a Baystation 12 downstream, so most of the Baystation 12 content here came through it, from
 branch `dev`, commit `409a1d918c7fc99c162104fe77fd0ebf1ddb695d` (2023-07-14). The Sojourn Station files are from
-commit `c4d39bd4efea1cf25a61a39474b3835ade953bcd`.
+commit `c4d39bd4efea1cf25a61a39474b3835ade953bcd`. The walls, windows and doors come from Baystation 12 itself, branch `dev`
+as of 2026-11-12.
 
 ## License
 
@@ -37,6 +38,9 @@ Assets are taken only for what the universe needs, not everything the source's m
   colours of the ship: the tiles with the colour Bay gives their turf baked in (a coloured turf would tint the decals
   on it), with the damaged and scorched states of upstream's `icons/turf/almayer.dmi`, and the decals as they are; its
   walls, carpets, wood and machines become CM counterparts;
+- the ship interior of Baystation 12 as the SEV Torch has it: steel, titanium and osmium-carbide plasteel walls in the
+  paints it uses, reinforced windows on low walls, the airlocks of every department, firedoors, blast doors and
+  shutters;
 - Lordania: its clothing, flags, banner, memorial and statues, from Proxi-BoS-Bay12 commit
   [`e4e6c18`](https://github.com/Proxima-Project/Proxi-BoS-Bay12/commit/e4e6c1845b4e5b9b94017987a96f29eef88436af).
 
@@ -74,6 +78,24 @@ Assets are copied as they are, except that states nothing here needs are removed
 which the dmi test of the CI rejects: BYOND always uses the first state of a name, so only the later duplicates go and
 the game shows the same. Merged into a shared file, a state keeps its name unless it clashes (see above). The tent of Cadaab has its states renamed to `tent` and `tent_open` (the closed one had no
 name).
+
+## Walls, windows and doors
+
+Bay draws its walls, low walls, windows and airlocks at runtime from greyscale layers that it colours with the paint of
+the type, and the code here does the same: walls take `paint_color`, `stripe_color` and the colour of their material,
+windows `frame_color` and `glass_color`, airlocks `door_color`, `stripe_color` and `window_color`. The types are the
+paints of the source (`prepainted`, `fleet`, `hull`, the airlocks of each department) with its colours in
+`code/__DEFINES/colors.dm`; mappers can repaint a placed one through these vars, or through `color` for walls and
+airlocks. Walls and windows keep Bay's smoothing by corners, airlocks and firedoors turn along their walls on their own,
+and the opening of airlocks and firedoors plays at 1 ds a frame instead of Bay's 2.
+
+The layers are converted by `tools/bake_structures.py`, run with the path of a Baystation 12 checkout
+(`python bake_structures.py <checkout>`, needs Pillow); it overwrites the files it writes. It copies the layers
+greyscale into `icons/turf/walls/walls.dmi`, `icons/turf/walls/windows.dmi` and `icons/obj/structures/doors/`, renaming
+their states to the CM ones. Each airlock frame (`station`, `external`, `hatch`, `secure`) gets a folder in `airlocks/`
+with its frame, lights and the paint layers the source has for it, every layer with every state of the door: they are
+overlays without an icon_state, which show the state the door shows. Only the map editor previews are baked with the
+colours of the types, in `airlocks/previews.dmi` and windows.dmi; the script holds the same colours for them.
 
 ## Rig sprites
 
