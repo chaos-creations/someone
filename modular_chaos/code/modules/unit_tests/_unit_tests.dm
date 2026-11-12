@@ -32,14 +32,18 @@
 
 #include "cyrillic_text.dm"
 #include "human_ai.dm"
+#include "live_world.dm"
 #include "origins.dm"
 #include "races.dm"
 #include "rigs.dm"
 #include "universes.dm"
 #include "vox.dm"
 
+// A live test world (live_world.dm) keeps them: hot reload expands macros as they stand at the end of the project, which would break every reloaded test using them.
+#ifndef UNIT_TESTS_LIVE
 #undef TEST_ASSERT
 #undef TEST_ASSERT_EQUAL
 #undef TEST_ASSERT_NOTEQUAL
+#endif
 
 #endif
