@@ -38,9 +38,9 @@ Assets are taken only for what the universe needs, not everything the source's m
   colours of the ship: the tiles with the colour Bay gives their turf baked in (a coloured turf would tint the decals
   on it), with the damaged and scorched states of upstream's `icons/turf/almayer.dmi`, and the decals as they are; its
   walls, carpets, wood and machines become CM counterparts;
-- the ship interior of Baystation 12 as the SEV Torch has it: steel, titanium and osmium-carbide plasteel walls in the
-  paints it uses, reinforced windows on low walls, the airlocks of every department, firedoors, blast doors and
-  shutters;
+- the SEV Torch of Baystation 12 and everything it needs, ported as Bay has it rather than with CM counterparts (see
+  "Porting a map"); so far the steel, titanium and osmium-carbide plasteel walls in the paints it uses, reinforced
+  windows on low walls, the airlocks of every department, firedoors, blast doors and shutters;
 - Lordania: its clothing, flags, banner, memorial and statues, from Proxi-BoS-Bay12 commit
   [`e4e6c18`](https://github.com/Proxima-Project/Proxi-BoS-Bay12/commit/e4e6c1845b4e5b9b94017987a96f29eef88436af).
 
@@ -81,6 +81,21 @@ Assets are copied as they are, except that states nothing here needs are removed
 which the dmi test of the CI rejects: BYOND always uses the first state of a name, so only the later duplicates go and
 the game shows the same. Merged into a shared file, a state keeps its name unless it clashes (see above). The tent of Cadaab has its states renamed to `tent` and `tent_open` (the closed one had no
 name).
+
+## Porting a map
+
+`tools/port_map.py` ports a Baystation 12 map (for now the Torch), run with the path of a Baystation 12 checkout and
+bidict installed:
+
+- `python port_map.py inventory <checkout>` lists every Bay type the map needs: the ones placed on it and what they
+  bring along (the contents of closets, vendors, random spawners and storage, and the types other vars name), with
+  the status of each, in a TSV and a summary by category;
+- `python port_map.py convert <checkout> --out <file>` stacks the map's decks into one multi-z `.dmm`, from the lowest
+  up. Types without a fork counterpart yet are dropped and listed, so the result always loads.
+
+Both follow `tools/bay_types.txt`, the table of which fork type each Bay type becomes, or why it is skipped: the
+overmap, atmospherics, research and development, xenoarchaeology, the AI and cyborgs, and the engine (supermatter and
+fusion) are not ported for now. A newly ported Bay type gets its rule there.
 
 ## Walls, windows and doors
 

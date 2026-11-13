@@ -1,0 +1,161 @@
+# Which fork type each Baystation 12 type becomes when port_map.py converts a Bay map or lists what it needs.
+#
+# A rule is a Bay type, then the fork type or "skip" with the reason:
+#   /turf/simulated/wall/prepainted  /turf/closed/wall/bay/prepainted
+#   /obj/overmap/*  skip  overmap
+# A Bay type ending in /* also covers its subtypes; a fork type ending in /* then keeps the rest of the path
+# (/obj/floor_decal/corner/red becomes /obj/effect/decal/bay_floor/corner/red), otherwise they all become that one
+# type. The most specific rule wins. After the fork type, a rule may name var edits of the map to keep besides the
+# ones every atom keeps (dir, pixel offsets, name, desc, color), as "var" or "bay_var>fork_var".
+#
+# A tile whose turf or area is dropped gets these:
+@turf /turf/open/floor/plating/almayer
+@area /area/space
+
+# Space
+
+/turf/space  /turf/open/space
+/area/space  /area/space
+
+# Floors
+
+/turf/simulated/floor/tiled/*  /turf/open/floor/bay/tiled/*
+/turf/simulated/floor/reinforced/*  /turf/open/floor/bay/reinforced
+
+# Floor decals
+
+/obj/floor_decal/*  /obj/effect/decal/bay_floor/*
+
+# Walls
+
+/turf/simulated/wall/prepainted  /turf/closed/wall/bay/prepainted
+/turf/simulated/wall/r_wall/prepainted  /turf/closed/wall/bay/reinforced/prepainted
+/turf/simulated/wall/r_wall/hull  /turf/closed/wall/bay/reinforced/hull
+/turf/simulated/wall/titanium  /turf/closed/wall/bay/titanium
+/turf/simulated/wall/r_titanium  /turf/closed/wall/bay/titanium/reinforced
+/turf/simulated/wall/ocp_wall  /turf/closed/wall/bay/ocp
+
+# Windows
+
+/obj/wallframe_spawn/reinforced  /obj/structure/window/framed/bay
+/obj/wallframe_spawn/reinforced/hull  /obj/structure/window/framed/bay/hull
+
+# Doors
+
+/obj/machinery/door/airlock  /obj/structure/machinery/door/airlock/bay  id_tag>id locked
+/obj/machinery/door/airlock/atmos  /obj/structure/machinery/door/airlock/bay/atmos  id_tag>id locked
+/obj/machinery/door/airlock/civilian  /obj/structure/machinery/door/airlock/bay/civilian  id_tag>id locked
+/obj/machinery/door/airlock/command  /obj/structure/machinery/door/airlock/bay/command  id_tag>id locked
+/obj/machinery/door/airlock/corporate  /obj/structure/machinery/door/airlock/bay/corporate  id_tag>id locked
+/obj/machinery/door/airlock/engineering  /obj/structure/machinery/door/airlock/bay/engineering  id_tag>id locked
+/obj/machinery/door/airlock/external  /obj/structure/machinery/door/airlock/bay/external  id_tag>id locked
+/obj/machinery/door/airlock/freezer  /obj/structure/machinery/door/airlock/bay/freezer  id_tag>id locked
+/obj/machinery/door/airlock/hatch  /obj/structure/machinery/door/airlock/bay/hatch  id_tag>id locked
+/obj/machinery/door/airlock/hatch/maintenance  /obj/structure/machinery/door/airlock/bay/hatch/maintenance  id_tag>id locked
+/obj/machinery/door/airlock/highsecurity  /obj/structure/machinery/door/airlock/bay/highsecurity  id_tag>id locked
+/obj/machinery/door/airlock/maintenance  /obj/structure/machinery/door/airlock/bay/maintenance  id_tag>id locked
+/obj/machinery/door/airlock/medical  /obj/structure/machinery/door/airlock/bay/medical  id_tag>id locked
+/obj/machinery/door/airlock/mining  /obj/structure/machinery/door/airlock/bay/mining  id_tag>id locked
+/obj/machinery/door/airlock/research  /obj/structure/machinery/door/airlock/bay/research  id_tag>id locked
+/obj/machinery/door/airlock/science  /obj/structure/machinery/door/airlock/bay/science  id_tag>id locked
+/obj/machinery/door/airlock/security  /obj/structure/machinery/door/airlock/bay/security  id_tag>id locked
+/obj/machinery/door/airlock/sol  /obj/structure/machinery/door/airlock/bay/sol  id_tag>id locked
+/obj/machinery/door/airlock/glass  /obj/structure/machinery/door/airlock/bay/glass  id_tag>id locked
+/obj/machinery/door/airlock/glass/atmos  /obj/structure/machinery/door/airlock/bay/atmos/glass  id_tag>id locked
+/obj/machinery/door/airlock/glass/civilian  /obj/structure/machinery/door/airlock/bay/civilian/glass  id_tag>id locked
+/obj/machinery/door/airlock/glass/command  /obj/structure/machinery/door/airlock/bay/command/glass  id_tag>id locked
+/obj/machinery/door/airlock/glass/engineering  /obj/structure/machinery/door/airlock/bay/engineering/glass  id_tag>id locked
+/obj/machinery/door/airlock/glass/medical  /obj/structure/machinery/door/airlock/bay/medical/glass  id_tag>id locked
+/obj/machinery/door/airlock/glass/mining  /obj/structure/machinery/door/airlock/bay/mining/glass  id_tag>id locked
+/obj/machinery/door/airlock/glass/research  /obj/structure/machinery/door/airlock/bay/research/glass  id_tag>id locked
+/obj/machinery/door/airlock/glass/science  /obj/structure/machinery/door/airlock/bay/science/glass  id_tag>id locked
+/obj/machinery/door/airlock/glass/security  /obj/structure/machinery/door/airlock/bay/security/glass  id_tag>id locked
+/obj/machinery/door/firedoor  /obj/structure/machinery/door/firedoor/bay
+/obj/machinery/door/blast/regular  /obj/structure/machinery/door/poddoor/bay  id_tag>id
+/obj/machinery/door/blast/regular/open  /obj/structure/machinery/door/poddoor/bay/open  id_tag>id
+/obj/machinery/door/blast/shutters  /obj/structure/machinery/door/poddoor/shutters/bay  id_tag>id
+/obj/machinery/door/blast/shutters/open  /obj/structure/machinery/door/poddoor/shutters/bay/open  id_tag>id
+
+# Not ported: the overmap
+
+/obj/overmap/*  skip  overmap
+/obj/shuttle_landmark/*  skip  overmap
+/obj/machinery/computer/ship/*  skip  overmap
+/obj/machinery/shipsensors/*  skip  overmap
+/obj/machinery/disperser/*  skip  overmap
+/obj/machinery/bluespacedrive/*  skip  overmap
+/obj/machinery/pointdefense/*  skip  overmap
+/obj/machinery/pointdefense_control/*  skip  overmap
+/obj/machinery/shield_diffuser/*  skip  overmap
+/obj/machinery/power/shield_generator/*  skip  overmap
+/obj/machinery/nav_light/*  skip  overmap
+/obj/structure/ship_munition/*  skip  overmap
+/obj/structure/missile/*  skip  overmap
+/obj/item/missile_equipment/*  skip  overmap
+/obj/structure/fuel_port/*  skip  overmap
+/obj/machinery/computer/modular/preset/helm  skip  overmap
+/obj/machinery/computer/modular/preset/navigation  skip  overmap
+/obj/machinery/computer/modular/preset/sensors  skip  overmap
+/obj/machinery/computer/modular/preset/munitions  skip  overmap
+
+# Not ported: atmospherics
+
+/obj/machinery/atmospherics/*  skip  atmos
+/obj/machinery/portable_atmospherics/*  skip  atmos
+/obj/machinery/alarm/*  skip  atmos
+/obj/machinery/air_sensor/*  skip  atmos
+/obj/machinery/meter/*  skip  atmos
+/obj/machinery/embedded_controller/*  skip  atmos
+/obj/machinery/airlock_sensor/*  skip  atmos
+/obj/machinery/access_button/*  skip  atmos
+/obj/machinery/oxygen_pump/*  skip  atmos
+/obj/machinery/space_heater/*  skip  atmos
+/obj/machinery/pipedispenser/*  skip  atmos
+/obj/machinery/computer/air_control/*  skip  atmos
+/obj/machinery/computer/atmos_alert/*  skip  atmos
+/obj/machinery/computer/atmoscontrol/*  skip  atmos
+/obj/machinery/power/generator/*  skip  atmos
+/obj/item/rpd/*  skip  atmos
+
+# Not ported: research and development
+
+/obj/machinery/r_n_d/*  skip  research
+/obj/machinery/computer/rdconsole/*  skip  research
+/obj/machinery/computer/rdservercontrol/*  skip  research
+
+# Not ported: xenoarchaeology
+
+/obj/machinery/artifact_analyser/*  skip  xenoarchaeology
+/obj/machinery/artifact_harvester/*  skip  xenoarchaeology
+/obj/machinery/artifact_scanpad/*  skip  xenoarchaeology
+/obj/machinery/anomaly_container/*  skip  xenoarchaeology
+/obj/machinery/suspension_gen/*  skip  xenoarchaeology
+/obj/machinery/radiocarbon_spectrometer/*  skip  xenoarchaeology
+/obj/item/anobattery/*  skip  xenoarchaeology
+/obj/item/anodevice/*  skip  xenoarchaeology
+
+# Not ported: the AI and cyborgs
+
+/obj/item/aiModule/*  skip  silicons
+/obj/item/aicard/*  skip  silicons
+/obj/machinery/computer/upload/*  skip  silicons
+/obj/machinery/drone_fabricator/*  skip  silicons
+/obj/machinery/computer/drone_control/*  skip  silicons
+/obj/machinery/recharge_station/*  skip  silicons
+/obj/machinery/cryopod/robot/*  skip  silicons
+/obj/machinery/computer/cryopod/robot/*  skip  silicons
+/obj/machinery/computer/modular/preset/aislot/*  skip  silicons
+
+# Not ported yet: the engine (supermatter and fusion)
+
+/obj/machinery/power/supermatter/*  skip  engine
+/obj/machinery/power/fusion_core/*  skip  engine
+/obj/machinery/fusion_fuel_injector/*  skip  engine
+/obj/machinery/fusion_fuel_compressor/*  skip  engine
+/obj/machinery/computer/fusion/*  skip  engine
+/obj/machinery/power/emitter/gyrotron/*  skip  engine
+/obj/machinery/power/rad_collector/*  skip  engine
+
+# Map helpers of Bay with no use here
+
+/obj/landmark/map_data  skip  map helper
