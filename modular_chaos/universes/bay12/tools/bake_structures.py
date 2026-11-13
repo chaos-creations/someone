@@ -9,8 +9,9 @@ icons/:
 - turf/walls/walls.dmi: the wall masks of steel, titanium and wooden walls and their map editor states;
 - turf/walls/windows.dmi: low wall frames, the glass on them, and panes on their own;
 - obj/structures/grille.dmi: grilles, on their own and on low walls;
-- obj/structures/: catwalks, lattices, railings, handrails, ladders and stairs, and in doors/ the windoors, the morgue
-  door and the plastic door, as they are;
+- obj/structures/: catwalks, lattices, railings, handrails, ladders and stairs, in doors/ the windoors, the morgue
+  door and the plastic door, and in machinery/ breaker boxes, portable generators, solar panels and trackers, the
+  solar control console and power sensors, as they are; and obj/items/circuitboards.dmi, electronics;
 - obj/structures/machinery/apc.dmi: APCs, their lights coloured into the states CM draws, and power terminals;
 - obj/structures/machinery/smes.dmi and power_cond_white.dmi: SMES units and power cables, as they are;
 - obj/structures/doors/airlocks/<frame>/: for each airlock frame, door.dmi (the frame, its panel and welds) and the
@@ -157,12 +158,19 @@ COPIED_ICONS = [
 	("obj/doors/material_doors.dmi", ["plastic", "plasticopen", "plasticopening", "plasticclosing"],
 		"obj/structures/doors/material_doors.dmi"),
 	("obj/machines/power/breakerbox.dmi", ["bbox", "bbox_lights", "bbox_panel"], "obj/structures/machinery/breakerbox.dmi"),
+	("obj/structures/portgen.dmi", ["portgen0", "portgen0on", "portgen1", "portgen1on", "portgen1rad", "portgen2",
+		"portgen2on"], "obj/structures/machinery/portgen.dmi"),
+	("obj/machines/power/solar_panels.dmi", ["sp_base", "solar_panel", "solar_panel-b", "tracker"],
+		"obj/structures/machinery/solar_panels.dmi"),
+	("obj/machines/computer.dmi", ["computer", "solar", "broken", "solcon-o"], "obj/structures/machinery/computer.dmi"),
+	("obj/structures/floor_magnet.dmi", ["floor_beacon"], "obj/structures/machinery/power_sensor.dmi"),
+	("obj/doors/door_assembly.dmi", ["door_electronics"], "obj/items/circuitboards.dmi"),
 ]
 
 
 def bake_copied_icons():
-	"""Catwalks, lattices, railings, handrails, ladders, stairs and doors that need no conversion; catwalks, drawn from
-	overlays, also get "blank"."""
+	"""Icons that need no conversion: catwalks, lattices, railings, handrails, ladders, stairs, doors and machines;
+	catwalks, drawn from overlays, also get "blank"."""
 	for path, names, out in COPIED_ICONS:
 		states = source(path)
 		blank = [blank_state()] if out == "obj/structures/catwalks.dmi" else []

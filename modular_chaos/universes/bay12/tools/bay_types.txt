@@ -171,6 +171,15 @@
 /obj/machinery/power/apc/super/critical  /obj/structure/machinery/power/apc/bay/super
 /obj/machinery/power/apc/shuttle/*  /obj/structure/machinery/power/apc/bay
 /obj/machinery/power/apc/hyper/shuttle/*  /obj/structure/machinery/power/apc/bay/hyper
+/obj/machinery/power/port_gen/pacman  /obj/structure/machinery/power/power_generator/port_gen/pacman/bay  anchored sheets
+/obj/machinery/power/port_gen/pacman/super  /obj/structure/machinery/power/power_generator/port_gen/pacman/bay/super  anchored sheets
+/obj/machinery/power/port_gen/pacman/mrs  /obj/structure/machinery/power/power_generator/port_gen/pacman/bay/mrs  anchored sheets
+/obj/machinery/power/solar  /obj/structure/machinery/power/bay_solar  id
+/obj/machinery/power/solar/improved  /obj/structure/machinery/power/bay_solar/improved  id
+/obj/machinery/power/tracker  /obj/structure/machinery/power/bay_tracker  id
+/obj/machinery/power/solar_control  /obj/structure/machinery/power/bay_solar_control  id track
+/obj/machinery/power/solar_control/autostart  /obj/structure/machinery/power/bay_solar_control/autostart  id
+/obj/machinery/power/sensor  /obj/structure/machinery/power/bay_sensor  name_tag long_range
 
 # Not ported: the overmap
 

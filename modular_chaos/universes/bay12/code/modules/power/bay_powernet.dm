@@ -179,3 +179,20 @@
 	powernet = knot.powernet
 	powernet.nodes |= src
 	return TRUE
+
+/// In an area with Bay power, a generator feeds the network of its cable knot, as generators of the source do, not the APC of its area
+/obj/structure/machinery/power/power_generator/connect_to_network()
+	CAN_BE_REDEFINED(TRUE)
+	. = ..()
+	if(!current_area?.bay_power || !apc_in_area)
+		return .
+	LAZYREMOVE(apc_in_area.connected_power_sources, src)
+	apc_in_area = null
+	return .
+
+/obj/structure/machinery/power/power_generator/add_avail(amount)
+	CAN_BE_REDEFINED(TRUE)
+	if(!current_area?.bay_power)
+		return ..()
+	if(powernet)
+		powernet.newavail += amount
