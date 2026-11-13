@@ -236,15 +236,19 @@ class TypesTable:
 
 
 def status(table, fork_tree, path):
-    """(status, detail) of a Bay type: ported (fork type), skipped (reason), missing (fork type not there) or todo."""
+    """(status, detail) of a Bay type: ported (fork type), skipped (reason), missing (fork type not there) or todo.
+
+    A rule can give several fork types joined by "+", for a Bay type that spawns several things.
+    """
     rule = table.find(path)
     if rule is None:
         return "todo", ""
     fork, reason, _ = rule
     if fork is None:
         return "skipped", reason
-    if not fork_tree.exists(fork):
-        return "missing", fork
+    for fork_path in fork.split("+"):
+        if not fork_tree.exists(fork_path):
+            return "missing", fork_path
     return "ported", fork
 
 
@@ -311,19 +315,23 @@ def inventory(arguments):
 
 
 def convert_atom(table, fork_tree, atom, dropped):
-    """The fork atom for a Bay atom of the map, or None if it is dropped (then added to dropped, unless skipped)."""
+    """The fork atoms for a Bay atom of the map, none if it is dropped (then added to dropped, unless skipped).
+
+    The kept var edits go on the first of them.
+    """
     path, bay_vars = dmm.parse_map_atom(atom)
     state, detail = status(table, fork_tree, path)
     if state != "ported":
         if state != "skipped":
             dropped.append((state, path, detail))
-        return None
+        return []
     kept = {name: name for name in TRANSFERRED_VARS}
     kept.update(table.find(path)[2])
     fork_vars = [(kept[name], value) for name, value in bay_vars.items() if name in kept]
-    if not fork_vars:
-        return detail
-    return detail + "{" + "; ".join(f"{name} = {value}" for name, value in fork_vars) + "}"
+    first, *rest = detail.split("+")
+    if fork_vars:
+        first += "{" + "; ".join(f"{name} = {value}" for name, value in fork_vars) + "}"
+    return [first, *rest]
 
 
 def convert(arguments):
@@ -345,8 +353,8 @@ def convert(arguments):
             bay_tile = level.dictionary[key]
             if bay_tile not in converted_tiles:
                 dropped_atoms = []
-                atoms = [convert_atom(table, fork_tree, atom, dropped_atoms) for atom in bay_tile]
-                movables, turfs, areas = dmm.split_atom_groups([atom for atom in atoms if atom])
+                atoms = [fork_atom for atom in bay_tile for fork_atom in convert_atom(table, fork_tree, atom, dropped_atoms)]
+                movables, turfs, areas = dmm.split_atom_groups(atoms)
                 fork_tile = tuple(movables + (turfs[:1] or [table.fallbacks["turf"]])
                                   + (areas[:1] or [table.fallbacks["area"]]))
                 converted_tiles[bay_tile] = (fork_tile, dropped_atoms)

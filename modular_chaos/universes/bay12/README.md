@@ -38,8 +38,10 @@ Assets are taken only for what the universe needs, not everything the source's m
   colours of the ship: the tiles with the colour Bay gives their turf baked in (a coloured turf would tint the decals
   on it), and the decals as they are; its walls, carpets, wood and machines became CM counterparts;
 - the SEV Torch of Baystation 12 and everything it needs, ported as Bay has it rather than with CM counterparts (see
-  "Porting a map"); so far the steel, titanium, osmium-carbide plasteel and walnut walls in the paints it uses,
-  reinforced windows on low walls, the airlocks of every department, firedoors, blast doors and shutters, its floors
+  "Porting a map"); so far the steel, titanium, osmium-carbide plasteel and walnut walls in the paints it uses and the
+  coats of paint that repaint them, windows of plain, reinforced, borosilicate and electrochromic glass on low walls of
+  every material, panes and grilles, the airlocks of every department, firedoors, blast doors and shutters, catwalks,
+  lattices, railings, handrails, ladders and stairs, its floors
   (plating, tiles, carpets, wood, linoleum, grass, the pool, mainframe and crystal floors, hull plating) with Bay's
   borders and damage overlays, and its floor decals, signs and logos;
 - Lordania: its clothing, flags, banner, memorial and statues, from Proxi-BoS-Bay12 commit

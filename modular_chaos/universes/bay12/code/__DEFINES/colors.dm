@@ -11,6 +11,10 @@
 #define COLOR_OSMIUM_CARBIDE_PLASTEEL "#9bc6f2"
 /// The colour of glass, of windows and of the windows of glass airlocks
 #define GLASS_COLOR "#aaccff"
+/// The colour of borosilicate glass
+#define GLASS_COLOR_BORON "#899ebd"
+/// The colour of tinted glass, and of an electrochromic window darkened
+#define GLASS_COLOR_TINTED "#222222"
 
 // Woods: the colour of wooden walls and floors, by the wood
 #define WOOD_COLOR_GENERIC "#d5a66e"

@@ -5,7 +5,8 @@
 #   /obj/overmap/*  skip  overmap
 # A Bay type ending in /* also covers its subtypes; a fork type ending in /* then keeps the rest of the path
 # (/obj/floor_decal/corner/red becomes /obj/effect/decal/bay_floor/corner/red), otherwise they all become that one
-# type. The most specific rule wins. After the fork type, a rule may name var edits of the map to keep besides the
+# type. Several fork types joined by "+" all go on the tile, for a Bay type that spawns several things (a window
+# spawner with its grille). The most specific rule wins. After the fork type, a rule may name var edits of the map to keep besides the
 # ones every atom keeps (dir, pixel offsets, name, desc, color), as "var" or "bay_var>fork_var".
 #
 # A tile whose turf or area is dropped gets these:
@@ -53,10 +54,45 @@
 /turf/simulated/wall/ocp_wall  /turf/closed/wall/bay/ocp
 /turf/simulated/wall/walnut  /turf/closed/wall/bay/walnut
 
-# Windows
+# Windows: a spawner of Bay makes a low wall, the glass on it and, unless it says no_grille, a grille
 
-/obj/wallframe_spawn/reinforced  /obj/structure/window/framed/bay
-/obj/wallframe_spawn/reinforced/hull  /obj/structure/window/framed/bay/hull
+/obj/wallframe_spawn/no_grille  /obj/structure/window/framed/bay/basic
+/obj/wallframe_spawn/reinforced  /obj/structure/window/framed/bay+/obj/structure/grille/bay
+/obj/wallframe_spawn/reinforced/no_grille  /obj/structure/window/framed/bay
+/obj/wallframe_spawn/reinforced/hull  /obj/structure/window/framed/bay/hull+/obj/structure/grille/bay
+/obj/wallframe_spawn/reinforced/titanium  /obj/structure/window/framed/bay/titanium+/obj/structure/grille/bay
+/obj/wallframe_spawn/reinforced/polarized  /obj/structure/window/framed/bay/polarized+/obj/structure/grille/bay  id
+/obj/wallframe_spawn/reinforced/polarized/no_grille/*  /obj/structure/window/framed/bay/polarized  id
+/obj/wallframe_spawn/reinforced_phoron  /obj/structure/window/framed/bay/boron+/obj/structure/grille/bay
+/obj/wallframe_spawn/reinforced_phoron/titanium  /obj/structure/window/framed/bay/boron/titanium+/obj/structure/grille/bay
+/obj/wallframe_spawn/reinforced_phoron/ocp  /obj/structure/window/framed/bay/boron/ocp+/obj/structure/grille/bay
+/obj/structure/wall_frame  /obj/structure/window_frame/bay
+/obj/structure/window/basic  /obj/structure/window/bay
+/obj/structure/window/reinforced  /obj/structure/window/bay/reinforced
+/obj/structure/window/boron_reinforced  /obj/structure/window/bay/reinforced/boron
+/obj/structure/window/reinforced/polarized/full  /obj/structure/window/bay/reinforced/polarized_full  id
+/obj/structure/grille  /obj/structure/grille/bay
+/obj/structure/grille/broken  /obj/structure/grille/bay/broken
+
+# Paint, catwalks, lattices, railings, ladders and stairs
+
+/obj/paint/hull  /obj/effect/bay_paint/hull
+/obj/paint/red  /obj/effect/bay_paint/red
+/obj/paint/silver  /obj/effect/bay_paint/silver
+/obj/structure/catwalk  /obj/structure/catwalk/bay
+/obj/catwalk_plated  /obj/structure/catwalk/bay/plated
+/obj/catwalk_plated/dark  /obj/structure/catwalk/bay/plated/dark
+/obj/catwalk_plated/white  /obj/structure/catwalk/bay/plated/white
+/obj/structure/lattice  /obj/structure/lattice/bay
+/obj/structure/railing/mapped  /obj/structure/barricade/handrail/bay
+/obj/structure/handrail  /obj/structure/bay_handrail
+/obj/structure/ladder  /obj/structure/ladder/bay
+/obj/structure/ladder/up  /obj/structure/ladder/bay/up
+/obj/structure/ladder/updown  /obj/structure/ladder/bay/updown
+/obj/structure/stairs/north  /obj/structure/stairs/multiz/up/bay/north
+/obj/structure/stairs/south  /obj/structure/stairs/multiz/up/bay/south
+/obj/structure/stairs/east  /obj/structure/stairs/multiz/up/bay/east
+/obj/structure/stairs/west  /obj/structure/stairs/multiz/up/bay/west
 
 # Doors
 

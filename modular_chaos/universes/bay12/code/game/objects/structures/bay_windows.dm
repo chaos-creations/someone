@@ -64,6 +64,12 @@
 	var/frame_color = COLOR_GUNMETAL
 	/// Colour of the glass
 	var/glass_color = GLASS_COLOR
+	/// Prefix of the corner states of the glass: "rwindow" for reinforced glass, "window" for plain glass
+	var/glass_state = "rwindow"
+	/// Whether buttons with the same id tint the glass (/obj/structure/window/reinforced/polarized in the source)
+	var/polarized = FALSE
+	/// Id of the window tint buttons that tint a polarized window
+	var/id
 
 /obj/structure/window/framed/bay/Initialize()
 	var/obj/structure/window_frame/bay/frame = locate() in loc
@@ -86,13 +92,20 @@
 		frame.color = frame_color
 		overlays += frame
 	for(var/i in 1 to 4)
-		var/image/glass = image(icon, "rwindow[edge_connections[i] != "0" ? "_other" : ""][glass_connections[i]]", dir = 1<<(i-1))
-		glass.color = glass_color
+		var/image/glass = image(icon, "[glass_state][edge_connections[i] != "0" ? "_other" : ""][glass_connections[i]]", dir = 1<<(i-1))
+		glass.color = opacity ? GLASS_COLOR_TINTED : glass_color
 		overlays += glass
 
 /obj/structure/window/framed/bay/relativewall_neighbours()
 	..()
 	update_bay_low_walls_around(src)
+
+/// Tints a polarized window or clears it, as /obj/structure/window/proc/toggle() does in the source
+/obj/structure/window/framed/bay/proc/toggle_tint()
+	if(!polarized)
+		return
+	set_opacity(!opacity)
+	relativewall()
 
 /// A hull window: a low wall in the blue of /turf/closed/wall/bay/reinforced/hull, and glass nothing gets through
 /obj/structure/window/framed/bay/hull
@@ -106,6 +119,44 @@
 	unslashable = TRUE
 	unacidable = TRUE
 	health = 1000000 //Failsafe, shouldn't matter
+
+/// Plain glass on a low wall, /obj/structure/window/basic/full in the source
+/obj/structure/window/framed/bay/basic
+	name = "window"
+	desc = "A glass window set on a low wall. It looks thin and flimsy. A few knocks with anything should shatter it."
+	icon_state = "window"
+	basestate = "window"
+	glass_state = "window"
+	health = 40
+	reinf = FALSE
+
+/// Electrochromic glass, which window tint buttons of its id darken
+/obj/structure/window/framed/bay/polarized
+	name = "electrochromic window"
+	desc = "Adjusts its tint with voltage. Might take a few good hits to shatter it."
+	polarized = TRUE
+
+/// A reinforced window on a low wall of titanium
+/obj/structure/window/framed/bay/titanium
+	icon_state = "titanium_rwindow"
+	frame_color = COLOR_TITANIUM
+
+/// Reinforced borosilicate glass, /obj/structure/window/boron_reinforced/full in the source: tougher, with a darker tint
+/obj/structure/window/framed/bay/boron
+	name = "reinforced borosilicate window"
+	desc = "A borosilicate glass window with a rod matrix inside, set on a low wall. It looks very strong."
+	icon_state = "boron_rwindow"
+	glass_color = GLASS_COLOR_BORON
+	health = 150
+
+/obj/structure/window/framed/bay/boron/titanium
+	icon_state = "titanium_boron_rwindow"
+	frame_color = COLOR_TITANIUM
+
+/// Borosilicate glass on a low wall of osmium-carbide plasteel
+/obj/structure/window/framed/bay/boron/ocp
+	icon_state = "ocp_boron_rwindow"
+	frame_color = COLOR_OSMIUM_CARBIDE_PLASTEEL
 
 /// The low wall of a Bay window, left when its glass breaks; reinforced glass makes it a window again
 /obj/structure/window_frame/bay
@@ -148,3 +199,95 @@
 	icon_state = "hull_frame"
 	frame_color = COLOR_SOL
 	window_type = /obj/structure/window/framed/bay/hull
+
+/**
+ * A pane of Bay glass on one edge of a tile (/obj/structure/window in the source, not full-tile)
+ *
+ * The sprites are greyscale and take the colour of the glass from color.
+ */
+/obj/structure/window/bay
+	icon = 'modular_chaos/universes/bay12/icons/turf/walls/windows.dmi'
+	icon_state = "window_border"
+	basestate = "window_border"
+	color = GLASS_COLOR
+
+/obj/structure/window/bay/reinforced
+	name = "reinforced window"
+	desc = "A glass window reinforced with bracing rods. It looks rather strong. Might take a few good hits to shatter it."
+	icon_state = "rwindow_border"
+	basestate = "rwindow_border"
+	health = 40
+	reinf = TRUE
+
+/obj/structure/window/bay/reinforced/boron
+	name = "reinforced borosilicate window"
+	desc = "A borosilicate glass window reinforced with bracing rods. It looks very strong."
+	color = GLASS_COLOR_BORON
+	health = 80
+
+/// A full-tile electrochromic pane without a low wall, /obj/structure/window/reinforced/polarized/full in the source
+/obj/structure/window/bay/reinforced/polarized_full
+	name = "electrochromic window"
+	desc = "Adjusts its tint with voltage. Might take a few good hits to shatter it."
+	icon_state = "rwindow_full"
+	basestate = "rwindow_full"
+	flags_atom = FPRINT
+	/// Id of the window tint buttons that tint it
+	var/id
+
+/// Tints the pane or clears it, as /obj/structure/window/proc/toggle() does in the source
+/obj/structure/window/bay/reinforced/polarized_full/proc/toggle_tint()
+	animate(src, color = opacity ? initial(color) : GLASS_COLOR_TINTED, time = 0.5 SECONDS)
+	set_opacity(!opacity)
+
+/**
+ * A Bay grille (/obj/structure/grille in the source)
+ *
+ * Drawn by corners like a low wall: it joins other grilles and ends with an edge against walls and doors, and has
+ * states of its own when it stands on a low wall, as the grilles under Bay windows do. The sprites are greyscale and
+ * take the colour of steel. A destroyed one stays as a broken grille until it takes more damage, as CM grilles do.
+ */
+/obj/structure/grille/bay
+	icon = 'modular_chaos/universes/bay12/icons/obj/structures/grille.dmi'
+	icon_state = "grille"
+	color = COLOR_STEEL
+
+/obj/structure/grille/bay/Initialize(mapload, ...)
+	. = ..()
+	update_icon()
+	for(var/obj/structure/grille/bay/neighbor in orange(1, src))
+		neighbor.update_icon()
+
+/obj/structure/grille/bay/Destroy()
+	var/turf/old_loc = loc
+	. = ..()
+	for(var/obj/structure/grille/bay/neighbor in orange(1, old_loc))
+		neighbor.update_icon()
+
+/obj/structure/grille/bay/update_icon()
+	. = ..()
+	overlays.Cut()
+	var/on_frame = (locate(/obj/structure/window_frame/bay) in loc) || (locate(/obj/structure/window/framed/bay) in loc)
+	if(destroyed)
+		icon_state = on_frame ? "broken_onframe" : "broken"
+		return
+	icon_state = "blank"
+	var/list/corners = bay_low_wall_connections(src, list(/obj/structure/grille/bay))
+	var/list/connections = corners[1]
+	var/list/edge_connections = corners[2]
+	for(var/i in 1 to 4)
+		overlays += image(icon, "grille[edge_connections[i] != "0" ? "_other" : ""][on_frame ? "_onframe" : ""][connections[i]]", dir = 1<<(i-1))
+
+/obj/structure/grille/bay/healthcheck()
+	var/was_destroyed = destroyed
+	. = ..()
+	if(!QDELETED(src) && destroyed != was_destroyed)
+		update_icon()
+		for(var/obj/structure/grille/bay/neighbor in orange(1, src))
+			neighbor.update_icon()
+
+/obj/structure/grille/bay/broken
+	icon_state = "broken"
+	density = FALSE
+	destroyed = TRUE
+	health = 0

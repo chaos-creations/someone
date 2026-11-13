@@ -31,6 +31,8 @@
 	var/paint_color
 	/// Colour of the stripe along the wall, and of its edges; null if it has none
 	var/stripe_color
+	/// Whether paint (/obj/effect/bay_paint) also colours the stripe, as on steel and plasteel; titanium has no stripe
+	var/paintable_stripe = TRUE
 	/// Whether an edge is drawn where the wall meets a door or a wall of another paint, as Bay does for steel and plasteel
 	var/has_edges = TRUE
 	/// Corner states of the edge, in the order of wall_connections; "0" is no edge on that corner
@@ -177,6 +179,7 @@
 	wall_icon_base = "metal"
 	material_color = COLOR_TITANIUM
 	has_edges = FALSE
+	paintable_stripe = FALSE
 
 /// /turf/simulated/wall/r_titanium in the source
 /turf/closed/wall/bay/titanium/reinforced

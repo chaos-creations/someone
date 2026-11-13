@@ -1,4 +1,4 @@
-"""Converts the walls, windows and doors of Baystation 12 into the icons of this universe.
+"""Converts the walls, windows, doors and floor structures of Baystation 12 into the icons of this universe.
 
 Bay draws these at runtime from greyscale layers that it colours with the paint of the type: wall masks, low wall
 frames and glass, airlock panels and stripes. The code here does the same, so the layers are copied greyscale; this
@@ -7,7 +7,9 @@ state of the door (an overlay without an icon_state shows the state its door sho
 icons/:
 
 - turf/walls/walls.dmi: the wall masks of steel, titanium and wooden walls and their map editor states;
-- turf/walls/windows.dmi: low wall frames and the reinforced glass on them;
+- turf/walls/windows.dmi: low wall frames, the glass on them, and panes on their own;
+- obj/structures/grille.dmi: grilles, on their own and on low walls;
+- obj/structures/: catwalks, lattices, railings, handrails, ladders and stairs, as they are;
 - obj/structures/doors/airlocks/<frame>/: for each airlock frame, door.dmi (the frame, its panel and welds) and the
   layers drawn over it: lights.dmi (bolt, deny and opening lights, sparks, the panel while opening) and the paint
   layers Bay has for that frame;
@@ -77,10 +79,26 @@ def bake_walls():
 WALL_FRAME = "obj/structures/wall_frame.dmi"
 WINDOW = "obj/structures/window.dmi"
 
-# preview state prefix, frame colour; /obj/structure/window/framed/bay and its /hull
+GRILLE = "obj/structures/grille.dmi"
+GLASS_COLOR_BORON = "#899ebd"
+FRAME_COLORS = {
+	"": "#545c68",  # COLOR_GUNMETAL, the stripe of /obj/structure/wall_frame/standard
+	"hull_": "#436b8e",  # COLOR_SOL
+	"titanium_": "#d1e6e3",  # COLOR_TITANIUM
+	"ocp_": "#9bc6f2",  # COLOR_OSMIUM_CARBIDE_PLASTEEL
+}
+# Map editor previews of the window types: state, frame prefix in FRAME_COLORS, glass state on the frame (None for the
+# low wall alone), glass colour. They must match code/game/objects/structures/bay_windows.dm.
 WINDOW_PREVIEWS = [
-	("", "#545c68"),
-	("hull_", "#436b8e"),
+	("frame", "", None, None),
+	("rwindow", "", "rwindow", GLASS_COLOR),
+	("hull_frame", "hull_", None, None),
+	("hull_rwindow", "hull_", "rwindow", GLASS_COLOR),
+	("window", "", "window", GLASS_COLOR),
+	("titanium_rwindow", "titanium_", "rwindow", GLASS_COLOR),
+	("boron_rwindow", "", "rwindow", GLASS_COLOR_BORON),
+	("titanium_boron_rwindow", "titanium_", "rwindow", GLASS_COLOR_BORON),
+	("ocp_boron_rwindow", "ocp_", "rwindow", GLASS_COLOR_BORON),
 ]
 
 
@@ -88,18 +106,55 @@ def bake_windows():
 	frames = source(WALL_FRAME)
 	windows = source(WINDOW)
 	dmi = Dmi([blank_state()])
-	for prefix, frame_color in WINDOW_PREVIEWS:
-		def isolated(with_glass):
-			return lambda _d, _f: stack(*(multiply(layer(WALL_FRAME, "frame0", d, 0), frame_color) for d in range(4)),
-				*(multiply(layer(WINDOW, "rwindow_onframe0", d, 0), GLASS_COLOR) for d in range(4) if with_glass))
-		dmi.states.append(make_state(f"{prefix}frame", 1, 1, isolated(False)))
-		dmi.states.append(make_state(f"{prefix}rwindow", 1, 1, isolated(True)))
+	for name, frame, glass, glass_color in WINDOW_PREVIEWS:
+		def isolated(_d, _f, frame=frame, glass=glass, glass_color=glass_color):
+			return stack(*(multiply(layer(WALL_FRAME, "frame0", d, 0), FRAME_COLORS[frame]) for d in range(4)),
+				*(multiply(layer(WINDOW, f"{glass}_onframe0", d, 0), glass_color) for d in range(4) if glass))
+		dmi.states.append(make_state(name, 1, 1, isolated))
 	for kind in ("frame", "frame_other"):
 		dmi.states += [frames.get(f"{kind}{corner_state}") for corner_state in range(8)]
-	for kind in ("", "_other"):
-		dmi.states += [windows.get(f"rwindow{kind}_onframe{corner_state}").renamed(f"rwindow{kind}{corner_state}")
-			for corner_state in range(8)]
+	for glass in ("rwindow", "window"):
+		for kind in ("", "_other"):
+			dmi.states += [windows.get(f"{glass}{kind}_onframe{corner_state}").renamed(f"{glass}{kind}{corner_state}")
+				for corner_state in range(8)]
+	# Panes on the edge of a tile, and the full-tile pane without a low wall; greyscale, coloured by the type
+	dmi.states += [windows.get("window").renamed("window_border"), windows.get("rwindow").renamed("rwindow_border"),
+		windows.get("rwindow_full")]
 	write(dmi, "turf/walls/windows.dmi")
+
+
+def bake_grilles():
+	"""Grilles as they are: corner states on their own and on a low wall, the broken ones, and the map editor state."""
+	grilles = source(GRILLE)
+	dmi = Dmi([blank_state(), grilles.get("grille"), grilles.get("broken"), grilles.get("broken_onframe")])
+	for kind in ("grille", "grille_other", "grille_onframe", "grille_other_onframe"):
+		dmi.states += [grilles.get(f"{kind}{corner_state}") for corner_state in range(8)]
+	write(dmi, "obj/structures/grille.dmi")
+
+
+# --- Structures on the floor ---------------------------------------------------------------------------------------
+
+# (file under icons/ in the source, states taken, file under icons/ here): copied as they are
+FLOOR_STRUCTURES = [
+	("obj/structures/catwalks.dmi", ["catwalk", *[f"catwalk{n}" for n in range(8)], "plated", "catwalk_plated",
+		"catwalk_plateddark", "catwalk_platedwhite"], "obj/structures/catwalks.dmi"),
+	("obj/structures/smoothlattice.dmi", [f"lattice{n}" for n in range(16)], "obj/structures/lattice.dmi"),
+	("obj/structures/railing.dmi", ["railing_preview", "railing0-0", "railing0-1", "railing1-0", "railing1-1",
+		"_railing0-1", "_railing1-1", "corneroverlay0", "corneroverlay1", "frontoverlay_l0", "frontoverlay_l1",
+		"frontoverlay_r0", "frontoverlay_r1", "_frontoverlay_l1", "_frontoverlay_r1", "mcorneroverlay0",
+		"mcorneroverlay1", "_mcorneroverlay1"], "obj/structures/railing.dmi"),
+	("obj/structures/handrail.dmi", ["handrail"], "obj/structures/handrail.dmi"),
+	("obj/structures/structures.dmi", ["ladder00", "ladder01", "ladder10", "ladder11"], "obj/structures/ladders.dmi"),
+	("obj/structures/stairs.dmi", ["above"], "obj/structures/stairs.dmi"),
+]
+
+
+def bake_floor_structures():
+	"""Catwalks, lattices, railings, handrails, ladders and stairs; catwalks, drawn from overlays, also get "blank"."""
+	for path, names, out in FLOOR_STRUCTURES:
+		states = source(path)
+		blank = [blank_state()] if out == "obj/structures/catwalks.dmi" else []
+		write(Dmi(blank + [states.get(name) for name in names], states.width, states.height), out)
 
 
 # --- Airlocks ------------------------------------------------------------------------------------------------------
@@ -286,6 +341,8 @@ def main():
 	BAY = os.path.join(sys.argv[1], "icons")
 	bake_walls()
 	bake_windows()
+	bake_grilles()
+	bake_floor_structures()
 	for frame_name, frame_files in FRAMES.items():
 		bake_airlock_frame(frame_name, frame_files)
 	bake_airlock_previews()
