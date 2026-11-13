@@ -2,6 +2,7 @@
 
     python port_map.py inventory <bay checkout> [--map torch] [--out report.tsv]
     python port_map.py convert <bay checkout> [--map torch] [--out map.dmm]
+    python port_map.py areas <bay checkout> [--map torch] [--out areas.dm]
 
 Both read bay_types.txt next to this script, the table of which fork type each Bay type becomes (see its header).
 
@@ -15,7 +16,11 @@ the table skips are dropped; types it does not cover yet, or whose fork type doe
 reported, so the result always compiles. A tile left without a turf or area gets the fallbacks of the table. Only the
 vars of TRANSFERRED_VARS and those a rule of the table lists are kept from the var edits of the map.
 
-Needs bidict (for tools/mapmerge2) and Python 3.10 or newer.
+areas writes the DM of the map's areas: the Bay area types it places and their parents, under a root of their own
+(AREA_ROOTS), with the name, icon, sound environment and power the source gives them. It adds the icons of the areas
+the fork's icons/turf/areas.dmi lacks, and reports the ones it has with other sprites.
+
+Needs bidict (for tools/mapmerge2) and Python 3.10 or newer; areas also needs Pillow.
 """
 
 import argparse
@@ -48,6 +53,32 @@ MAPS = {
 BAY_CODE = {
     "torch": ["code", "packs", "maps/torch"],
 }
+
+# The root the areas of each map go under, and the name and power network of the root
+AREA_ROOTS = {
+    "torch": ("/area/torch", "SEV Torch", "torch"),
+}
+
+# Sound environments of the source (code/game/sound.dm there) and the CM define of the same environment
+SOUND_ENVIRONMENTS = {
+    "STANDARD_STATION": "SOUND_ENVIRONMENT_STONEROOM",
+    "LARGE_ENCLOSED": "SOUND_ENVIRONMENT_HANGAR",
+    "SMALL_ENCLOSED": "SOUND_ENVIRONMENT_BATHROOM",
+    "TUNNEL_ENCLOSED": "SOUND_ENVIRONMENT_CAVE",
+    "LARGE_SOFTFLOOR": "SOUND_ENVIRONMENT_CARPETED_HALLWAY",
+    "MEDIUM_SOFTFLOOR": "SOUND_ENVIRONMENT_LIVINGROOM",
+    "SMALL_SOFTFLOOR": "SOUND_ENVIRONMENT_ROOM",
+    "ASTEROID": "SOUND_ENVIRONMENT_CAVE",
+    "SPACE": "SOUND_ENVIRONMENT_UNDERWATER",
+    "PLAIN": "SOUND_ENVIRONMENT_PLAIN",
+    "ARENA": "SOUND_ENVIRONMENT_ARENA",
+    "AUDITORIUM": "SOUND_ENVIRONMENT_AUDITORIUM",
+    "CONCERT_HALL": "SOUND_ENVIRONMENT_CONCERT_HALL",
+    "FOREST": "SOUND_ENVIRONMENT_FOREST",
+}
+
+# The fork's file of area icons, which the areas of every map share
+AREA_ICONS = os.path.join(SCRIPT_DIRECTORY, "..", "icons", "turf", "areas.dmi")
 
 # The fork code the converted types are checked against, relative to this repository
 FORK_CODE = ["code", "modular_chaos"]
@@ -330,7 +361,7 @@ def convert_atom(table, fork_tree, atom, dropped):
     fork_vars = [(kept[name], value) for name, value in bay_vars.items() if name in kept]
     first, *rest = detail.split("+")
     if fork_vars:
-        first += "{" + "; ".join(f"{name} = {value}" for name, value in fork_vars) + "}"
+        first += "{" + ";".join(f"{name} = {value}" for name, value in fork_vars) + "}"
     return [first, *rest]
 
 
@@ -370,16 +401,99 @@ def convert(arguments):
             print(f"{count:>8} {path}" + (f" -> {detail} (missing)" if state == "missing" else ""))
 
 
+def first_line(value):
+    """The value of a var without what follows its first line, comments included."""
+    return value.split("\n", 1)[0].split("//", 1)[0].strip()
+
+
+def areas(arguments):
+    from dmi_files import Dmi
+
+    bay_tree = TypeTree().read(os.path.join(arguments.checkout, root) for root in BAY_CODE[arguments.map])
+    placed = placed_types(arguments.checkout, arguments.map)
+    root, root_name, powernet = AREA_ROOTS[arguments.map]
+    needed = set()
+    for path in placed:
+        if path.startswith("/area/") and path != "/area/space":
+            needed.update(ancestor for ancestor in bay_tree.ancestors(path) if ancestor != "/area")
+
+    blocks = [f"""//Areas of the {root_name} (the areas of maps/{arguments.map}/ and code/game/area/ in the source), written by
+//tools/port_map.py areas, which this should be written by again rather than edited: the area types of the source the
+//map places and their parents, under {root}, with their names, icons, sound environments and power.
+
+/// Every area of the {root_name}: a ship with its own power network, as on the Almayer
+{root}
+	name = "{root_name}"
+	icon = 'modular_chaos/universes/bay12/icons/turf/areas.dmi'
+	icon_state = "unknown"
+	ceiling = CEILING_METAL
+	powernet_name = "{powernet}"
+	sound_environment = SOUND_ENVIRONMENT_STONEROOM
+	ambience_exterior = AMBIENCE_ALMAYER
+	ceiling_muffle = FALSE
+	weather_enabled = FALSE"""]
+    icon_states = {"unknown"}
+    for path in sorted(needed):
+        bay_vars = {name: first_line(value) for name, value in bay_tree.vars.get(path, {}).items()}
+        lines = []
+        if "name" in bay_vars:
+            lines.append(f"name = {bay_vars['name']}")
+        if "icon_state" in bay_vars:
+            lines.append(f"icon_state = {bay_vars['icon_state']}")
+            icon_states.add(bay_vars["icon_state"].strip('"'))
+        if "sound_env" in bay_vars:
+            environment = SOUND_ENVIRONMENTS.get(bay_vars["sound_env"])
+            if environment:
+                lines.append(f"sound_environment = {environment}")
+            else:
+                print(f"{path}: no CM sound environment for {bay_vars['sound_env']}")
+        if bay_vars.get("requires_power") in ("0", "FALSE"):
+            lines += ["requires_power = FALSE", "unlimited_power = TRUE"]
+        if bay_vars.get("always_unpowered") in ("1", "TRUE"):
+            lines.append("always_unpowered = TRUE")
+        if not lines and not bay_tree.exists(path):
+            continue  # a node of the tree only, which DM makes from its subtypes
+        blocks.append("\n".join([root + path[len("/area"):]] + [f"\t{line}" for line in lines]))
+
+    with open(arguments.out, "w", newline="\n", encoding="utf-8") as file:
+        file.write("\n\n".join(blocks) + "\n")
+    print(f"{arguments.out}: {len(blocks)} areas")
+
+    source_icons = Dmi.load(os.path.join(arguments.checkout, "icons", "turf", "areas.dmi"))
+    fork_icons = Dmi.load(AREA_ICONS)
+    added = []
+    for name in sorted(icon_states):
+        state = source_icons.get(name)
+        if state is None:
+            print(f"the source has no area icon \"{name}\"")
+            continue
+        existing = fork_icons.get(name)
+        if existing is None:
+            fork_icons.states.append(state)
+            added.append(name)
+        elif [image.tobytes() for frames in existing.images for image in frames] != \
+                [image.tobytes() for frames in state.images for image in frames]:
+            print(f"areas.dmi has another \"{name}\" than the source")
+    if added:
+        fork_icons.save(AREA_ICONS)
+    print(f"areas.dmi: {len(added)} icons added")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("command", choices=["inventory", "convert"])
+    parser.add_argument("command", choices=["inventory", "convert", "areas"])
     parser.add_argument("checkout", help="path of a Baystation 12 checkout")
     parser.add_argument("--map", default="torch", choices=sorted(MAPS))
-    parser.add_argument("--out", help="output file (default: <map>_inventory.tsv or <map>.dmm here)")
+    parser.add_argument("--out", help="output file (default: <map>_inventory.tsv, <map>.dmm or <map>_areas.dm here)")
     arguments = parser.parse_args()
-    if not arguments.out:
-        arguments.out = f"{arguments.map}_inventory.tsv" if arguments.command == "inventory" else f"{arguments.map}.dmm"
-    (inventory if arguments.command == "inventory" else convert)(arguments)
+    commands = {
+        "inventory": (inventory, f"{arguments.map}_inventory.tsv"),
+        "convert": (convert, f"{arguments.map}.dmm"),
+        "areas": (areas, f"{arguments.map}_areas.dm"),
+    }
+    command, default_out = commands[arguments.command]
+    arguments.out = arguments.out or default_out
+    command(arguments)
 
 
 if __name__ == "__main__":

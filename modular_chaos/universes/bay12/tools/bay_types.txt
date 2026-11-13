@@ -18,6 +18,10 @@
 /turf/space  /turf/open/space
 /area/space  /area/space
 
+# Areas, written by port_map.py areas under the root of the map (code/game/area/torch.dm)
+
+/area/*  /area/torch/*
+
 # Floors
 
 /turf/simulated/floor  /turf/open/floor/plating/bay
@@ -124,7 +128,27 @@
 /obj/machinery/door/airlock/glass/research  /obj/structure/machinery/door/airlock/bay/research/glass  id_tag>id locked
 /obj/machinery/door/airlock/glass/science  /obj/structure/machinery/door/airlock/bay/science/glass  id_tag>id locked
 /obj/machinery/door/airlock/glass/security  /obj/structure/machinery/door/airlock/bay/security/glass  id_tag>id locked
+/obj/machinery/door/airlock/chaplain  /obj/structure/machinery/door/airlock/bay/chaplain  id_tag>id locked
+/obj/machinery/door/airlock/crystal  /obj/structure/machinery/door/airlock/bay/crystal  id_tag>id locked
+/obj/machinery/door/airlock/external/escapepod  /obj/structure/machinery/door/airlock/bay/external/escapepod  id_tag>id
+/obj/machinery/door/airlock/hatch/maintenance/bolted  /obj/structure/machinery/door/airlock/bay/hatch/maintenance/bolted  id_tag>id
+/obj/machinery/door/airlock/vault  /obj/structure/machinery/door/airlock/bay/vault  id_tag>id locked
+/obj/machinery/door/airlock/vault/bolted  /obj/structure/machinery/door/airlock/bay/vault/bolted  id_tag>id
+/obj/machinery/door/airlock/multi_tile  /obj/structure/machinery/door/airlock/bay/double  id_tag>id locked
+/obj/machinery/door/airlock/multi_tile/engineering  /obj/structure/machinery/door/airlock/bay/double/engineering  id_tag>id locked
+/obj/machinery/door/airlock/multi_tile/civilian  /obj/structure/machinery/door/airlock/bay/double/civilian  id_tag>id locked
+/obj/machinery/door/airlock/multi_tile/glass  /obj/structure/machinery/door/airlock/bay/double/glass  id_tag>id locked
+/obj/machinery/door/airlock/multi_tile/glass/civilian  /obj/structure/machinery/door/airlock/bay/double/glass/civilian  id_tag>id locked
+/obj/machinery/door/airlock/multi_tile/glass/command  /obj/structure/machinery/door/airlock/bay/double/glass/command  id_tag>id locked
+/obj/machinery/door/airlock/multi_tile/glass/security  /obj/structure/machinery/door/airlock/bay/double/glass/security  id_tag>id locked
+/obj/machinery/door/airlock/multi_tile/glass/medical  /obj/structure/machinery/door/airlock/bay/double/glass/medical  id_tag>id locked
+/obj/machinery/door/airlock/multi_tile/glass/research  /obj/structure/machinery/door/airlock/bay/double/glass/research  id_tag>id locked
 /obj/machinery/door/firedoor  /obj/structure/machinery/door/firedoor/bay
+/obj/machinery/door/blast/regular/escape_pod  /obj/structure/machinery/door/poddoor/bay/escape_pod  id_tag>id
+/obj/machinery/door/window/*  /obj/structure/machinery/door/window/bay/*
+/obj/machinery/door/window/brigdoor/*  /obj/structure/machinery/door/window/brigdoor/bay/*  id
+/obj/machinery/door/morgue  /obj/structure/machinery/door/morgue/bay
+/obj/machinery/door/unpowered/simple/plastic/*  /obj/structure/mineral_door/bay/plastic/*
 /obj/machinery/door/blast/regular  /obj/structure/machinery/door/poddoor/bay  id_tag>id
 /obj/machinery/door/blast/regular/open  /obj/structure/machinery/door/poddoor/bay/open  id_tag>id
 /obj/machinery/door/blast/shutters  /obj/structure/machinery/door/poddoor/shutters/bay  id_tag>id

@@ -42,3 +42,5 @@
 #define COLOR_BLUE_GRAY "#6a97b0"
 #define COLOR_SKY_BLUE "#5ca1cc"
 #define COLOR_CIVIE_GREEN "#b7f27d"
+#define COLOR_GRAY20 "#333333"
+#define COLOR_CRYSTAL "#00c8a5"

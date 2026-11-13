@@ -115,8 +115,9 @@ def multiply(image, color):
 
 
 def stack(*layers):
-	"""Layers drawn bottom to top; None ones are skipped."""
-	image = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+	"""Layers drawn bottom to top; None ones are skipped. The size is the first layer's, 32x32 if there is none."""
+	size = next((item.size for item in layers if item is not None), (32, 32))
+	image = Image.new("RGBA", size, (0, 0, 0, 0))
 	for item in layers:
 		if item is not None:
 			image.alpha_composite(item)

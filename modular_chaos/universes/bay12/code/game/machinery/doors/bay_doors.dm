@@ -57,6 +57,8 @@
 	var/stripe_color
 	/// Colour of the window of a glass door
 	var/window_color = GLASS_COLOR
+	/// Whether the door turns along the walls it is set in on Initialize(); two-tile doors keep their mapped dir
+	var/faces_walls = TRUE
 
 /obj/structure/machinery/door/airlock/bay/Initialize(mapload, ...)
 	if(color) // Painted in the map editor
@@ -64,7 +66,8 @@
 		color = null
 	icon = door_file
 	. = ..()
-	face_bay_walls()
+	if(faces_walls)
+		face_bay_walls()
 	update_icon()
 
 /obj/structure/machinery/door/airlock/bay/update_icon()
@@ -251,6 +254,15 @@
 	icon_state = "freezer"
 	door_color = COLOR_WHITE
 
+/obj/structure/machinery/door/airlock/bay/chaplain
+	icon_state = "chaplain"
+	stripe_color = COLOR_GRAY20
+
+/obj/structure/machinery/door/airlock/bay/crystal
+	name = "\improper Crystal Airlock"
+	icon_state = "crystal"
+	door_color = COLOR_CRYSTAL
+
 /// An airlock to space or another ship, red with a warning sign
 /obj/structure/machinery/door/airlock/bay/external
 	name = "\improper External Airlock"
@@ -268,6 +280,11 @@
 	opacity = FALSE
 	glass = TRUE
 
+/// The bolted door of an escape pod
+/obj/structure/machinery/door/airlock/bay/external/escapepod
+	name = "\improper Escape Pod"
+	locked = TRUE
+
 /// A round airtight hatch
 /obj/structure/machinery/door/airlock/bay/hatch
 	name = "\improper Airtight Hatch"
@@ -283,6 +300,9 @@
 	icon_state = "hatch_maintenance"
 	stripe_color = COLOR_AMBER
 
+/obj/structure/machinery/door/airlock/bay/hatch/maintenance/bolted
+	locked = TRUE
+
 /// A heavy airlock of bare plates for vaults and armouries
 /obj/structure/machinery/door/airlock/bay/highsecurity
 	name = "\improper Secure Airlock"
@@ -290,6 +310,111 @@
 	door_file = 'modular_chaos/universes/bay12/icons/obj/structures/doors/airlocks/secure/door.dmi'
 	fill_file = 'modular_chaos/universes/bay12/icons/obj/structures/doors/airlocks/secure/fill_steel.dmi'
 	lights_file = 'modular_chaos/universes/bay12/icons/obj/structures/doors/airlocks/secure/lights.dmi'
+
+/// The heavy door of a vault, which nothing sees through
+/obj/structure/machinery/door/airlock/bay/vault
+	name = "\improper Vault"
+	icon_state = "vault"
+	door_file = 'modular_chaos/universes/bay12/icons/obj/structures/doors/airlocks/vault/door.dmi'
+	fill_file = 'modular_chaos/universes/bay12/icons/obj/structures/doors/airlocks/vault/fill_steel.dmi'
+	lights_file = 'modular_chaos/universes/bay12/icons/obj/structures/doors/airlocks/vault/lights.dmi'
+
+/obj/structure/machinery/door/airlock/bay/vault/bolted
+	locked = TRUE
+
+/**
+ * A Bay airlock two tiles wide (/obj/machinery/door/airlock/multi_tile in the source)
+ *
+ * It spans the tile east of it if it faces north or south and the tile north of it otherwise, as in the source; CM doors
+ * do the other way round. The door turns along its walls before it initializes, as
+ * /obj/machinery/door/airlock/multi_tile/on_update_icon() does in the source: with walls only north or south of it,
+ * the far ones looked for past its second tile, it faces west and spans north; otherwise it faces south and spans east.
+ */
+/obj/structure/machinery/door/airlock/bay/double
+	name = "\improper Airlock"
+	icon = 'modular_chaos/universes/bay12/icons/obj/structures/doors/airlocks/previews_double.dmi'
+	icon_state = "double"
+	width = 2
+	faces_walls = FALSE
+	damage_cap = 650
+	door_file = 'modular_chaos/universes/bay12/icons/obj/structures/doors/airlocks/double/door.dmi'
+	fill_file = 'modular_chaos/universes/bay12/icons/obj/structures/doors/airlocks/double/fill_steel.dmi'
+	color_file = 'modular_chaos/universes/bay12/icons/obj/structures/doors/airlocks/double/color.dmi'
+	color_fill_file = 'modular_chaos/universes/bay12/icons/obj/structures/doors/airlocks/double/fill_color.dmi'
+	stripe_file = 'modular_chaos/universes/bay12/icons/obj/structures/doors/airlocks/double/stripe.dmi'
+	stripe_fill_file = 'modular_chaos/universes/bay12/icons/obj/structures/doors/airlocks/double/fill_stripe.dmi'
+	glass_file = 'modular_chaos/universes/bay12/icons/obj/structures/doors/airlocks/double/fill_glass.dmi'
+	lights_file = 'modular_chaos/universes/bay12/icons/obj/structures/doors/airlocks/double/lights.dmi'
+
+/obj/structure/machinery/door/airlock/bay/double/Initialize(mapload, ...)
+	var/connections = NONE
+	for(var/direction in GLOB.cardinals)
+		var/turf/neighbor = get_step(src, direction)
+		if(direction & (NORTH|EAST))
+			neighbor = get_step(neighbor, direction)
+		if(!neighbor)
+			continue
+		if(istype(neighbor, /turf/closed/wall) || (locate(/obj/structure/window/framed) in neighbor) || (locate(/obj/structure/window_frame) in neighbor))
+			connections |= direction
+	setDir((connections && !(connections & (EAST|WEST))) ? WEST : SOUTH)
+	return ..()
+
+/// Spans the tiles the way the source does, which its sprites are drawn for: east if it faces north or south, the other way round from CM doors
+/obj/structure/machinery/door/airlock/bay/double/handle_multidoor()
+	if(dir in list(NORTH, SOUTH))
+		bound_width = width * world.icon_size
+		bound_height = world.icon_size
+	else
+		bound_width = world.icon_size
+		bound_height = width * world.icon_size
+	change_filler_opacity(opacity)
+
+/obj/structure/machinery/door/airlock/bay/double/locate_filler_turfs()
+	var/list/located_turfs = list()
+	for(var/i in 1 to width - 1)
+		var/turf/filler = (dir in list(NORTH, SOUTH)) ? locate(x + i, y, z) : locate(x, y + i, z)
+		if(filler)
+			located_turfs += filler
+	return located_turfs
+
+/obj/structure/machinery/door/airlock/bay/double/engineering
+	name = "\improper Maintenance Hatch"
+	icon_state = "double_engineering"
+	door_color = COLOR_AMBER
+
+/obj/structure/machinery/door/airlock/bay/double/civilian
+	icon_state = "double_civilian"
+	stripe_color = COLOR_CIVIE_GREEN
+
+/obj/structure/machinery/door/airlock/bay/double/glass
+	name = "\improper Glass Airlock"
+	icon_state = "double_glass"
+	opacity = FALSE
+	glass = TRUE
+
+/obj/structure/machinery/door/airlock/bay/double/glass/civilian
+	icon_state = "double_civilian_glass"
+	stripe_color = COLOR_CIVIE_GREEN
+
+/obj/structure/machinery/door/airlock/bay/double/glass/command
+	icon_state = "double_command_glass"
+	door_color = COLOR_COMMAND_BLUE
+	stripe_color = COLOR_SKY_BLUE
+
+/obj/structure/machinery/door/airlock/bay/double/glass/security
+	icon_state = "double_security_glass"
+	door_color = COLOR_NT_RED
+	stripe_color = COLOR_ORANGE
+
+/obj/structure/machinery/door/airlock/bay/double/glass/medical
+	icon_state = "double_medical_glass"
+	door_color = COLOR_WHITE
+	stripe_color = COLOR_DEEP_SKY_BLUE
+
+/obj/structure/machinery/door/airlock/bay/double/glass/research
+	icon_state = "double_research_glass"
+	door_color = COLOR_WHITE
+	stripe_color = COLOR_RESEARCH
 
 /// A Bay firedoor, a full-tile emergency shutter that faces along its walls like Bay airlocks
 /obj/structure/machinery/door/firedoor/bay
@@ -311,6 +436,10 @@
 	icon_state = "pdoor0"
 	density = FALSE
 
+/// The blast door that lets an escape pod go
+/obj/structure/machinery/door/poddoor/bay/escape_pod
+	name = "escape pod release door"
+
 /// Bay shutters; they keep the dir they are mapped with
 /obj/structure/machinery/door/poddoor/shutters/bay
 	icon = 'modular_chaos/universes/bay12/icons/obj/structures/doors/blastdoors_shutters.dmi'
@@ -318,3 +447,113 @@
 /obj/structure/machinery/door/poddoor/shutters/bay/open
 	icon_state = "shutter0"
 	density = FALSE
+
+// Windoors, the morgue door and simple doors
+
+/// A Bay windoor, /obj/machinery/door/window in the source: a CM windoor with the sprites of the source
+/obj/structure/machinery/door/window/bay
+	name = "interior door"
+	desc = "A strong door."
+	icon = 'modular_chaos/universes/bay12/icons/obj/structures/doors/windoor.dmi'
+
+/// A Bay brig door, /obj/machinery/door/window/brigdoor in the source: a CM brig door with the secure windoor sprites
+/obj/structure/machinery/door/window/brigdoor/bay
+	name = "secure door"
+	icon = 'modular_chaos/universes/bay12/icons/obj/structures/doors/windoor.dmi'
+	icon_state = "leftsecure"
+	base_state = "leftsecure"
+
+/obj/structure/machinery/door/window/bay/northleft
+	dir = NORTH
+
+/obj/structure/machinery/door/window/bay/eastleft
+	dir = EAST
+
+/obj/structure/machinery/door/window/bay/westleft
+	dir = WEST
+
+/obj/structure/machinery/door/window/bay/southleft
+	dir = SOUTH
+
+/obj/structure/machinery/door/window/bay/northright
+	dir = NORTH
+	icon_state = "right"
+	base_state = "right"
+
+/obj/structure/machinery/door/window/bay/eastright
+	dir = EAST
+	icon_state = "right"
+	base_state = "right"
+
+/obj/structure/machinery/door/window/bay/westright
+	dir = WEST
+	icon_state = "right"
+	base_state = "right"
+
+/obj/structure/machinery/door/window/bay/southright
+	dir = SOUTH
+	icon_state = "right"
+	base_state = "right"
+
+/obj/structure/machinery/door/window/brigdoor/bay/northleft
+	dir = NORTH
+	icon_state = "leftsecure"
+	base_state = "leftsecure"
+
+/obj/structure/machinery/door/window/brigdoor/bay/eastleft
+	dir = EAST
+	icon_state = "leftsecure"
+	base_state = "leftsecure"
+
+/obj/structure/machinery/door/window/brigdoor/bay/westleft
+	dir = WEST
+	icon_state = "leftsecure"
+	base_state = "leftsecure"
+
+/obj/structure/machinery/door/window/brigdoor/bay/southleft
+	dir = SOUTH
+	icon_state = "leftsecure"
+	base_state = "leftsecure"
+
+/obj/structure/machinery/door/window/brigdoor/bay/northright
+	dir = NORTH
+	icon_state = "rightsecure"
+	base_state = "rightsecure"
+
+/obj/structure/machinery/door/window/brigdoor/bay/eastright
+	dir = EAST
+	icon_state = "rightsecure"
+	base_state = "rightsecure"
+
+/obj/structure/machinery/door/window/brigdoor/bay/westright
+	dir = WEST
+	icon_state = "rightsecure"
+	base_state = "rightsecure"
+
+/obj/structure/machinery/door/window/brigdoor/bay/southright
+	dir = SOUTH
+	icon_state = "rightsecure"
+	base_state = "rightsecure"
+
+/// The sliding door of a morgue, /obj/machinery/door/morgue in the source
+/obj/structure/machinery/door/morgue/bay
+	icon = 'modular_chaos/universes/bay12/icons/obj/structures/doors/doormorgue.dmi'
+
+/// A Bay simple door (/obj/machinery/door/unpowered/simple in the source): a CM mineral door
+/obj/structure/mineral_door/bay
+	icon = 'modular_chaos/universes/bay12/icons/obj/structures/doors/material_doors.dmi'
+
+/obj/structure/mineral_door/bay/plastic
+	icon_state = "plastic"
+	mineralType = "plastic"
+
+/// A plastic door that starts open
+/obj/structure/mineral_door/bay/plastic/open
+	icon_state = "plasticopen"
+	open = TRUE
+	density = FALSE
+	opacity = FALSE
+
+/obj/structure/mineral_door/bay/plastic/open/Initialize(mapload, ...)
+	. = ..()
+	update_icon()

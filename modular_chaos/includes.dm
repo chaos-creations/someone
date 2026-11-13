@@ -172,6 +172,7 @@
 #include "universes\bay12\code\datums\race\vox_race.dm"
 #include "universes\bay12\code\game\area\cadaab.dm"
 #include "universes\bay12\code\game\area\castelnau.dm"
+#include "universes\bay12\code\game\area\torch.dm"
 #include "universes\bay12\code\game\machinery\doors\bay_doors.dm"
 #include "universes\bay12\code\game\objects\objs.dm"
 #include "universes\bay12\code\game\objects\effects\bay_paint.dm"

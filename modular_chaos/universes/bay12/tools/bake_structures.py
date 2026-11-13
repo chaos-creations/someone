@@ -9,11 +9,13 @@ icons/:
 - turf/walls/walls.dmi: the wall masks of steel, titanium and wooden walls and their map editor states;
 - turf/walls/windows.dmi: low wall frames, the glass on them, and panes on their own;
 - obj/structures/grille.dmi: grilles, on their own and on low walls;
-- obj/structures/: catwalks, lattices, railings, handrails, ladders and stairs, as they are;
+- obj/structures/: catwalks, lattices, railings, handrails, ladders and stairs, and in doors/ the windoors, the morgue
+  door and the plastic door, as they are;
 - obj/structures/doors/airlocks/<frame>/: for each airlock frame, door.dmi (the frame, its panel and welds) and the
   layers drawn over it: lights.dmi (bolt, deny and opening lights, sparks, the panel while opening) and the paint
   layers Bay has for that frame;
-- obj/structures/doors/airlocks/previews.dmi and the preview states of windows.dmi: the colour schemes of the types,
+- obj/structures/doors/airlocks/previews.dmi (previews_double.dmi for the two-tile ones, 64x64) and the preview states
+  of windows.dmi: the colour schemes of the types,
   baked, for the map editor only;
 - obj/structures/doors/firedoor.dmi and blastdoors_shutters.dmi: firedoors, blast doors and shutters, renamed only.
 
@@ -132,10 +134,10 @@ def bake_grilles():
 	write(dmi, "obj/structures/grille.dmi")
 
 
-# --- Structures on the floor ---------------------------------------------------------------------------------------
+# --- Icons copied as they are -------------------------------------------------------------------------------------
 
-# (file under icons/ in the source, states taken, file under icons/ here): copied as they are
-FLOOR_STRUCTURES = [
+# (file under icons/ in the source, states taken, file under icons/ here)
+COPIED_ICONS = [
 	("obj/structures/catwalks.dmi", ["catwalk", *[f"catwalk{n}" for n in range(8)], "plated", "catwalk_plated",
 		"catwalk_plateddark", "catwalk_platedwhite"], "obj/structures/catwalks.dmi"),
 	("obj/structures/smoothlattice.dmi", [f"lattice{n}" for n in range(16)], "obj/structures/lattice.dmi"),
@@ -146,12 +148,19 @@ FLOOR_STRUCTURES = [
 	("obj/structures/handrail.dmi", ["handrail"], "obj/structures/handrail.dmi"),
 	("obj/structures/structures.dmi", ["ladder00", "ladder01", "ladder10", "ladder11"], "obj/structures/ladders.dmi"),
 	("obj/structures/stairs.dmi", ["above"], "obj/structures/stairs.dmi"),
+	("obj/doors/windoor.dmi", [f"{side}{kind}{state}" for side in ("left", "right") for kind in ("", "secure")
+		for state in ("", "open", "opening", "closing", "deny", "spark")], "obj/structures/doors/windoor.dmi"),
+	("obj/doors/doormorgue.dmi", ["door1", "door0", "doorc0", "doorc1", "door_deny", "door_spark"],
+		"obj/structures/doors/doormorgue.dmi"),
+	("obj/doors/material_doors.dmi", ["plastic", "plasticopen", "plasticopening", "plasticclosing"],
+		"obj/structures/doors/material_doors.dmi"),
 ]
 
 
-def bake_floor_structures():
-	"""Catwalks, lattices, railings, handrails, ladders and stairs; catwalks, drawn from overlays, also get "blank"."""
-	for path, names, out in FLOOR_STRUCTURES:
+def bake_copied_icons():
+	"""Catwalks, lattices, railings, handrails, ladders, stairs and doors that need no conversion; catwalks, drawn from
+	overlays, also get "blank"."""
+	for path, names, out in COPIED_ICONS:
 		states = source(path)
 		blank = [blank_state()] if out == "obj/structures/catwalks.dmi" else []
 		write(Dmi(blank + [states.get(name) for name in names], states.width, states.height), out)
@@ -199,6 +208,12 @@ FRAMES = {
 		("fill_steel", "fill_steel"), ("stripe", "stripe"), ("fill_stripe", "fill_stripe"), ("bolts", "lights_bolts"),
 		("deny", "lights_deny"), ("lights", "lights_green"), ("panel", "panel"), ("welded", "welded"))}),
 	"secure": dict(STATION, door="obj/doors/secure/door.dmi", fill_steel="obj/doors/secure/fill_steel.dmi"),
+	"vault": dict(STATION, door="obj/doors/vault/door.dmi", fill_steel="obj/doors/vault/fill_steel.dmi"),
+	# Two tiles wide (64x64); it has no sparks of its own, and the station ones are of another size
+	"double": dict(STATION, sparks=None, **{key: f"obj/doors/double/{name}.dmi" for key, name in (("door", "door"),
+		("fill_steel", "fill_steel"), ("color", "color"), ("fill_color", "fill_color"), ("stripe", "stripe"),
+		("fill_stripe", "fill_stripe"), ("fill_glass", "fill_glass"), ("bolts", "lights_bolts"), ("deny", "lights_deny"),
+		("lights", "lights_green"), ("panel", "panel"), ("welded", "welded"))}),
 }
 
 # preview state, frame, door colour, stripe colour, glass; the types of bay_doors.dm
@@ -234,6 +249,22 @@ AIRLOCK_PREVIEWS = [
 	("hatch", "hatch", None, None, False),
 	("hatch_maintenance", "hatch", None, "#ffbf00", False),
 	("highsecurity", "secure", None, None, False),
+	("chaplain", "station", None, "#333333", False),
+	("crystal", "station", "#00c8a5", None, False),
+	("vault", "vault", None, None, False),
+]
+
+# The same for the two-tile airlocks, which have a preview file of their own as they are 64x64
+DOUBLE_AIRLOCK_PREVIEWS = [
+	("double", "double", None, None, False),
+	("double_glass", "double", None, None, True),
+	("double_engineering", "double", "#ffbf00", None, False),
+	("double_civilian", "double", None, "#b7f27d", False),
+	("double_civilian_glass", "double", None, "#b7f27d", True),
+	("double_command_glass", "double", "#46698c", "#5ca1cc", True),
+	("double_security_glass", "double", "#9d2300", "#ff9900", True),
+	("double_medical_glass", "double", "#ffffff", "#00e1ff", True),
+	("double_research_glass", "double", "#ffffff", "#a2819e", True),
 ]
 
 
@@ -249,19 +280,21 @@ def airlock_timing(files):
 	"""Frames and delays of each CM state, the same in every layer so that the overlays keep up with the door."""
 	animation = source(files["door"]).get("opening").frames
 	deny = source(files["door"]).get("deny")
-	sparks = source(files["sparks"]).get("closed")
 	timing = {name: (1, None) for name in DOOR_STATES}
 	for name in ("door_opening", "door_closing", "o_door_opening", "o_door_closing"):
 		timing[name] = (animation, [ANIMATION_DELAY] * animation)
 	timing["door_deny"] = (deny.frames, deny.delays)
-	timing["door_spark"] = (sparks.frames, sparks.delays)
+	if files["sparks"]:
+		sparks = source(files["sparks"]).get("closed")
+		timing["door_spark"] = (sparks.frames, sparks.delays)
 	return timing
 
 
 def bake_airlock_frame(frame_name, files):
 	timing = airlock_timing(files)
 	folder = f"obj/structures/doors/airlocks/{frame_name}/"
-	door = Dmi([door_state(files["door"], name, *timing[name]) for name in DOOR_STATES])
+	size = (source(files["door"]).width, source(files["door"]).height)
+	door = Dmi([door_state(files["door"], name, *timing[name]) for name in DOOR_STATES], *size)
 	door.states += [
 		make_state("panel_open", 4, 1, lambda d, f: layer(files["panel"], "closed", d, f)),
 		make_state("welded", 4, 1, lambda d, f: layer(files["welded"], "closed", d, f)),
@@ -282,14 +315,15 @@ def bake_airlock_frame(frame_name, files):
 		panel = files["panel"] if name.startswith("o_") else None
 		light_states.append(make_state(name, 4, frames, lambda d, f: stack(layer(panel, bay_name, d, f) if panel else None,
 			layer(path, bay_name, d, f)), delays, loop=1 if "ing" in name and name != "door_deny" else 0))
-	light_states.append(make_state("door_spark", 4, timing["door_spark"][0],
-		lambda d, f: layer(files["sparks"], "closed", d, f), timing["door_spark"][1]))
-	write(Dmi(light_states), folder + "lights.dmi")
+	if files["sparks"]:
+		light_states.append(make_state("door_spark", 4, timing["door_spark"][0],
+			lambda d, f: layer(files["sparks"], "closed", d, f), timing["door_spark"][1]))
+	write(Dmi(light_states, *size), folder + "lights.dmi")
 	for key in PAINT_LAYERS:
 		if frame_name != "station" and files[key] == STATION[key]:
 			continue
 		states = [door_state(files[key], name, *timing[name]) for name in DOOR_STATES]
-		write(Dmi([state for state in states if state]), folder + f"{key}.dmi")
+		write(Dmi([state for state in states if state], *size), folder + f"{key}.dmi")
 
 
 def airlock_look(files, door_color, stripe_color, glass):
@@ -306,9 +340,12 @@ def airlock_look(files, door_color, stripe_color, glass):
 
 
 def bake_airlock_previews():
-	dmi = Dmi([make_state(name, 1, 1, lambda _d, _f: airlock_look(FRAMES[frame], door_color, stripe_color, glass))
-		for name, frame, door_color, stripe_color, glass in AIRLOCK_PREVIEWS])
-	write(dmi, "obj/structures/doors/airlocks/previews.dmi")
+	for previews, out in ((AIRLOCK_PREVIEWS, "previews.dmi"), (DOUBLE_AIRLOCK_PREVIEWS, "previews_double.dmi")):
+		dmi = Dmi([make_state(name, 1, 1, lambda _d, _f, frame=frame, door_color=door_color, stripe_color=stripe_color,
+			glass=glass: airlock_look(FRAMES[frame], door_color, stripe_color, glass))
+			for name, frame, door_color, stripe_color, glass in previews])
+		dmi.width, dmi.height = source(FRAMES[previews[0][1]]["door"]).width, source(FRAMES[previews[0][1]]["door"]).height
+		write(dmi, f"obj/structures/doors/airlocks/{out}")
 
 
 # --- Firedoors, blast doors, shutters ------------------------------------------------------------------------------
@@ -342,7 +379,7 @@ def main():
 	bake_walls()
 	bake_windows()
 	bake_grilles()
-	bake_floor_structures()
+	bake_copied_icons()
 	for frame_name, frame_files in FRAMES.items():
 		bake_airlock_frame(frame_name, frame_files)
 	bake_airlock_previews()

@@ -40,7 +40,8 @@ Assets are taken only for what the universe needs, not everything the source's m
 - the SEV Torch of Baystation 12 and everything it needs, ported as Bay has it rather than with CM counterparts (see
   "Porting a map"); so far the steel, titanium, osmium-carbide plasteel and walnut walls in the paints it uses and the
   coats of paint that repaint them, windows of plain, reinforced, borosilicate and electrochromic glass on low walls of
-  every material, panes and grilles, the airlocks of every department, firedoors, blast doors and shutters, catwalks,
+  every material, panes and grilles, the airlocks of every department, two tiles wide too, vault, crystal and escape pod
+  doors, windoors and brig doors, the morgue door, plastic doors, firedoors, blast doors and shutters, its areas, catwalks,
   lattices, railings, handrails, ladders and stairs, its floors
   (plating, tiles, carpets, wood, linoleum, grass, the pool, mainframe and crystal floors, hull plating) with Bay's
   borders and damage overlays, and its floor decals, signs and logos;
@@ -98,6 +99,8 @@ bidict installed:
   the status of each, in a TSV and a summary by category;
 - `python port_map.py convert <checkout> --out <file>` stacks the map's decks into one multi-z `.dmm`, from the lowest
   up. Types without a fork counterpart yet are dropped and listed, so the result always loads.
+- `python port_map.py areas <checkout> --out <file>` writes the DM of the map's areas, the Bay area tree under a root
+  of the map's own (`code/game/area/torch.dm`), and adds their icons to `icons/turf/areas.dmi`.
 
 Both follow `tools/bay_types.txt`, the table of which fork type each Bay type becomes, or why it is skipped: the
 overmap, atmospherics, research and development, xenoarchaeology, the AI and cyborgs, and the engine (supermatter and
