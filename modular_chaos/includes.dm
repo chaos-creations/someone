@@ -163,6 +163,7 @@
 #include "universes\bay12\code\__DEFINES\origins.dm"
 #include "universes\bay12\code\__DEFINES\races.dm"
 #include "universes\bay12\code\__DEFINES\rig.dm"
+#include "universes\bay12\code\__DEFINES\turfs.dm"
 #include "universes\bay12\code\_globalvars\global_lists.dm"
 #include "universes\bay12\code\datums\ammo\energy.dm"
 #include "universes\bay12\code\datums\factions\lordania.dm"

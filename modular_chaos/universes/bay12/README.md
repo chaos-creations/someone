@@ -36,11 +36,12 @@ Assets are taken only for what the universe needs, not everything the source's m
   the noose;
 - for the Castelnau map, the base Baystation 12 floor tiles and floor decals it places, which carry the department
   colours of the ship: the tiles with the colour Bay gives their turf baked in (a coloured turf would tint the decals
-  on it), with the damaged and scorched states of upstream's `icons/turf/almayer.dmi`, and the decals as they are; its
-  walls, carpets, wood and machines become CM counterparts;
+  on it), and the decals as they are; its walls, carpets, wood and machines became CM counterparts;
 - the SEV Torch of Baystation 12 and everything it needs, ported as Bay has it rather than with CM counterparts (see
-  "Porting a map"); so far the steel, titanium and osmium-carbide plasteel walls in the paints it uses, reinforced
-  windows on low walls, the airlocks of every department, firedoors, blast doors and shutters;
+  "Porting a map"); so far the steel, titanium, osmium-carbide plasteel and walnut walls in the paints it uses,
+  reinforced windows on low walls, the airlocks of every department, firedoors, blast doors and shutters, its floors
+  (plating, tiles, carpets, wood, linoleum, grass, the pool, mainframe and crystal floors, hull plating) with Bay's
+  borders and damage overlays, and its floor decals, signs and logos;
 - Lordania: its clothing, flags, banner, memorial and statues, from Proxi-BoS-Bay12 commit
   [`e4e6c18`](https://github.com/Proxima-Project/Proxi-BoS-Bay12/commit/e4e6c1845b4e5b9b94017987a96f29eef88436af).
 
@@ -60,7 +61,9 @@ Assets are taken only for what the universe needs, not everything the source's m
   floor decals in `icons/turf/floors/decals.dmi`, areas in `icons/turf/areas.dmi`, other decals (graffiti, painted
   signs) in `icons/effects/decals.dmi`, props in `icons/obj/structures/props/props.dmi`, posters and paintings in
   `icons/obj/structures/props/wall_decorations/`. A sprite of another size goes in a file of its own named with the
-  size (`props_48x48.dmi`), and a state whose name another map already uses gets a suffix (`engineering_alt`);
+  size (`props_48x48.dmi`), and a state whose name another map already uses gets a suffix (`engineering_alt`). A floor
+  logo that maps put together from pieces they pick by icon_state keeps a file of its own, with the source's states
+  (`icons/turf/floors/solgov_floor.dmi`);
 - the ambience of a map in `sound/ambience/<map>/`, the rest of the sounds in the folders they have in the source.
 
 File names are lowercase. Where two sources, or two layers of Proxi-BoS-Bay12 (BoS, BoH, Ark, Proxima, Mithra on top
@@ -96,6 +99,10 @@ bidict installed:
 Both follow `tools/bay_types.txt`, the table of which fork type each Bay type becomes, or why it is skipped: the
 overmap, atmospherics, research and development, xenoarchaeology, the AI and cyborgs, and the engine (supermatter and
 fusion) are not ported for now. A newly ported Bay type gets its rule there.
+
+`tools/bake_floors.py`, run with the path of a Baystation 12 checkout, adds the floors and floor decals of the ported
+maps to the shared `floors.dmi` and `decals.dmi`, the colour Bay gives some floors baked in, and copies the floor
+logos. `tools/dmi_files.py` reads and writes the .dmi files for it and for `tools/bake_structures.py`.
 
 ## Walls, windows and doors
 

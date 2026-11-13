@@ -12,6 +12,11 @@
 /// The colour of glass, of windows and of the windows of glass airlocks
 #define GLASS_COLOR "#aaccff"
 
+// Woods: the colour of wooden walls and floors, by the wood
+#define WOOD_COLOR_GENERIC "#d5a66e"
+#define WOOD_COLOR_PALE "#d2bc9d"
+#define WOOD_COLOR_CHOCOLATE "#543c30"
+
 // Wall paints
 #define COLOR_WALL_GUNMETAL "#353a42"
 #define COLOR_GUNMETAL "#545c68"

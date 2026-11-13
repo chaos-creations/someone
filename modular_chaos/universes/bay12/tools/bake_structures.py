@@ -6,7 +6,7 @@ script only renames their states to the ones the CM types use, and lines up the 
 state of the door (an overlay without an icon_state shows the state its door shows, flicks included). It writes, under
 icons/:
 
-- turf/walls/walls.dmi: the wall masks of steel and titanium walls and their map editor states;
+- turf/walls/walls.dmi: the wall masks of steel, titanium and wooden walls and their map editor states;
 - turf/walls/windows.dmi: low wall frames and the reinforced glass on them;
 - obj/structures/doors/airlocks/<frame>/: for each airlock frame, door.dmi (the frame, its panel and welds) and the
   layers drawn over it: lights.dmi (bolt, deny and opening lights, sparks, the panel while opening) and the paint
@@ -22,9 +22,10 @@ code/game/machinery/doors/bay_doors.dm and code/game/objects/structures/bay_wind
 import os
 import sys
 
-from PIL import Image, PngImagePlugin
+from dmi_files import Dmi, blank_state, make_state, multiply, stack
 
-BAY = os.path.join(sys.argv[1], "icons") if len(sys.argv) > 1 else sys.exit(__doc__)
+# The icons/ folder of the Baystation 12 checkout, set by main()
+BAY = None
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "icons")
 
 GLASS_COLOR = "#aaccff"
@@ -32,93 +33,9 @@ GLASS_COLOR = "#aaccff"
 ANIMATION_DELAY = 1
 
 
-# --- DMI files -----------------------------------------------------------------------------------------------------
+# --- Source icons --------------------------------------------------------------------------------------------------
 
-class State:
-	def __init__(self, name, dirs=1, frames=1, delays=None, loop=0, rewind=0):
-		self.name = name
-		self.dirs = dirs
-		self.frames = frames
-		self.delays = delays
-		self.loop = loop
-		self.rewind = rewind
-		self.images = []  # images[dir index][frame], dirs in the DMI order S, N, E, W
-
-	def renamed(self, name, delays=None):
-		copy = State(name, self.dirs, self.frames, delays or self.delays, self.loop, self.rewind)
-		copy.images = self.images
-		return copy
-
-
-class Dmi:
-	def __init__(self, states=None):
-		self.states = states or []
-
-	def get(self, name):
-		for state in self.states:
-			if state.name == name:
-				return state
-		return None
-
-	@staticmethod
-	def load(path):
-		sheet = Image.open(path)
-		description = sheet.info["Description"]
-		sheet = sheet.convert("RGBA")
-		dmi = Dmi()
-		width = height = 32
-		entries = []
-		for line in description.splitlines():
-			key, _, value = line.strip().partition(" = ")
-			if key == "width":
-				width = int(value)
-			elif key == "height":
-				height = int(value)
-			elif key == "state":
-				entries.append({"name": value[1:-1]})
-			elif entries:
-				entries[-1][key] = value
-		columns = sheet.width // width
-		index = 0
-		for entry in entries:
-			state = State(entry["name"], int(entry.get("dirs", 1)), int(entry.get("frames", 1)),
-				[float(x) for x in entry["delay"].split(",")] if "delay" in entry else None,
-				int(entry.get("loop", 0)), int(entry.get("rewind", 0)))
-			state.images = [[None] * state.frames for _ in range(state.dirs)]
-			for frame in range(state.frames):
-				for dir_index in range(state.dirs):
-					x, y = (index % columns) * width, (index // columns) * height
-					state.images[dir_index][frame] = sheet.crop((x, y, x + width, y + height))
-					index += 1
-			dmi.states.append(state)
-		return dmi
-
-	def save(self, path):
-		count = sum(state.dirs * state.frames for state in self.states)
-		columns = max(1, round(count ** 0.5 + 0.5))
-		rows = -(-count // columns)
-		sheet = Image.new("RGBA", (columns * 32, rows * 32), (0, 0, 0, 0))
-		lines = ["# BEGIN DMI", "version = 4.0", "\twidth = 32", "\theight = 32"]
-		index = 0
-		for state in self.states:
-			lines += [f'state = "{state.name}"', f"\tdirs = {state.dirs}", f"\tframes = {state.frames}"]
-			if state.frames > 1:
-				lines.append("\tdelay = " + ",".join(f"{x:g}" for x in state.delays))
-			if state.loop:
-				lines.append(f"\tloop = {state.loop}")
-			if state.rewind:
-				lines.append(f"\trewind = {state.rewind}")
-			for frame in range(state.frames):
-				for dir_index in range(state.dirs):
-					sheet.paste(state.images[dir_index][frame], ((index % columns) * 32, (index // columns) * 32))
-					index += 1
-		lines.append("# END DMI")
-		info = PngImagePlugin.PngInfo()
-		info.add_text("Description", "\n".join(lines) + "\n", zip=True)
-		os.makedirs(os.path.dirname(path), exist_ok=True)
-		sheet.save(path, format="PNG", pnginfo=info, optimize=True)
-
-
+# Path under icons/ -> the Dmi read from the checkout
 _loaded = {}
 
 
@@ -136,37 +53,6 @@ def layer(path, state_name, dir_index, frame):
 	return state.images[min(dir_index, state.dirs - 1)][min(frame, state.frames - 1)]
 
 
-def multiply(image, color):
-	"""The image with its colour channels multiplied by color, as the color var of an overlay does."""
-	if image is None or color is None:
-		return image
-	red, green, blue = (int(color[i:i + 2], 16) for i in (1, 3, 5))
-	r, g, b, a = image.split()
-	return Image.merge("RGBA", (r.point(lambda v: v * red // 255), g.point(lambda v: v * green // 255),
-		b.point(lambda v: v * blue // 255), a))
-
-
-def stack(*layers):
-	"""Layers drawn bottom to top; None ones are skipped."""
-	image = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
-	for item in layers:
-		if item is not None:
-			image.alpha_composite(item)
-	return image
-
-
-def make_state(name, dirs, frames, painter, delays=None, loop=0):
-	"""A state whose images painter(dir index, frame) draws."""
-	state = State(name, dirs, frames, delays if frames > 1 else None, loop)
-	state.images = [[painter(dir_index, frame) for frame in range(frames)] for dir_index in range(dirs)]
-	return state
-
-
-def blank_state():
-	"""The empty state that atoms drawn wholly from overlays (walls, windows) set as their icon_state."""
-	return make_state("blank", 1, 1, lambda _d, _f: stack())
-
-
 def write(dmi, path):
 	dmi.save(os.path.join(OUT, path))
 	print(f"wrote {path}: {len(dmi.states)} states")
@@ -178,8 +64,9 @@ def bake_walls():
 	masks = source("turf/wall_masks.dmi")
 	dmi = Dmi([blank_state()])
 	# The map editor states, which the types colour through their color var
-	dmi.states += [masks.get(name) for name in ("generic", "r_generic", "titanium", "r_titanium")]
-	for prefix in ("solid", "solid_paint", "solid_stripe", "solid_other", "reinf_over", "metal", "metal_paint"):
+	dmi.states += [masks.get(name) for name in ("generic", "r_generic", "titanium", "r_titanium", "woodneric")]
+	for prefix in ("solid", "solid_paint", "solid_stripe", "solid_other", "reinf_over", "metal", "metal_paint", "wood",
+			"wood_paint", "wood_stripe", "wood_other"):
 		dmi.states += [masks.get(f"{prefix}{corner_state}") for corner_state in range(8)]
 	dmi.states.append(masks.get("reinf_metal"))
 	write(dmi, "turf/walls/walls.dmi")
@@ -392,10 +279,19 @@ def bake_blast_doors():
 		"obj/structures/doors/blastdoors_shutters.dmi")
 
 
-bake_walls()
-bake_windows()
-for frame_name, frame_files in FRAMES.items():
-	bake_airlock_frame(frame_name, frame_files)
-bake_airlock_previews()
-bake_firedoor()
-bake_blast_doors()
+def main():
+	global BAY
+	if len(sys.argv) < 2:
+		sys.exit(__doc__)
+	BAY = os.path.join(sys.argv[1], "icons")
+	bake_walls()
+	bake_windows()
+	for frame_name, frame_files in FRAMES.items():
+		bake_airlock_frame(frame_name, frame_files)
+	bake_airlock_previews()
+	bake_firedoor()
+	bake_blast_doors()
+
+
+if __name__ == "__main__":
+	main()

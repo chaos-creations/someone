@@ -1,5 +1,5 @@
-//Floor decals of Baystation 12 (/obj/effect/floor_decal in the source), as Castelnau places them: the department trims,
-//borders and industrial markings. The paths are the ones of the source under /obj/effect/floor_decal.
+//Floor decals of Baystation 12 (/obj/floor_decal in the source), as Castelnau and the Torch place them: the department
+//trims, borders and industrial markings, floor signs and logos. The paths are the ones of the source under /obj/floor_decal.
 
 /**
  * A Bay floor decal
@@ -41,6 +41,14 @@
 /obj/effect/decal/bay_floor/borderfloorwhite/corner2
 	icon_state = "borderfloorcorner2_white"
 
+/obj/effect/decal/bay_floor/chapel
+	name = "chapel"
+	icon_state = "chapel"
+
+/obj/effect/decal/bay_floor/corner/b_green
+	name = "bottle green corner"
+	color = "#57967f"
+
 /obj/effect/decal/bay_floor/corner/beige
 	name = "beige corner"
 	color = "#ceb689"
@@ -63,6 +71,10 @@
 /obj/effect/decal/bay_floor/corner/beige/three_quarters
 	icon_state = "corner_white_three_quarters"
 
+/obj/effect/decal/bay_floor/corner/black
+	name = "black corner"
+	color = "#333333"
+
 /obj/effect/decal/bay_floor/corner/blue
 	name = "blue corner"
 	color = "#6a97b0"
@@ -81,6 +93,12 @@
 
 /obj/effect/decal/bay_floor/corner/blue/full
 	icon_state = "corner_white_full"
+
+/obj/effect/decal/bay_floor/corner/blue/half
+	icon_state = "bordercolorhalf"
+
+/obj/effect/decal/bay_floor/corner/blue/mono
+	icon_state = "bordercolormonofull"
 
 /obj/effect/decal/bay_floor/corner/blue/three_quarters
 	icon_state = "corner_white_three_quarters"
@@ -129,13 +147,21 @@
 /obj/effect/decal/bay_floor/corner/green/half
 	icon_state = "bordercolorhalf"
 
+/obj/effect/decal/bay_floor/corner/green/mono
+	icon_state = "bordercolormonofull"
+
 /obj/effect/decal/bay_floor/corner/green/three_quarters
 	icon_state = "corner_white_three_quarters"
 
-/obj/effect/decal/bay_floor/corner/grey/diagonal
+/obj/effect/decal/bay_floor/corner/grey
 	name = "grey corner"
-	icon_state = "corner_white_diagonal"
 	color = "#8d8c8c"
+
+/obj/effect/decal/bay_floor/corner/grey/border
+	icon_state = "bordercolor"
+
+/obj/effect/decal/bay_floor/corner/grey/diagonal
+	icon_state = "corner_white_diagonal"
 
 /obj/effect/decal/bay_floor/corner/lightgrey/border
 	name = "lightgrey corner"
@@ -147,15 +173,21 @@
 	icon_state = "bordercolorcorner2"
 	color = "#a8b2b6"
 
-/obj/effect/decal/bay_floor/corner/lime/border
+/obj/effect/decal/bay_floor/corner/lime
 	name = "lime corner"
-	icon_state = "bordercolor"
 	color = "#aed18b"
 
+/obj/effect/decal/bay_floor/corner/lime/border
+	icon_state = "bordercolor"
+
 /obj/effect/decal/bay_floor/corner/lime/bordercorner2
-	name = "lime corner"
 	icon_state = "bordercolorcorner2"
-	color = "#aed18b"
+
+/obj/effect/decal/bay_floor/corner/lime/mono
+	icon_state = "bordercolormonofull"
+
+/obj/effect/decal/bay_floor/corner/lime/three_quarters
+	icon_state = "corner_white_three_quarters"
 
 /obj/effect/decal/bay_floor/corner/mauve
 	name = "mauve corner"
@@ -164,63 +196,78 @@
 /obj/effect/decal/bay_floor/corner/mauve/full
 	icon_state = "corner_white_full"
 
+/obj/effect/decal/bay_floor/corner/mauve/half
+	icon_state = "bordercolorhalf"
+
+/obj/effect/decal/bay_floor/corner/mauve/mono
+	icon_state = "bordercolormonofull"
+
 /obj/effect/decal/bay_floor/corner/mauve/three_quarters
 	icon_state = "corner_white_three_quarters"
 
-/obj/effect/decal/bay_floor/corner/orange/border
+/obj/effect/decal/bay_floor/corner/orange
 	name = "orange corner"
-	icon_state = "bordercolor"
 	color = "#b95a00"
 
-/obj/effect/decal/bay_floor/corner/paleblue/border
-	name = "pale blue corner"
+/obj/effect/decal/bay_floor/corner/orange/border
 	icon_state = "bordercolor"
+
+/obj/effect/decal/bay_floor/corner/orange/half
+	icon_state = "bordercolorhalf"
+
+/obj/effect/decal/bay_floor/corner/paleblue
+	name = "pale blue corner"
 	color = "#8bbbd5"
+
+/obj/effect/decal/bay_floor/corner/paleblue/border
+	icon_state = "bordercolor"
 
 /obj/effect/decal/bay_floor/corner/paleblue/bordercorner
-	name = "pale blue corner"
 	icon_state = "bordercolorcorner"
-	color = "#8bbbd5"
 
 /obj/effect/decal/bay_floor/corner/paleblue/bordercorner2
-	name = "pale blue corner"
 	icon_state = "bordercolorcorner2"
-	color = "#8bbbd5"
+
+/obj/effect/decal/bay_floor/corner/paleblue/diagonal
+	icon_state = "corner_white_diagonal"
 
 /obj/effect/decal/bay_floor/corner/paleblue/full
-	name = "pale blue corner"
 	icon_state = "corner_white_full"
-	color = "#8bbbd5"
+
+/obj/effect/decal/bay_floor/corner/paleblue/half
+	icon_state = "bordercolorhalf"
 
 /obj/effect/decal/bay_floor/corner/paleblue/mono
-	name = "pale blue corner"
 	icon_state = "bordercolormonofull"
-	color = "#8bbbd5"
+
+/obj/effect/decal/bay_floor/corner/paleblue/three_quarters
+	icon_state = "corner_white_three_quarters"
+
+/obj/effect/decal/bay_floor/corner/pink
+	name = "pink corner"
+	color = "#cc9090"
 
 /obj/effect/decal/bay_floor/corner/pink/border
-	name = "pink corner"
 	icon_state = "bordercolor"
-	color = "#cc9090"
 
 /obj/effect/decal/bay_floor/corner/pink/bordercorner
-	name = "pink corner"
 	icon_state = "bordercolorcorner"
-	color = "#cc9090"
 
 /obj/effect/decal/bay_floor/corner/pink/bordercorner2
-	name = "pink corner"
 	icon_state = "bordercolorcorner2"
-	color = "#cc9090"
 
 /obj/effect/decal/bay_floor/corner/pink/mono
-	name = "pink corner"
 	icon_state = "bordercolormonofull"
-	color = "#cc9090"
+
+/obj/effect/decal/bay_floor/corner/purple
+	name = "purple corner"
+	color = "#a2819e"
 
 /obj/effect/decal/bay_floor/corner/purple/bordercorner2
-	name = "purple corner"
 	icon_state = "bordercolorcorner2"
-	color = "#a2819e"
+
+/obj/effect/decal/bay_floor/corner/purple/half
+	icon_state = "bordercolorhalf"
 
 /obj/effect/decal/bay_floor/corner/red
 	name = "red corner"
@@ -235,6 +282,12 @@
 /obj/effect/decal/bay_floor/corner/red/bordercorner2
 	icon_state = "bordercolorcorner2"
 
+/obj/effect/decal/bay_floor/corner/red/diagonal
+	icon_state = "corner_white_diagonal"
+
+/obj/effect/decal/bay_floor/corner/red/full
+	icon_state = "corner_white_full"
+
 /obj/effect/decal/bay_floor/corner/red/half
 	icon_state = "bordercolorhalf"
 
@@ -243,6 +296,22 @@
 
 /obj/effect/decal/bay_floor/corner/red/three_quarters
 	icon_state = "corner_white_three_quarters"
+
+/obj/effect/decal/bay_floor/corner/research
+	name = "research corner"
+	color = "#a2819e"
+
+/obj/effect/decal/bay_floor/corner/research/half
+	icon_state = "bordercolorhalf"
+
+/obj/effect/decal/bay_floor/corner/research/mono
+	icon_state = "bordercolormonofull"
+
+/obj/effect/decal/bay_floor/corner/white
+	name = "white corner"
+
+/obj/effect/decal/bay_floor/corner/white/full
+	icon_state = "corner_white_full"
 
 /obj/effect/decal/bay_floor/corner/yellow
 	name = "yellow corner"
@@ -256,6 +325,15 @@
 
 /obj/effect/decal/bay_floor/corner/yellow/bordercorner2
 	icon_state = "bordercolorcorner2"
+
+/obj/effect/decal/bay_floor/corner/yellow/diagonal
+	icon_state = "corner_white_diagonal"
+
+/obj/effect/decal/bay_floor/corner/yellow/full
+	icon_state = "corner_white_full"
+
+/obj/effect/decal/bay_floor/corner/yellow/half
+	icon_state = "bordercolorhalf"
 
 /obj/effect/decal/bay_floor/corner/yellow/mono
 	icon_state = "bordercolormonofull"
@@ -279,9 +357,23 @@
 	icon_state = "manydot"
 	color = "#545c68"
 
-/obj/effect/decal/bay_floor/industrial/hatch/yellow
+/obj/effect/decal/bay_floor/floordetail/edgedrain
+	icon_state = "edge"
+
+/obj/effect/decal/bay_floor/industrial/hatch
 	name = "hatched marking"
 	icon_state = "delivery"
+
+/obj/effect/decal/bay_floor/industrial/hatch/blue
+	color = "#6a97b0"
+
+/obj/effect/decal/bay_floor/industrial/hatch/orange
+	color = "#b95a00"
+
+/obj/effect/decal/bay_floor/industrial/hatch/red
+	color = "#aa5f61"
+
+/obj/effect/decal/bay_floor/industrial/hatch/yellow
 	color = "#cfcf55"
 
 /obj/effect/decal/bay_floor/industrial/loading
@@ -312,6 +404,10 @@
 	name = "yellow outline"
 	color = "#cfcf55"
 
+/obj/effect/decal/bay_floor/industrial/shutoff
+	name = "shutoff valve marker"
+	icon_state = "shutoff"
+
 /obj/effect/decal/bay_floor/industrial/warning
 	name = "hazard stripes"
 	icon_state = "stripe"
@@ -329,6 +425,35 @@
 /obj/effect/decal/bay_floor/industrial/warning/fulltile
 	icon_state = "stripefulltile"
 
+/// One piece of the seal of the Sol Central Government on the floor; maps pick the piece with icon_state
+/obj/effect/decal/bay_floor/scglogo
+	icon = 'modular_chaos/universes/bay12/icons/turf/floors/solgov_floor.dmi'
+	icon_state = "center"
+
+/obj/effect/decal/bay_floor/sign
+	name = "floor sign"
+
+/obj/effect/decal/bay_floor/sign/d
+	icon_state = "white_d"
+
+/obj/effect/decal/bay_floor/sign/ex
+	icon_state = "white_ex"
+
+/obj/effect/decal/bay_floor/sign/or1
+	icon_state = "white_or1"
+
+/obj/effect/decal/bay_floor/sign/or2
+	icon_state = "white_or2"
+
+/obj/effect/decal/bay_floor/sign/pop
+	icon_state = "white_pop"
+
+/obj/effect/decal/bay_floor/sign/tr
+	icon_state = "white_tr"
+
+/obj/effect/decal/bay_floor/solarpanel
+	icon_state = "solarpanel"
+
 /obj/effect/decal/bay_floor/spline/fancy
 	name = "spline - fancy"
 	icon_state = "spline_fancy"
@@ -343,8 +468,27 @@
 	name = "spline - wood"
 	color = "#cb9e04"
 
+/obj/effect/decal/bay_floor/spline/fancy/wood/cee
+	icon_state = "spline_fancy_cee"
+
 /obj/effect/decal/bay_floor/spline/fancy/wood/corner
 	icon_state = "spline_fancy_corner"
+
+/obj/effect/decal/bay_floor/spline/plain
+	name = "spline - plain"
+	icon_state = "spline_plain"
+
+/obj/effect/decal/bay_floor/spline/plain/beige
+	color = "#ceb689"
+
+/obj/effect/decal/bay_floor/spline/plain/blue
+	color = "#6a97b0"
+
+/obj/effect/decal/bay_floor/spline/plain/green
+	color = "#8daf6a"
+
+/obj/effect/decal/bay_floor/spline/plain/red
+	color = "#aa5f61"
 
 /obj/effect/decal/bay_floor/steeldecal/steel_decals10
 	name = "steel decal"
@@ -368,3 +512,11 @@
 /obj/effect/decal/bay_floor/techfloor/corner
 	name = "techfloor corner"
 	icon_state = "techfloor_corners"
+
+/obj/effect/decal/bay_floor/techfloor/orange
+	icon_state = "techfloororange_edges"
+
+/// One corner of the logo of Torch Limited on the floor; maps pick the corner with icon_state
+/obj/effect/decal/bay_floor/torchltdlogo
+	icon = 'modular_chaos/universes/bay12/icons/turf/floors/corp_floor.dmi'
+	icon_state = "bottomleft"

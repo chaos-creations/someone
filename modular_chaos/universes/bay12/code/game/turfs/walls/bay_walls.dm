@@ -19,7 +19,7 @@
 	icon_state = "generic"
 	walltype = "solid"
 	special_icon = TRUE
-	/// Prefix of the masks of the wall itself: "solid" or "metal"; the paint, stripe and edge masks add "_paint", "_stripe" and "_other"
+	/// Prefix of the masks of the wall itself: "solid", "metal" or "wood"; the paint, stripe and edge masks add "_paint", "_stripe" and "_other"
 	var/wall_icon_base = "solid"
 	/// Icon state of the reinforcement over the wall, null if it has none; one with directional states "[wall_icon_reinf][corner state]" is drawn by corners
 	var/wall_icon_reinf
@@ -196,3 +196,12 @@
 	wall_icon_reinf = "reinf_over"
 	reinf_material_color = COLOR_OSMIUM_CARBIDE_PLASTEEL
 	damage_cap = HEALTH_WALL_REINFORCED
+
+/// /turf/simulated/wall/walnut in the source: a wall of walnut planks, with edges where it meets other walls
+/turf/closed/wall/bay/walnut
+	name = "walnut wall"
+	desc = "It seems to be a section of hull plated with walnut."
+	icon_state = "woodneric"
+	color = WOOD_COLOR_CHOCOLATE
+	wall_icon_base = "wood"
+	material_color = WOOD_COLOR_CHOCOLATE

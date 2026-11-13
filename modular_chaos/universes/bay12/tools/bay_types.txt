@@ -9,7 +9,7 @@
 # ones every atom keeps (dir, pixel offsets, name, desc, color), as "var" or "bay_var>fork_var".
 #
 # A tile whose turf or area is dropped gets these:
-@turf /turf/open/floor/plating/almayer
+@turf /turf/open/floor/plating/bay
 @area /area/space
 
 # Space
@@ -19,12 +19,29 @@
 
 # Floors
 
+/turf/simulated/floor  /turf/open/floor/plating/bay
+/turf/simulated/floor/airless  /turf/open/floor/plating/bay
+/turf/simulated/floor/plating  /turf/open/floor/plating/bay
 /turf/simulated/floor/tiled/*  /turf/open/floor/bay/tiled/*
 /turf/simulated/floor/reinforced/*  /turf/open/floor/bay/reinforced
+/turf/simulated/floor/shuttle_ceiling/*  /turf/open/floor/bay/hull_plating
+/turf/simulated/floor/carpet/*  /turf/open/floor/bay/carpet/*
+/turf/simulated/floor/lino  /turf/open/floor/bay/linoleum
+/turf/simulated/floor/wood/*  /turf/open/floor/bay/wood/*
+/turf/simulated/floor/grass  /turf/open/floor/bay/grass
+/turf/simulated/floor/pool  /turf/open/floor/bay/pool
+/turf/simulated/floor/bluegrid  /turf/open/floor/bay/circuit
+/turf/simulated/floor/greengrid/*  /turf/open/floor/bay/circuit/green
+/turf/simulated/floor/selfestructgrid  /turf/open/floor/bay/circuit/self_destruct
+/turf/simulated/floor/crystal  /turf/open/floor/bay/crystal
+/turf/simulated/open  /turf/open_space
 
 # Floor decals
 
 /obj/floor_decal/*  /obj/effect/decal/bay_floor/*
+/obj/floor_decal/scglogo  /obj/effect/decal/bay_floor/scglogo  icon_state
+/obj/floor_decal/torchltdlogo  /obj/effect/decal/bay_floor/torchltdlogo  icon_state
+/obj/floor_decal/reset  skip  map helper
 
 # Walls
 
@@ -34,6 +51,7 @@
 /turf/simulated/wall/titanium  /turf/closed/wall/bay/titanium
 /turf/simulated/wall/r_titanium  /turf/closed/wall/bay/titanium/reinforced
 /turf/simulated/wall/ocp_wall  /turf/closed/wall/bay/ocp
+/turf/simulated/wall/walnut  /turf/closed/wall/bay/walnut
 
 # Windows
 
