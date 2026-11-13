@@ -33,6 +33,11 @@ fi
 code_files="$code_files modular_chaos/**/**.dm"
 code_x_515="$code_x_515 modular_chaos/**/**.dm"
 # CHAOS-EDIT END
+# CHAOS-EDIT START: run the map lints on the maps of the universes too, if there are any (an unmatched glob would stay literal)
+if compgen -G "modular_chaos/universes/*/maps/**/*.dmm" > /dev/null; then
+	map_files="$map_files modular_chaos/universes/*/maps/**/**.dmm"
+fi
+# CHAOS-EDIT END
 
 echo -e "${BLUE}Using grep provider at $(which $grep)${NC}"
 
@@ -173,19 +178,26 @@ if ls -1 tgui/**/*.jsx 2>/dev/null; then
 fi;
 
 part "map json naming"
-if ls maps/*.json | grep -P "[A-Z]"; then
+if ls maps/*.json $(compgen -G "modular_chaos/universes/*/maps/*.json" || true) | grep -P "[A-Z]"; then # CHAOS-EDIT: also the maps of the universes
 	echo
 	echo -e "${RED}ERROR: Uppercase in a map json detected, these must be all lowercase.${NC}"
 	st=1
 fi;
 
 part "map json sanity"
-for json in maps/*.json
+# CHAOS-EDIT START: also the maps of the universes, whose files are in the "map_root" of their JSON
+# for json in maps/*.json
+for json in maps/*.json $(compgen -G "modular_chaos/universes/*/maps/*.json" || true)
 do
+	map_root=$(jq -r '.map_root // "maps/"' $json)
 	map_path=$(jq -r '.map_path' $json)
-	override_map=$(jq -r '.override_map' $json)
+	# override_map=$(jq -r '.override_map' $json)
+	# upstream bug, drop this once upstream fixes it: jq -r prints "null" for a missing key, so -z below never held
+	override_map=$(jq -r '.override_map // empty' $json)
 	while read map_file; do
-		filename="maps/$map_path/$map_file"
+		# filename="maps/$map_path/$map_file"
+		filename="$map_root$map_path/$map_file"
+# CHAOS-EDIT END
 		if [ ! -f $filename ] && [ -z "$override_map" ]
 		then
 			echo

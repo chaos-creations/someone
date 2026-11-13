@@ -70,9 +70,12 @@ Baystation 12 one, `uniforms_bos.dmi` the BoS one and `rig_modules_sojourn.dmi` 
 `asset_sources.json` maps every file from Proxi-BoS-Bay12 to its path in the source, in the source's own case, or to a
 list of paths when it is put together from several files.
 
-Maps go in `maps/` like upstream's, where the map tools and the CI check them, or in `+secret/maps/` while they are
-not public (see `/datum/controller/configuration/loadmaplist()`); their areas, turfs and props are in this universe's
-`code/`.
+Maps go in this universe's `maps/`: the JSON of a map as `maps/<map>.json`, with
+`"map_root": "modular_chaos/universes/bay12/maps/"`, and its files in `maps/map_files/<Map>/`. The map lists that offer
+them are `map_config/maps.txt` and `map_config/shipmaps.txt`, in the format of upstream's `map_config/`, loaded after
+upstream's (`extra_map_sources` of `/datum/controller/configuration`). The CI tests, lints and compiles these maps like
+upstream's, and `tools/deploy.sh` copies both folders. A map that is not public yet goes in `+secret/maps/` instead.
+The areas, turfs and props of the maps are in this universe's `code/`.
 
 Assets are copied as they are, except that states nothing here needs are removed, and so are duplicate icon states,
 which the dmi test of the CI rejects: BYOND always uses the first state of a name, so only the later duplicates go and

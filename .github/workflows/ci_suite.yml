@@ -122,9 +122,14 @@ jobs:
       - name: Find Maps
         id: map_finder
         run: |
-          shopt -s extglob
-          echo "$(ls -mw0 maps/!(*override*).json)" > maps_output.txt
-          sed -i -e s+maps/+\"+g -e s+.json+\"+g maps_output.txt
+          # CHAOS-EDIT START: also test the maps of the universes, whose JSON is in modular_chaos/universes/*/maps/
+          # shopt -s extglob
+          # echo "$(ls -mw0 maps/!(*override*).json)" > maps_output.txt
+          # sed -i -e s+maps/+\"+g -e s+.json+\"+g maps_output.txt
+          shopt -s extglob nullglob
+          echo "$(ls -mw0 maps/!(*override*).json modular_chaos/universes/*/maps/*.json)" > maps_output.txt
+          sed -i -E 's#[^ ,]*/([^/ ,]+)\.json#"\1"#g' maps_output.txt
+          # CHAOS-EDIT END
           echo "Ignored Maps: $(cat .github/maps_to_ignore.txt)"
           cat .github/maps_to_ignore.txt | sed -r 's/\s*//g' | xargs -i sed -ri 's/(, "{}")|("{}", )//g' maps_output.txt
           echo "Maps: $(cat maps_output.txt)"

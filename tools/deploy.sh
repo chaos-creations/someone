@@ -31,6 +31,16 @@ cp -r strings/* $1/strings/
 cp -r config/* $1/config/
 cp -r nano/* $1/nano/
 cp -r map_config/* $1/map_config/
+# CHAOS-EDIT START: the universes load their maps and map lists from modular_chaos/universes/<universe>/ at runtime
+for universe in modular_chaos/universes/*/; do
+	for folder in maps map_config; do
+		if [ -d "$universe$folder" ]; then
+			mkdir -p "$1/$universe$folder"
+			cp -r "$universe$folder"/* "$1/$universe$folder/"
+		fi
+	done
+done
+# CHAOS-EDIT END
 
 #remove .dm files from _maps
 

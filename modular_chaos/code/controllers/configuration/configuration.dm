@@ -1,19 +1,26 @@
-/// Folder of the secret map lists, the counterpart of map_config/ in the +secret submodule
-#define SECRET_MAP_LISTS_DIRECTORY "+secret/map_config"
-/// Folder the map configs of the secret map lists are in, with a trailing slash
-#define SECRET_MAP_CONFIGS_DIRECTORY "+secret/maps/"
-
 /datum/controller/configuration
 	/// Folder loadmaplist() loads the map configs (JSON) of a map list from, with a trailing slash
 	var/map_configs_directory = "maps/"
+	/**
+	 * The map lists loaded after the one of map_config/, in this order: the folder of the lists, like map_config/, to
+	 * the folder their map configs (JSON) are in, with a trailing slash
+	 *
+	 * A universe keeps its maps in modular_chaos/universes/<universe>/: its lists in map_config/, the JSON of its maps
+	 * in maps/. The secret maps are in the +secret submodule, which CI and public clones do not have. A folder without
+	 * a list of that name is skipped.
+	 */
+	var/list/extra_map_sources = list(
+		"modular_chaos/universes/bay12/map_config" = "modular_chaos/universes/bay12/maps/",
+		"+secret/map_config" = "+secret/maps/",
+	)
 
 /**
- * Loads the map list of map_config/, then the map list of the same name in +secret/map_config/ if there is one
+ * Loads the map list of map_config/, then the lists of the same name in the folders of extra_map_sources
  *
- * The maps of a secret list are in +secret/maps/: "map foo" loads +secret/maps/foo.json, which must have
- * "map_root": "+secret/maps/" for its map files (see /datum/map_config/var/map_root). The secret lists are read with
- * the same parser as the public ones, so they take the same commands. Without the submodule (CI, public clones) there
- * are no secret lists and nothing changes.
+ * "map foo" in a list from extra_map_sources loads foo.json from the folder paired with the list's, and that JSON
+ * must have its folder as "map_root" for its map files (see /datum/map_config/var/map_root), as the JSON is copied to
+ * data/ when the map is picked. All the lists are read with the same parser, so they take the same commands, and an
+ * entry of a later list replaces an earlier one of the same map.
  *
  * Arguments:
  * * filename - name of the map list (CONFIG_GROUND_MAPS_FILE or CONFIG_SHIP_MAPS_FILE)
@@ -22,14 +29,12 @@
 /datum/controller/configuration/loadmaplist(filename, maptype)
 	CAN_BE_REDEFINED(TRUE)
 	..()
-	if(!fexists("[SECRET_MAP_LISTS_DIRECTORY]/[filename]"))
-		return
 	var/public_lists_directory = map_directory
-	map_directory = SECRET_MAP_LISTS_DIRECTORY
-	map_configs_directory = SECRET_MAP_CONFIGS_DIRECTORY
-	..()
+	for(var/lists_directory in extra_map_sources)
+		if(!fexists("[lists_directory]/[filename]"))
+			continue
+		map_directory = lists_directory
+		map_configs_directory = extra_map_sources[lists_directory]
+		..()
 	map_directory = public_lists_directory
 	map_configs_directory = initial(map_configs_directory)
-
-#undef SECRET_MAP_LISTS_DIRECTORY
-#undef SECRET_MAP_CONFIGS_DIRECTORY

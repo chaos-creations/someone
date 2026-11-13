@@ -75,9 +75,19 @@ export const NoWarningParameter = new Juke.Parameter({
 
 export const DmMapsIncludeTarget = new Juke.Target({
   executes: async () => {
-    const folders = [...Juke.glob("maps/**/*.dmm")];
+    // CHAOS-EDIT START: also compile the maps of the universes, included relative to maps/templates.dm
+    // const folders = [...Juke.glob("maps/**/*.dmm")];
+    // const content = `${folders
+    //   .map((file) => file.replace('maps/', ''))
+    const folders = [
+      ...Juke.glob("maps/**/*.dmm"),
+      ...Juke.glob("modular_chaos/universes/*/maps/**/*.dmm"),
+    ];
     const content = `${folders
-      .map((file) => file.replace('maps/', ''))
+      .map((file) =>
+        file.startsWith('maps/') ? file.replace('maps/', '') : `../${file}`,
+      )
+    // CHAOS-EDIT END
       .map((file) => `#include "${file}"`)
       .join('\n')}\n`;
     fs.writeFileSync("maps/templates.dm", content);
