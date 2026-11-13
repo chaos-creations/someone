@@ -83,7 +83,8 @@ The areas, turfs and props of the maps are in this universe's `code/`.
 Assets are copied as they are, except that states nothing here needs are removed, and so are duplicate icon states,
 which the dmi test of the CI rejects: BYOND always uses the first state of a name, so only the later duplicates go and
 the game shows the same. Merged into a shared file, a state keeps its name unless it clashes (see above). The tent of Cadaab has its states renamed to `tent` and `tent_open` (the closed one had no
-name).
+name). The worn states of the Lordanian uniforms are renamed the way CM names those of a uniform: without Bay's `_s`,
+and with rolled sleeves (`_r_s`) as `_d` and the jacket off (`_d_s`) as `_dj`, so that a uniform rolls and opens.
 
 ## Porting a map
 

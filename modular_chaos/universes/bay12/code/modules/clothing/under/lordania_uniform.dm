@@ -15,7 +15,6 @@
 	name = "marine urban utility uniform"
 	desc = "The utility uniform of the LSS Marine Corps, made from durable material."
 	icon_state = "greyutility"
-	worn_state = "greyutility_s"
 	armor_melee = CLOTHING_ARMOR_VERYLOW
 	armor_energy = CLOTHING_ARMOR_VERYLOW
 
@@ -23,4 +22,3 @@
 	name = "marine utility uniform"
 	desc = "A green version of the LSS Marine utility uniform, made from durable material."
 	icon_state = "greenutility"
-	worn_state = "greenutility_s"

@@ -175,10 +175,13 @@ There are several things that need to be remembered:
 	if(!(species.flags & HAS_EYELIDS) || eyelids_status == EYELID_OPEN || eyelids_status == EYELID_FLAYED)
 		var/image/eyes = image('icons/mob/humans/onmob/human_face.dmi', species.eyes, layer = -EYES_LAYER)
 		eyes.color = list(null, null, null, null, rgb(r_eyes, g_eyes, b_eyes))
-		. += eyes
+		// CHAOS-EDIT START: cmss13-devs/cmss13#13419, the glow of synthetic eyes goes on the eyes, as "." is no list here and "+=" on it runtimes; upstream bug, take upstream's version once the PR is merged
+		// . += eyes
 
 		if(HAS_TRAIT(src, TRAIT_INTENT_EYES))
-			. += emissive_appearance(icon = 'icons/mob/humans/onmob/human_face.dmi', icon_state = species.eyes)
+			// . += emissive_appearance(icon = 'icons/mob/humans/onmob/human_face.dmi', icon_state = species.eyes)
+			eyes.overlays += emissive_appearance(icon = 'icons/mob/humans/onmob/human_face.dmi', icon_state = species.eyes)
+		// CHAOS-EDIT END
 
 		overlays_standing[EYES_LAYER] = eyes
 		apply_overlay(EYES_LAYER)
