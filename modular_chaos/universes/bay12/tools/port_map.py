@@ -244,7 +244,12 @@ class TypesTable:
                     kept = {}
                     for word in extra:
                         source, _, target = word.partition(">")
-                        kept[source] = target or source
+                        target = target or source
+                        # The TGM reader of CM takes var names of letters and underscores only (var_edits_tgm in
+                        # code/modules/mapping/reader.dm); one with a digit makes it give the vars of the line before
+                        if not re.fullmatch(r"[A-Za-z_]+", target):
+                            sys.exit(f"{filename}:{number}: the map loader cannot read the var {target}")
+                        kept[source] = target
                     rule = (fork, "", kept)
                 if bay.endswith("/*"):
                     self.prefixes[bay[:-2]] = rule
@@ -421,13 +426,14 @@ def areas(arguments):
 //tools/port_map.py areas, which this should be written by again rather than edited: the area types of the source the
 //map places and their parents, under {root}, with their names, icons, sound environments and power.
 
-/// Every area of the {root_name}: a ship with its own power network, as on the Almayer
+/// Every area of the {root_name}: a ship whose power runs along its cables, as in the source
 {root}
 	name = "{root_name}"
 	icon = 'modular_chaos/universes/bay12/icons/turf/areas.dmi'
 	icon_state = "unknown"
 	ceiling = CEILING_METAL
 	powernet_name = "{powernet}"
+	bay_power = TRUE
 	sound_environment = SOUND_ENVIRONMENT_STONEROOM
 	ambience_exterior = AMBIENCE_ALMAYER
 	ceiling_muffle = FALSE

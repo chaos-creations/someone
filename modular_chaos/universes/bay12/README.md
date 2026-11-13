@@ -41,7 +41,8 @@ Assets are taken only for what the universe needs, not everything the source's m
   "Porting a map"); so far the steel, titanium, osmium-carbide plasteel and walnut walls in the paints it uses and the
   coats of paint that repaint them, windows of plain, reinforced, borosilicate and electrochromic glass on low walls of
   every material, panes and grilles, the airlocks of every department, two tiles wide too, vault, crystal and escape pod
-  doors, windoors and brig doors, the morgue door, plastic doors, firedoors, blast doors and shutters, its areas, catwalks,
+  doors, windoors and brig doors, the morgue door, plastic doors, firedoors, blast doors and shutters, its areas, its
+  power grid (see "Power"), catwalks,
   lattices, railings, handrails, ladders and stairs, its floors
   (plating, tiles, carpets, wood, linoleum, grass, the pool, mainframe and crystal floors, hull plating) with Bay's
   borders and damage overlays, and its floor decals, signs and logos;
@@ -109,6 +110,15 @@ fusion) are not ported for now. A newly ported Bay type gets its rule there.
 `tools/bake_floors.py`, run with the path of a Baystation 12 checkout, adds the floors and floor decals of the ported
 maps to the shared `floors.dmi` and `decals.dmi`, the colour Bay gives some floors baked in, and copies the floor
 logos. `tools/dmi_files.py` reads and writes the .dmi files for it and for `tools/bake_structures.py`.
+
+## Power
+
+CM has no power grid: every power machine joins the network named by the `powernet_name` of its area, and cables are
+only for show. The areas of Bay maps set `bay_power` instead (`code/modules/power/bay_powernet.dm`), and there power
+runs along Bay cables as in the source: a power machine joins the network of the cable knot on its turf, an SMES
+charges through the terminal next to it from what is left on that network once everything else drew, breaker boxes
+join networks, and a cut cable splits its network. The machines themselves are CM ones and take their power from the
+APC of their area as on any map, so CM maps keep their power as it was.
 
 ## Walls, windows and doors
 

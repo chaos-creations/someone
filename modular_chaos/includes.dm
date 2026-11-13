@@ -229,3 +229,8 @@
 #include "universes\bay12\code\modules\mob\new_player\sprite_accessories\hair.dm"
 #include "universes\bay12\code\modules\organs\organ_internal.dm"
 #include "universes\bay12\code\modules\organs\organ_objects.dm"
+#include "universes\bay12\code\modules\power\bay_apc.dm"
+#include "universes\bay12\code\modules\power\bay_breaker_box.dm"
+#include "universes\bay12\code\modules\power\bay_cable.dm"
+#include "universes\bay12\code\modules\power\bay_powernet.dm"
+#include "universes\bay12\code\modules\power\bay_smes.dm"

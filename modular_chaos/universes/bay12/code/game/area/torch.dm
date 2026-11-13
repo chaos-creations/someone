@@ -2,13 +2,14 @@
 //tools/port_map.py areas, which this should be written by again rather than edited: the area types of the source the
 //map places and their parents, under /area/torch, with their names, icons, sound environments and power.
 
-/// Every area of the SEV Torch: a ship with its own power network, as on the Almayer
+/// Every area of the SEV Torch: a ship whose power runs along its cables, as in the source
 /area/torch
 	name = "SEV Torch"
 	icon = 'modular_chaos/universes/bay12/icons/turf/areas.dmi'
 	icon_state = "unknown"
 	ceiling = CEILING_METAL
 	powernet_name = "torch"
+	bay_power = TRUE
 	sound_environment = SOUND_ENVIRONMENT_STONEROOM
 	ambience_exterior = AMBIENCE_ALMAYER
 	ceiling_muffle = FALSE

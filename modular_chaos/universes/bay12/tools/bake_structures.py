@@ -11,6 +11,8 @@ icons/:
 - obj/structures/grille.dmi: grilles, on their own and on low walls;
 - obj/structures/: catwalks, lattices, railings, handrails, ladders and stairs, and in doors/ the windoors, the morgue
   door and the plastic door, as they are;
+- obj/structures/machinery/apc.dmi: APCs, their lights coloured into the states CM draws, and power terminals;
+- obj/structures/machinery/smes.dmi and power_cond_white.dmi: SMES units and power cables, as they are;
 - obj/structures/doors/airlocks/<frame>/: for each airlock frame, door.dmi (the frame, its panel and welds) and the
   layers drawn over it: lights.dmi (bolt, deny and opening lights, sparks, the panel while opening) and the paint
   layers Bay has for that frame;
@@ -154,6 +156,7 @@ COPIED_ICONS = [
 		"obj/structures/doors/doormorgue.dmi"),
 	("obj/doors/material_doors.dmi", ["plastic", "plasticopen", "plasticopening", "plasticclosing"],
 		"obj/structures/doors/material_doors.dmi"),
+	("obj/machines/power/breakerbox.dmi", ["bbox", "bbox_lights", "bbox_panel"], "obj/structures/machinery/breakerbox.dmi"),
 ]
 
 
@@ -348,6 +351,49 @@ def bake_airlock_previews():
 		write(dmi, f"obj/structures/doors/airlocks/{out}")
 
 
+# --- Power ---------------------------------------------------------------------------------------------------------
+
+APC = "obj/machines/apc.dmi"
+# The colours the source gives the channel lights of an APC at runtime, in the order of the CM channel states:
+# off, off by the APC, on, on by the APC (COLOR_RED_LIGHT, COLOR_ORANGE_LIGHT, COLOR_GREEN_LIGHT, COLOR_BLUE_LIGHT)
+APC_CHANNEL_COLORS = ["#ff3333", "#ffcc33", "#33ff33", "#33ccff"]
+# The colours of the cover lock light, unlocked then locked
+APC_LOCK_COLORS = ["#33ff33", "#ff3333"]
+
+
+def bake_apc():
+	"""APCs with their lights coloured into the states CM draws ("apco<channel>-<state>", "apcox-<locked>"), the map
+	editor states CM APCs have, and the terminal."""
+	apc = source(APC)
+	dmi = Dmi([apc.get(name) for name in ("apc0", "apcewires", "apc-spark", "apcemag", "apcmaint", "apc1-b-nocover",
+		"apc1", "apc1-nocover", "apc2", "apc2-nocover", "apc2-b-nocover", "apc-b", "apco3-0", "apco3-1", "apco3-2",
+		"term")])
+	for channel in range(3):
+		for index, color in enumerate(APC_CHANNEL_COLORS):
+			dmi.states.append(make_state(f"apco{channel}-{index}", 4, 1,
+				lambda d, _f, channel=channel, color=color: multiply(layer(APC, f"apco{channel}", d, 0), color)))
+	for index, color in enumerate(APC_LOCK_COLORS):
+		dmi.states.append(make_state(f"apcox-{index}", 4, 1,
+			lambda d, _f, color=color: multiply(layer(APC, "apcox", d, 0), color)))
+	# A working APC with a cell, its channels on and its cover locked, for the map editor
+	dmi.states.append(make_state("apc_mapicon", 4, 1, lambda d, _f: stack(layer(APC, "apc2", d, 0),
+		*(multiply(layer(APC, f"apco{channel}", d, 0), APC_CHANNEL_COLORS[3]) for channel in range(3)),
+		layer(APC, "apco3-2", d, 0), multiply(layer(APC, "apcox", d, 0), APC_LOCK_COLORS[1]))))
+	for name, base in (("apcewires_mapicon", "apcewires"), ("apc2_mapicon", "apc2"), ("apc1_mapicon", "apc1")):
+		dmi.states.append(apc.get(base).renamed(name))
+	write(dmi, "obj/structures/machinery/apc.dmi")
+
+
+def bake_power():
+	"""SMES units and cables as they are."""
+	smes = source("obj/machines/power/smes.dmi")
+	write(Dmi([smes.get(name) for name in ("smes", *[f"smes-og{n}" for n in range(1, 6)],
+		*[f"smes-op{n}" for n in range(3)], *[f"smes-oc{n}" for n in range(3)], "smes-panel")]),
+		"obj/structures/machinery/smes.dmi")
+	cables = source("obj/machines/power/power_cond_white.dmi")
+	write(Dmi([state for state in cables.states if state.name]), "obj/structures/machinery/power_cond_white.dmi")
+
+
 # --- Firedoors, blast doors, shutters ------------------------------------------------------------------------------
 
 def bake_firedoor():
@@ -380,6 +426,8 @@ def main():
 	bake_windows()
 	bake_grilles()
 	bake_copied_icons()
+	bake_apc()
+	bake_power()
 	for frame_name, frame_files in FRAMES.items():
 		bake_airlock_frame(frame_name, frame_files)
 	bake_airlock_previews()

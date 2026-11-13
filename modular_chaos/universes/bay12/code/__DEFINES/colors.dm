@@ -16,6 +16,16 @@
 /// The colour of tinted glass, and of an electrochromic window darkened
 #define GLASS_COLOR_TINTED "#222222"
 
+// Power cables
+#define CABLE_COLOR_RED "#800000"
+#define CABLE_COLOR_YELLOW "#ffbf00"
+#define CABLE_COLOR_GREEN "#008000"
+#define CABLE_COLOR_BLUE "#3366cc"
+#define CABLE_COLOR_ORANGE "#ff9900"
+#define CABLE_COLOR_CYAN "#5ca1cc"
+#define CABLE_COLOR_WHITE "#c0c0c0"
+#define CABLE_COLOR_BLACK "#333333"
+
 // Woods: the colour of wooden walls and floors, by the wood
 #define WOOD_COLOR_GENERIC "#d5a66e"
 #define WOOD_COLOR_PALE "#d2bc9d"

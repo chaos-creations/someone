@@ -154,6 +154,24 @@
 /obj/machinery/door/blast/shutters  /obj/structure/machinery/door/poddoor/shutters/bay  id_tag>id
 /obj/machinery/door/blast/shutters/open  /obj/structure/machinery/door/poddoor/shutters/bay/open  id_tag>id
 
+# Power
+
+/obj/structure/cable/*  /obj/structure/cable/bay/*  icon_state
+/obj/machinery/power/terminal  /obj/structure/machinery/power/bay_terminal
+/obj/machinery/power/breakerbox  /obj/structure/machinery/power/breakerbox/bay
+/obj/machinery/power/breakerbox/activated  /obj/structure/machinery/power/breakerbox/bay/activated
+/obj/machinery/power/smes/buildable  /obj/structure/machinery/power/smes/bay  RCon_tag>name_tag
+/obj/machinery/power/smes/buildable/preset/on_full  /obj/structure/machinery/power/smes/bay/preset/on_full  RCon_tag>name_tag
+/obj/machinery/power/smes/buildable/preset/torch/*  /obj/structure/machinery/power/smes/bay/preset/torch/*  RCon_tag>name_tag
+/obj/machinery/power/apc  /obj/structure/machinery/power/apc/bay
+/obj/machinery/power/apc/critical  /obj/structure/machinery/power/apc/bay
+/obj/machinery/power/apc/high  /obj/structure/machinery/power/apc/bay/high
+/obj/machinery/power/apc/hyper  /obj/structure/machinery/power/apc/bay/hyper
+/obj/machinery/power/apc/super  /obj/structure/machinery/power/apc/bay/super
+/obj/machinery/power/apc/super/critical  /obj/structure/machinery/power/apc/bay/super
+/obj/machinery/power/apc/shuttle/*  /obj/structure/machinery/power/apc/bay
+/obj/machinery/power/apc/hyper/shuttle/*  /obj/structure/machinery/power/apc/bay/hyper
+
 # Not ported: the overmap
 
 /obj/overmap/*  skip  overmap
