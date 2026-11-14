@@ -13,6 +13,7 @@ icons/:
   door and the plastic door, and in machinery/ breaker boxes, portable generators, solar panels and trackers, the
   solar control console and power sensors, as they are, with lighting.dmi (light fixtures, their frames and bulbs) and
   buttons.dmi (light switches and buttons), fire alarms and cameras; obj/items/circuitboards.dmi, electronics;
+- obj/pipes/disposal.dmi: disposal units, chutes, outlets and pipes, as they are;
 - misc/security_state.dmi: what alarms, status displays and the screen border show for each alert level, the default
   ones and the Torch's own;
 - obj/structures/machinery/apc.dmi: APCs, their lights coloured into the states CM draws, and power terminals;
@@ -178,6 +179,11 @@ COPIED_ICONS = [
 		"obj/structures/machinery/firealarm.dmi"),
 	("obj/structures/cameras.dmi", ["camera", "cameraemp", "camera1", "camerax", "xraycam", "xraycamemp", "xraycam1",
 		"xraycamx"], "obj/structures/machinery/cameras.dmi"),
+	("obj/pipes/disposal.dmi", ["disposal", "disposal-flush", "dispover-charge", "dispover-full", "dispover-handle",
+		"dispover-ready", "condisposal", "intake", "intake-closing", "outlet", "outlet-open", "trashcan",
+		*[f"{part}{suffix}" for part in ("pipe-s", "pipe-c", "pipe-j1", "pipe-j2", "pipe-y", "pipe-t", "pipe-j1s",
+		"pipe-j2s", "pipe-b") for suffix in ("", "f")], "pipe-u", "pipe-d", "pipe-tagger", "pipe-tagger-partial",
+		*[f"conpipe-{part}" for part in ("s", "c", "j1", "j2", "y", "t", "j1s", "j2s")]], "obj/pipes/disposal.dmi"),
 ]
 
 

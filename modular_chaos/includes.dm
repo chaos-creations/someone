@@ -250,3 +250,4 @@
 #include "universes\bay12\code\modules\power\bay_sensor.dm"
 #include "universes\bay12\code\modules\power\bay_smes.dm"
 #include "universes\bay12\code\modules\power\bay_solar.dm"
+#include "universes\bay12\code\modules\recycling\bay_disposal.dm"

@@ -43,7 +43,7 @@ Assets are taken only for what the universe needs, not everything the source's m
   every material, panes and grilles, the airlocks of every department, two tiles wide too, vault, crystal and escape pod
   doors, windoors and brig doors, the morgue door, plastic doors, firedoors, blast doors and shutters, its areas, its
   power grid (see "Power") with its portable generators, solar arrays, power sensors, lights and light switches,
-  its door, bolt, blast door and window tint buttons, fire alarms and security cameras, catwalks,
+  its door, bolt, blast door and window tint buttons, fire alarms and security cameras, its disposals, catwalks,
   lattices, railings, handrails, ladders and stairs, its floors
   (plating, tiles, carpets, wood, linoleum, grass, the pool, mainframe and crystal floors, hull plating) with Bay's
   borders and damage overlays, and its floor decals, signs and logos;
@@ -132,6 +132,12 @@ Bay light switches start off, as in the source, so a room with one is dark until
 
 Bay buttons send to the doors with their `id_tag`, as the radio of the source does, which the doors keep in `id`. Bay
 access is not ported yet, so buttons the map limits to some jobs are open to everyone.
+
+## Disposals
+
+Bay disposals are CM ones with the sprites of the source and CM's pressure, as atmos is not ported. Their pipes up
+and down a deck pass what they carry to the pipe on the deck above or below, as in the source; the CM ones of that kind
+leave it where it is, and only the Almayer's, linked by id, go anywhere.
 
 ## Alert levels
 

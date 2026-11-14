@@ -192,6 +192,23 @@
 /obj/machinery/button/windowtint  /obj/structure/machinery/bay_button/windowtint  id range
 /obj/machinery/firealarm  /obj/structure/machinery/firealarm/bay
 /obj/machinery/camera/network/*  /obj/structure/machinery/camera/bay/network/*  c_tag network invisibility
+/obj/machinery/disposal  /obj/structure/machinery/disposal/bay
+/obj/machinery/disposal/deliveryChute  /obj/structure/machinery/disposal/deliveryChute/bay
+/obj/structure/disposaloutlet  /obj/structure/disposaloutlet/bay
+/obj/structure/disposalpipe/segment  /obj/structure/disposalpipe/segment/bay  icon_state
+/obj/structure/disposalpipe/segment/bent  /obj/structure/disposalpipe/segment/bay/bent
+/obj/structure/disposalpipe/trunk  /obj/structure/disposalpipe/trunk/bay
+/obj/structure/disposalpipe/up  /obj/structure/disposalpipe/up/bay
+/obj/structure/disposalpipe/down  /obj/structure/disposalpipe/down/bay
+/obj/structure/disposalpipe/junction  /obj/structure/disposalpipe/junction/bay  icon_state
+/obj/structure/disposalpipe/junction/mirrored  /obj/structure/disposalpipe/junction/bay/mirrored
+/obj/structure/disposalpipe/junction/yjunction  /obj/structure/disposalpipe/junction/bay/yjunction
+/obj/structure/disposalpipe/sortjunction  /obj/structure/disposalpipe/sortjunction/bay  sort_type>sortType
+/obj/structure/disposalpipe/sortjunction/flipped  /obj/structure/disposalpipe/sortjunction/flipped/bay  sort_type>sortType
+/obj/structure/disposalpipe/sortjunction/untagged  /obj/structure/disposalpipe/sortjunction/untagged/bay
+/obj/structure/disposalpipe/sortjunction/untagged/flipped  /obj/structure/disposalpipe/sortjunction/untagged/flipped/bay
+/obj/structure/disposalpipe/sortjunction/wildcard  /obj/structure/disposalpipe/sortjunction/wildcard/bay
+/obj/structure/disposalpipe/sortjunction/wildcard/flipped  /obj/structure/disposalpipe/sortjunction/wildcard/flipped/bay
 /obj/item/light/tube/*  /obj/item/light_bulb/bay/tube/*
 /obj/item/light/bulb/*  /obj/item/light_bulb/bay/bulb/*
 
