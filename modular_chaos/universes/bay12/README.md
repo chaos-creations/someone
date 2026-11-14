@@ -147,6 +147,16 @@ those are, showing the designs of Bay: these are CM designs (`/datum/poster/bay_
 `/datum/poster` for a design) with a sprite file of their own (`/datum/poster/var/icon`), so CM's random posters may show
 them too. A Bay poster picks a design at random as the source does: not contraband, or one of the Torch's.
 
+## Furniture and props
+
+Most Bay props are CM ones of the same kind (`/obj/structure/toilet/bay`, `/obj/structure/sink/bay`, cabinets, boards,
+bookcases, curtains, potted plants): CM's mechanics with the sprites of the source, and the source's behaviour where it
+differs (a toilet lid flips on a click instead of flushing, a sink wets mops, a shower valve takes the temperature
+picked, a display case shows and drops what is mapped in it). Where CM's sprites are the same as the source's, the map
+uses the CM type itself (bushes, the urinal). Props CM has nothing like are types of their own (`bay_drain`,
+`bay_faucet`, `bay_fireaxe_cabinet`). As CM has no fluids, nothing clogs, floods or drains water. Items the props hold
+(extinguishers, fire axes, bedsheets, books) are CM's until the items of the source are ported.
+
 ## Alert levels
 
 A map can have the alert levels of Bay instead of CM's four: its JSON names their type as `"security_state"`

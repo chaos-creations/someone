@@ -15,7 +15,8 @@ convert stacks the map's z-levels into one TGM .dmm, from the lowest level up, a
 that turn along their walls in the game are mapped with the dir they turn to, which map editors draw. Types
 the table skips are dropped; types it does not cover yet, or whose fork type does not exist, are dropped too and
 reported, so the result always compiles. A tile left without a turf or area gets the fallbacks of the table. Only the
-vars of TRANSFERRED_VARS and those a rule of the table lists are kept from the var edits of the map.
+vars of TRANSFERRED_VARS and those a rule of the table lists are kept from the var edits of the map, with pixel_w and
+pixel_z added to pixel_x and pixel_y, as CM maps may not set them.
 
 areas writes the DM of the map's areas: the Bay area types it places and their parents, under a root of their own
 (AREA_ROOTS), with the name, icon, sound environment, power, lighting tone and outside flag the source gives them. It
@@ -86,6 +87,8 @@ FORK_CODE = ["code", "modular_chaos"]
 
 # Var edits of the map kept on every converted atom; the others need a rule of the table that names them
 TRANSFERRED_VARS = {"dir", "pixel_x", "pixel_y", "pixel_w", "pixel_z", "name", "desc", "color"}
+# The offsets CM maps may not set (check_grep.sh), folded into the ones they draw the same as on a flat map
+FOLDED_OFFSETS = {"pixel_w": "pixel_x", "pixel_z": "pixel_y"}
 
 # Procs whose type paths are what an atom spawns, so what the map needs
 CONTENT_PROCS = {"WillContain", "spawn_choices", "create_objects_in_loc"}
@@ -381,13 +384,29 @@ def convert_atom(table, fork_tree, bay_tree, atom, dropped):
         return []
     kept = {name: name for name in TRANSFERRED_VARS}
     kept.update(table.find(path)[2])
-    fork_vars = [(kept[name], value) for name, value in bay_vars.items() if name in kept]
+    fork_vars = fold_offsets([(kept[name], value) for name, value in bay_vars.items() if name in kept])
     first, *rest = detail.split("+")
     if "dir" not in bay_vars and is_type(first, EAST_FACING_TYPES):
         fork_vars.append(("dir", bay_default_dir(bay_tree, path)))
     if fork_vars:
         first += "{" + ";".join(f"{name} = {value}" for name, value in fork_vars) + "}"
     return [first, *rest]
+
+
+def fold_offsets(fork_vars):
+    """The var edits with pixel_w and pixel_z added to pixel_x and pixel_y (FOLDED_OFFSETS)."""
+    offsets = {}
+    mapped = set()  # The offsets the map sets itself, kept even at 0, which may undo the offset of the type
+    result = []
+    for name, value in fork_vars:
+        target = FOLDED_OFFSETS.get(name)
+        if not target and name not in FOLDED_OFFSETS.values():
+            result.append((name, value))
+            continue
+        if not target:
+            mapped.add(name)
+        offsets[target or name] = offsets.get(target or name, 0) + (int(value) if value != "null" else 0)
+    return result + [(name, offset) for name, offset in sorted(offsets.items()) if offset or name in mapped]
 
 
 # Doors that turn along the walls they are set in on Initialize(): face_bay_walls() in bay_doors.dm, and the
