@@ -6,13 +6,15 @@ script only renames their states to the ones the CM types use, and lines up the 
 state of the door (an overlay without an icon_state shows the state its door shows, flicks included). It writes, under
 icons/:
 
-- turf/walls/walls.dmi: the wall masks of steel, titanium and wooden walls and their map editor states;
+- turf/walls/walls.dmi: the wall masks of every material and their map editor states;
 - turf/walls/windows.dmi: low wall frames, the glass on them, and panes on their own;
 - obj/structures/grille.dmi: grilles, on their own and on low walls;
 - obj/structures/: catwalks, lattices, railings, handrails, ladders and stairs, in doors/ the windoors, the morgue
   door and the plastic door, and in machinery/ breaker boxes, portable generators, solar panels and trackers, the
   solar control console and power sensors, as they are, with lighting.dmi (light fixtures, their frames and bulbs) and
   buttons.dmi (light switches and buttons), fire alarms and cameras; obj/items/circuitboards.dmi, electronics;
+- obj/structures/tables.dmi and furniture.dmi: tables, racks, chairs, beds and stools, in greyscale for the colours of
+  their materials;
 - obj/pipes/disposal.dmi: disposal units, chutes, outlets and pipes, as they are;
 - misc/security_state.dmi: what alarms, status displays and the screen border show for each alert level, the default
   ones and the Torch's own;
@@ -72,14 +74,9 @@ def write(dmi, path):
 # --- Walls ---------------------------------------------------------------------------------------------------------
 
 def bake_walls():
+	"""The wall masks of every material, and the map editor states, which the types colour through their color var."""
 	masks = source("turf/wall_masks.dmi")
-	dmi = Dmi([blank_state()])
-	# The map editor states, which the types colour through their color var
-	dmi.states += [masks.get(name) for name in ("generic", "r_generic", "titanium", "r_titanium", "woodneric")]
-	for prefix in ("solid", "solid_paint", "solid_stripe", "solid_other", "reinf_over", "metal", "metal_paint", "wood",
-			"wood_paint", "wood_stripe", "wood_other"):
-		dmi.states += [masks.get(f"{prefix}{corner_state}") for corner_state in range(8)]
-	dmi.states.append(masks.get("reinf_metal"))
+	dmi = Dmi([blank_state()] + [state for state in masks.states if state.name and state.name != "blank"])
 	write(dmi, "turf/walls/walls.dmi")
 
 
@@ -179,6 +176,8 @@ COPIED_ICONS = [
 		"obj/structures/machinery/firealarm.dmi"),
 	("obj/structures/cameras.dmi", ["camera", "cameraemp", "camera1", "camerax", "xraycam", "xraycamemp", "xraycam1",
 		"xraycamx"], "obj/structures/machinery/cameras.dmi"),
+	("obj/structures/tables.dmi", None, "obj/structures/tables.dmi"),
+	("obj/structures/furniture.dmi", None, "obj/structures/furniture.dmi"),
 	("obj/pipes/disposal.dmi", ["disposal", "disposal-flush", "dispover-charge", "dispover-full", "dispover-handle",
 		"dispover-ready", "condisposal", "intake", "intake-closing", "outlet", "outlet-open", "trashcan",
 		*[f"{part}{suffix}" for part in ("pipe-s", "pipe-c", "pipe-j1", "pipe-j2", "pipe-y", "pipe-t", "pipe-j1s",
@@ -188,12 +187,14 @@ COPIED_ICONS = [
 
 
 def bake_copied_icons():
-	"""Icons that need no conversion: catwalks, lattices, railings, handrails, ladders, stairs, doors and machines;
-	catwalks, drawn from overlays, also get "blank"."""
+	"""Icons that need no conversion: catwalks, lattices, railings, handrails, ladders, stairs, doors, machines and
+	furniture; those drawn from overlays (catwalks, tables) also get "blank". A list of names of None takes every
+	named state."""
 	for path, names, out in COPIED_ICONS:
 		states = source(path)
-		blank = [blank_state()] if out == "obj/structures/catwalks.dmi" else []
-		write(Dmi(blank + [states.get(name) for name in names], states.width, states.height), out)
+		blank = [blank_state()] if out in ("obj/structures/catwalks.dmi", "obj/structures/tables.dmi") else []
+		picked = [state for state in states.states if state.name] if names is None else [states.get(name) for name in names]
+		write(Dmi(blank + picked, states.width, states.height), out)
 
 
 # --- Airlocks ------------------------------------------------------------------------------------------------------

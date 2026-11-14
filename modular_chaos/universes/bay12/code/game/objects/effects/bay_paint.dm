@@ -3,8 +3,8 @@
 /**
  * A mapping helper that paints the Bay wall or low wall it is placed on in its colour, then deletes itself
  *
- * A wall takes the colour as its paint and, if it can have one, its stripe; a low wall, with or without glass, takes it
- * as its frame colour. The walls and low walls around are redrawn, as their edges depend on the paint.
+ * A wall takes the colour as its paint and stripe where its material takes them; a low wall, with or without glass,
+ * as its paint and stripe. The walls and low walls around are redrawn, as their edges depend on the paint.
  */
 /obj/effect/bay_paint
 	name = "coat of paint"
@@ -18,17 +18,14 @@
 /obj/effect/bay_paint/LateInitialize()
 	var/turf/closed/wall/bay/wall = loc
 	if(istype(wall))
-		wall.paint_color = color
-		if(wall.paintable_stripe)
-			wall.stripe_color = color
-		for(var/turf/closed/wall/bay/painted_wall in range(1, wall))
-			painted_wall.update_connections()
-			painted_wall.update_icon()
+		wall.paint(color)
 	for(var/obj/structure/window/framed/bay/window in loc)
-		window.frame_color = color
+		window.frame_paint_color = color
+		window.frame_stripe_color = color
 		window.relativewall()
 	for(var/obj/structure/window_frame/bay/frame in loc)
-		frame.frame_color = color
+		frame.frame_paint_color = color
+		frame.frame_stripe_color = color
 		frame.relativewall()
 	qdel(src)
 

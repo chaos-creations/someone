@@ -1,7 +1,7 @@
 //Areas of the SEV Torch (the areas of maps/torch/ and code/game/area/ in the source), written by
 //tools/port_map.py areas, which this should be written by again rather than edited: the area types of the source the
-//map places and their parents, under /area/torch, with their names, icons, sound environments, power and the tone
-//of their lights.
+//map places and their parents, under /area/torch, with their names, icons, sound environments, power, the tone
+//of their lights and whether they are outside.
 
 /// Every area of the SEV Torch: a ship whose power runs along its cables, as in the source
 /area/torch
@@ -1117,6 +1117,7 @@
 
 /area/torch/solar
 	always_unpowered = TRUE
+	bay_external = TRUE
 
 /area/torch/solar/auxstarboard
 	name = "\improper Fore Starboard Solar Array"
@@ -1222,6 +1223,7 @@
 /area/torch/torchexterior
 	name = "\improper Exterior Reinforcements"
 	icon_state = "maint_exterior"
+	bay_external = TRUE
 
 /area/torch/turbolift
 	name = "\improper Turbolift"

@@ -38,13 +38,13 @@ Assets are taken only for what the universe needs, not everything the source's m
   colours of the ship: the tiles with the colour Bay gives their turf baked in (a coloured turf would tint the decals
   on it), and the decals as they are; its walls, carpets, wood and machines became CM counterparts;
 - the SEV Torch of Baystation 12 and everything it needs, ported as Bay has it rather than with CM counterparts (see
-  "Porting a map"); so far the steel, titanium, osmium-carbide plasteel and walnut walls in the paints it uses and the
-  coats of paint that repaint them, windows of plain, reinforced, borosilicate and electrochromic glass on low walls of
-  every material, panes and grilles, the airlocks of every department, two tiles wide too, vault, crystal and escape pod
-  doors, windoors and brig doors, the morgue door, plastic doors, firedoors, blast doors and shutters, its areas, its
-  power grid (see "Power") with its portable generators, solar arrays, power sensors, lights and light switches,
-  its door, bolt, blast door and window tint buttons, fire alarms and security cameras, its disposals, catwalks,
-  lattices, railings, handrails, ladders and stairs, its floors
+  "Porting a map"); so far Bay's materials (see "Materials"), the walls of every material in the paints the Torch
+  uses and the coats of paint that repaint them, windows of plain, reinforced, borosilicate and electrochromic glass on
+  low walls of every material, panes and grilles, the airlocks of every department, two tiles wide too, vault, crystal
+  and escape pod doors, windoors and brig doors, the morgue door, plastic doors, firedoors, blast doors and shutters, its
+  areas, its power grid (see "Power") with its portable generators, solar arrays, power sensors, lights and light
+  switches, its door, bolt, blast door and window tint buttons, fire alarms and security cameras, its disposals, its
+  tables and racks, catwalks, lattices, railings, handrails, ladders and stairs, its floors
   (plating, tiles, carpets, wood, linoleum, grass, the pool, mainframe and crystal floors, hull plating) with Bay's
   borders and damage overlays, and its floor decals, signs and logos;
 - Lordania: its clothing, flags, banner, memorial and statues, from Proxi-BoS-Bay12 commit
@@ -150,13 +150,27 @@ start the CM self-destruct), and CM code that sets the CM level switches the map
 (`cm_equivalent`), quietly. Admins set any level of the map with "Set Map Alert Level". Maps without one show the CM
 level on Bay alarms.
 
+## Materials
+
+The materials of Bay (`/material`, `code/modules/materials/`) are what walls, low walls, windows, tables and the rest of
+Bay's furniture are made of: their names, colours, sprites and strength. `tools/port_materials.py`, run with the path
+of a Baystation 12 checkout, writes their definitions into `definitions/` with the vars that are ported so far; what the
+source does with them in systems not ported yet (sheets, recipes, reagents, ores) comes with those systems, and the
+script is then run again with their vars. `get_bay_material()` finds one by its name. `MATERIAL_WOOD` is CM's, so Bay's
+is `BAY_MATERIAL_WOOD`.
+
+Strength is in CM's units: a Bay steel wall has the health of a CM wall, and a Bay reinforced window that of a CM
+reinforced window, the rest in proportion to the source.
+
 ## Walls, windows and doors
 
 Bay draws its walls, low walls, windows and airlocks at runtime from greyscale layers that it colours with the paint of
 the type, and the code here does the same: walls take `paint_color`, `stripe_color` and the colour of their material,
-windows `frame_color` and `glass_color`, airlocks `door_color`, `stripe_color` and `window_color`. The types are the
-paints of the source (`prepainted`, `fleet`, `hull`, the airlocks of each department) with its colours in
-`code/__DEFINES/colors.dm`; mappers can repaint a placed one through these vars, or through `color` for walls and
+low walls `frame_paint_color`, `frame_stripe_color` and the colour of theirs, glass the colour of its own, airlocks
+`door_color`, `stripe_color` and `window_color`. Walls, low walls and windows are made of materials (see "Materials"),
+which give them their name, masks, strength and what takes paint, as in the source. The types are the paints and
+materials of the source (`prepainted`, `fleet`, `hull`, `titanium`, the airlocks of each department) with its colours
+in `code/__DEFINES/colors.dm`; mappers can repaint a placed one through these vars, or through `color` for walls and
 airlocks. Walls and windows keep Bay's smoothing by corners, airlocks and firedoors turn along their walls on their own,
 and the opening of airlocks and firedoors plays at 1 ds a frame instead of Bay's 2.
 

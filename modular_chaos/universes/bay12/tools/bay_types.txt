@@ -57,6 +57,29 @@
 /turf/simulated/wall/r_titanium  /turf/closed/wall/bay/titanium/reinforced
 /turf/simulated/wall/ocp_wall  /turf/closed/wall/bay/ocp
 /turf/simulated/wall/walnut  /turf/closed/wall/bay/walnut
+/turf/simulated/wall  /turf/closed/wall/bay
+/turf/simulated/wall/r_wall  /turf/closed/wall/bay/reinforced
+/turf/simulated/wall/r_wall/rglass_wall  /turf/closed/wall/bay/reinforced/rglass
+/turf/simulated/wall/sandstone/diamond  /turf/closed/wall/bay/sandstone/diamond
+/turf/simulated/wall/prepainted/fleet  /turf/closed/wall/bay/prepainted/fleet
+/turf/simulated/wall/r_wall/prepainted/fleet  /turf/closed/wall/bay/reinforced/prepainted/fleet
+/turf/simulated/wall/iron  /turf/closed/wall/bay/iron
+/turf/simulated/wall/uranium  /turf/closed/wall/bay/uranium
+/turf/simulated/wall/diamond  /turf/closed/wall/bay/diamond
+/turf/simulated/wall/gold  /turf/closed/wall/bay/gold
+/turf/simulated/wall/silver  /turf/closed/wall/bay/silver
+/turf/simulated/wall/phoron  /turf/closed/wall/bay/phoron
+/turf/simulated/wall/sandstone  /turf/closed/wall/bay/sandstone
+/turf/simulated/wall/rutile  /turf/closed/wall/bay/rutile
+/turf/simulated/wall/wood  /turf/closed/wall/bay/wood
+/turf/simulated/wall/mahogany  /turf/closed/wall/bay/mahogany
+/turf/simulated/wall/maple  /turf/closed/wall/bay/maple
+/turf/simulated/wall/ebony  /turf/closed/wall/bay/ebony
+/turf/simulated/wall/ironphoron  /turf/closed/wall/bay/ironphoron
+/turf/simulated/wall/golddiamond  /turf/closed/wall/bay/golddiamond
+/turf/simulated/wall/silvergold  /turf/closed/wall/bay/silvergold
+/turf/simulated/wall/crystal  /turf/closed/wall/bay/crystal
+/turf/simulated/wall/concrete  /turf/closed/wall/bay/concrete
 
 # Windows: a spawner of Bay makes a low wall, the glass on it and, unless it says no_grille, a grille
 
@@ -295,3 +318,10 @@
 # Map helpers of Bay with no use here
 
 /obj/landmark/map_data  skip  map helper
+
+# Furniture
+
+/obj/structure/table  /obj/structure/surface/table/bay
+/obj/structure/table/*  /obj/structure/surface/table/bay/*
+/obj/structure/table/rack  /obj/structure/surface/rack/bay
+/obj/structure/table/rack/dark  /obj/structure/surface/rack/bay/dark

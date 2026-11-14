@@ -30,6 +30,8 @@
 #define WOOD_COLOR_GENERIC "#d5a66e"
 #define WOOD_COLOR_PALE "#d2bc9d"
 #define WOOD_COLOR_CHOCOLATE "#543c30"
+#define WOOD_COLOR_RICH "#792f27"
+#define WOOD_COLOR_BLACK "#332521"
 
 // Wall paints
 #define COLOR_WALL_GUNMETAL "#353a42"
@@ -59,3 +61,8 @@
 /// The COLOR_GREEN of the source, darker than CM's
 #define BAY_COLOR_GREEN "#008000"
 #define COLOR_NAVY_BLUE "#000080"
+
+// Furniture previews
+#define COLOR_OFF_WHITE "#eeeeee"
+#define COLOR_GRAY40 "#666666"
+#define COLOR_GRAY80 "#cccccc"
