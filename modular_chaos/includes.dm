@@ -201,6 +201,7 @@
 #include "universes\bay12\code\game\objects\structures\bay_windows.dm"
 #include "universes\bay12\code\game\objects\structures\cadaab.dm"
 #include "universes\bay12\code\game\objects\structures\vox.dm"
+#include "universes\bay12\code\game\objects\structures\stool_bed_chair_nest\bay_furniture.dm"
 #include "universes\bay12\code\game\turfs\bay_floors.dm"
 #include "universes\bay12\code\game\turfs\cadaab.dm"
 #include "universes\bay12\code\game\turfs\walls\bay_walls.dm"

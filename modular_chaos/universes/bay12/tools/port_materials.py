@@ -39,7 +39,7 @@ RENAMED_DEFINES = {"MATERIAL_WOOD": "BAY_MATERIAL_WOOD"}
 # Defines of the source written as their value
 VALUE_DEFINE = re.compile(r"^(COLOR_[A-Z0-9_]+|WOOD_COLOR_[A-Z0-9_]+|GLASS_COLOR[A-Z0-9_]*|FLAGS_OFF|PHORON_MINIMUM_BURN_TEMPERATURE)$")
 
-TYPE_LINE = re.compile(r"^(/material[\w/]*)\s*$")
+TYPE_LINE = re.compile(r"^(/material[\w/]*)\s*(//.*)?$")
 VAR_LINE = re.compile(r"^\t(?:var/)?(\w+)\s*=\s*(.*)$")
 
 

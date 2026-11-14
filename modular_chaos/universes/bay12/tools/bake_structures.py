@@ -6,7 +6,8 @@ script only renames their states to the ones the CM types use, and lines up the 
 state of the door (an overlay without an icon_state shows the state its door shows, flicks included). It writes, under
 icons/:
 
-- turf/walls/walls.dmi: the wall masks of every material and their map editor states;
+- turf/walls/walls.dmi: the wall masks of every material, and the map editor previews of the wall types, a lone wall
+  of each in its colours;
 - turf/walls/windows.dmi: low wall frames, the glass on them, and panes on their own;
 - obj/structures/grille.dmi: grilles, on their own and on low walls;
 - obj/structures/: catwalks, lattices, railings, handrails, ladders and stairs, in doors/ the windoors, the morgue
@@ -33,6 +34,7 @@ Needs Pillow. It overwrites the files it writes. The colours of the previews mus
 code/game/machinery/doors/bay_doors.dm and code/game/objects/structures/bay_windows.dm.
 """
 import os
+import re
 import sys
 
 from dmi_files import Dmi, blank_state, make_state, multiply, stack
@@ -73,10 +75,84 @@ def write(dmi, path):
 
 # --- Walls ---------------------------------------------------------------------------------------------------------
 
+# Map editor previews of the wall types: state, material, reinforcement, paint, stripe; the materials are the defines of
+# code/__DEFINES/materials.dm. They must match code/game/turfs/walls/bay_walls.dm.
+WALL_PREVIEWS = [
+	("steel", "MATERIAL_STEEL", None, None, None),
+	("steel_prepainted", "MATERIAL_STEEL", None, "#353a42", "#545c68"),
+	("steel_fleet", "MATERIAL_STEEL", None, "#3e4855", "#353a42"),
+	("r_steel", "MATERIAL_STEEL", "MATERIAL_PLASTEEL", None, None),
+	("r_steel_prepainted", "MATERIAL_STEEL", "MATERIAL_PLASTEEL", "#353a42", "#545c68"),
+	("r_steel_fleet", "MATERIAL_STEEL", "MATERIAL_PLASTEEL", "#3e4855", "#353a42"),
+	("r_steel_hull", "MATERIAL_STEEL", "MATERIAL_PLASTEEL", "#436b8e", "#436b8e"),
+	("titanium", "MATERIAL_TITANIUM", None, None, None),
+	("r_titanium", "MATERIAL_TITANIUM", "MATERIAL_TITANIUM", None, None),
+	("r_ocp", "MATERIAL_OSMIUM_CARBIDE_PLASTEEL", "MATERIAL_OSMIUM_CARBIDE_PLASTEEL", None, None),
+	("r_glass", "MATERIAL_GLASS", "MATERIAL_STEEL", None, None),
+	*[(name.lower(), f"MATERIAL_{name}", None, None, None) for name in ("IRON", "URANIUM", "DIAMOND", "GOLD", "SILVER",
+		"PHORON", "SANDSTONE", "RUTILE", "MAHOGANY", "MAPLE", "EBONY", "WALNUT", "CRYSTAL", "CONCRETE")],
+	("wood", "BAY_MATERIAL_WOOD", None, None, None),
+	("r_iron_phoron", "MATERIAL_IRON", "MATERIAL_PHORON", None, None),
+	("r_gold_diamond", "MATERIAL_GOLD", "MATERIAL_DIAMOND", None, None),
+	("r_silver_gold", "MATERIAL_SILVER", "MATERIAL_GOLD", None, None),
+	("r_sandstone_diamond", "MATERIAL_SANDSTONE", "MATERIAL_DIAMOND", None, None),
+]
+
+
+def read_materials():
+	"""The materials of code/modules/materials/definitions/ here, by the define their name is written with: dicts of
+	their vars, inherited from their parents and from the defaults of /material."""
+	code = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "code")
+	by_path = {"/material": {"wall_icon_base": "metal", "wall_icon_reinf": "reinf_metal"}}
+	definitions = os.path.join(code, "modules", "materials", "definitions")
+	for file_name in sorted(os.listdir(definitions)):
+		path = None
+		with open(os.path.join(definitions, file_name), encoding="utf-8") as file:
+			for line in file:
+				if line.startswith("/material"):
+					path = line.strip()
+					by_path[path] = {}
+				elif path:
+					match = re.match(r"\t(\w+) = (.*)$", line.rstrip("\n"))
+					if match:
+						by_path[path][match.group(1)] = match.group(2).strip('"')
+	by_define = {}
+	for path, own_vars in by_path.items():
+		if not own_vars.get("name"):
+			continue
+		merged = {}
+		parts = path.split("/")
+		for end in range(2, len(parts) + 1):
+			merged.update(by_path.get("/".join(parts[:end]), {}))
+		by_define[own_vars["name"]] = merged
+	return by_define
+
+
 def bake_walls():
-	"""The wall masks of every material, and the map editor states, which the types colour through their color var."""
+	"""The wall masks of every material, and the map editor previews of the types: a lone wall drawn from its masks in
+	the colours of its materials and paint, as it shows in game."""
 	masks = source("turf/wall_masks.dmi")
+	materials = read_materials()
 	dmi = Dmi([blank_state()] + [state for state in masks.states if state.name and state.name != "blank"])
+	for name, material, reinforcement, paint, stripe in WALL_PREVIEWS:
+		base = materials[material]
+		reinf = materials[reinforcement] if reinforcement else None
+		wall_icon_base = base["wall_icon_base"]
+		layers = []
+		for dir_index in range(4):
+			layers.append(multiply(layer("turf/wall_masks.dmi", f"{wall_icon_base}0", dir_index, 0),
+				paint or base["icon_colour"]))
+			if paint:
+				layers.append(multiply(layer("turf/wall_masks.dmi", f"{wall_icon_base}_paint0", dir_index, 0), paint))
+			if stripe:
+				layers.append(multiply(layer("turf/wall_masks.dmi", f"{wall_icon_base}_stripe0", dir_index, 0), stripe))
+		if reinf:
+			reinf_state = base["wall_icon_reinf"]
+			directional = masks.get(f"{reinf_state}0") is not None
+			for dir_index in range(4 if directional else 1):
+				layers.append(multiply(layer("turf/wall_masks.dmi", f"{reinf_state}0" if directional else reinf_state,
+					dir_index, 0), paint or reinf["icon_colour"]))
+		dmi.states.append(make_state(f"preview_{name}", 1, 1, lambda _d, _f, layers=layers: stack(*layers)))
 	write(dmi, "turf/walls/walls.dmi")
 
 
@@ -357,10 +433,10 @@ def bake_airlock_frame(frame_name, files):
 		write(Dmi([state for state in states if state], *size), folder + f"{key}.dmi")
 
 
-def airlock_look(files, door_color, stripe_color, glass):
-	"""A closed airlock with its paint, as set_airlock_overlays() stacks it."""
+def airlock_look(files, door_color, stripe_color, glass, dir_index=0):
+	"""A closed airlock with its paint, as set_airlock_overlays() stacks it, facing the dir of the index."""
 	def part(key, color=None):
-		return multiply(layer(files[key], "closed", 0, 0), color)
+		return multiply(layer(files[key], "closed", dir_index, 0), color)
 	return stack(
 		part("door"),
 		part("color", door_color) if door_color else None,
@@ -372,8 +448,9 @@ def airlock_look(files, door_color, stripe_color, glass):
 
 def bake_airlock_previews():
 	for previews, out in ((AIRLOCK_PREVIEWS, "previews.dmi"), (DOUBLE_AIRLOCK_PREVIEWS, "previews_double.dmi")):
-		dmi = Dmi([make_state(name, 1, 1, lambda _d, _f, frame=frame, door_color=door_color, stripe_color=stripe_color,
-			glass=glass: airlock_look(FRAMES[frame], door_color, stripe_color, glass))
+		# Every dir, as the doors turn along their walls and map editors draw the dir a door is mapped with
+		dmi = Dmi([make_state(name, 4, 1, lambda dir_index, _f, frame=frame, door_color=door_color,
+			stripe_color=stripe_color, glass=glass: airlock_look(FRAMES[frame], door_color, stripe_color, glass, dir_index))
 			for name, frame, door_color, stripe_color, glass in previews])
 		dmi.width, dmi.height = source(FRAMES[previews[0][1]]["door"]).width, source(FRAMES[previews[0][1]]["door"]).height
 		write(dmi, f"obj/structures/doors/airlocks/{out}")

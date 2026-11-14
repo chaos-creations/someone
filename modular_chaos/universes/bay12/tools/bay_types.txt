@@ -325,3 +325,10 @@
 /obj/structure/table/*  /obj/structure/surface/table/bay/*
 /obj/structure/table/rack  /obj/structure/surface/rack/bay
 /obj/structure/table/rack/dark  /obj/structure/surface/rack/bay/dark
+/obj/structure/bed  /obj/structure/bed/bay
+/obj/structure/bed/padded  /obj/structure/bed/bay/padded
+/obj/structure/bed/psych  /obj/structure/bed/bay/psych
+/obj/structure/bed/chair  /obj/structure/bed/chair/bay
+/obj/structure/bed/chair/*  /obj/structure/bed/chair/bay/*
+/obj/structure/bed/chair/office/*  /obj/structure/bed/chair/office/bay/*
+/obj/structure/bed/chair/wheelchair  /obj/structure/bed/chair/wheelchair/bay

@@ -52,6 +52,21 @@
 	conductive = 0
 	value = 0
 
+/material/cloth
+	name = MATERIAL_CLOTH
+	display_name = "cotton"
+	use_name = "cotton"
+	icon_colour = "#ffffff"
+	sheet_icon_base = "skin"
+	door_icon_base = "wood"
+	ignition_point = T0C+232
+	melting_point = T0C+300
+	flags = MATERIAL_PADDING
+	brute_armor = 1
+	conductive = 0
+	hidden_from_codex = TRUE
+	construction_difficulty = MATERIAL_NORMAL_DIY
+
 /material/cloth/carpet
 	name = "carpet"
 	display_name = "red"

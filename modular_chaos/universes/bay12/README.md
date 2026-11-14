@@ -44,7 +44,7 @@ Assets are taken only for what the universe needs, not everything the source's m
   and escape pod doors, windoors and brig doors, the morgue door, plastic doors, firedoors, blast doors and shutters, its
   areas, its power grid (see "Power") with its portable generators, solar arrays, power sensors, lights and light
   switches, its door, bolt, blast door and window tint buttons, fire alarms and security cameras, its disposals, its
-  tables and racks, catwalks, lattices, railings, handrails, ladders and stairs, its floors
+  tables, racks, chairs and beds, catwalks, lattices, railings, handrails, ladders and stairs, its floors
   (plating, tiles, carpets, wood, linoleum, grass, the pool, mainframe and crystal floors, hull plating) with Bay's
   borders and damage overlays, and its floor decals, signs and logos;
 - Lordania: its clothing, flags, banner, memorial and statues, from Proxi-BoS-Bay12 commit
@@ -180,7 +180,8 @@ greyscale into `icons/turf/walls/walls.dmi`, `icons/turf/walls/windows.dmi` and 
 their states to the CM ones. Each airlock frame (`station`, `external`, `hatch`, `secure`) gets a folder in `airlocks/`
 with its frame, lights and the paint layers the source has for it, every layer with every state of the door: they are
 overlays without an icon_state, which show the state the door shows. Only the map editor previews are baked with the
-colours of the types, in `airlocks/previews.dmi` and windows.dmi; the script holds the same colours for them.
+colours of the types, in `airlocks/previews.dmi`, windows.dmi and the `preview_` states of walls.dmi (a lone wall of
+each type, as it shows in game); the script holds the same colours and materials for them.
 
 ## Rig sprites
 

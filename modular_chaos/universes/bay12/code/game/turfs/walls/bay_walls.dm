@@ -23,14 +23,14 @@
  * paint a placed wall with paint_color and stripe_color.
  *
  * The parent's smoothing is turned off with special_icon, which here only means that this type draws its corners itself.
- * The color var shows the paint in the map editor: painted types set it to their paint_color, and a color set on a
- * placed wall becomes its paint_color on Initialize(). It is cleared then, as it would tint everything on the wall.
+ * The map editor shows a lone wall of the type, its "preview_" state baked by tools/bake_structures.py; a color set on
+ * a placed wall becomes its paint_color on Initialize(), and is cleared then, as it would tint everything on the wall.
  */
 /turf/closed/wall/bay
 	name = "steel bulkhead"
 	desc = "It seems to be a section of hull plated with steel."
 	icon = 'modular_chaos/universes/bay12/icons/turf/walls/walls.dmi'
-	icon_state = "generic"
+	icon_state = "preview_steel"
 	walltype = "solid"
 	special_icon = TRUE
 	/// The material it is plated with, a material name until resolve_materials(), then the /material
@@ -45,7 +45,7 @@
 	var/list/edge_connections = list("0", "0", "0", "0")
 
 /turf/closed/wall/bay/Initialize(mapload, ...)
-	if(color && color != initial(color)) // Painted in the map editor
+	if(color) // Painted in the map editor
 		paint_color = color
 	color = null
 	resolve_materials()
@@ -125,7 +125,6 @@
 	if(QDELETED(src))
 		return
 	resolve_materials()
-	icon_state = "blank"
 	flags_atom |= HTML_USE_INITIAL_ICON
 	// The parent added the damage and bullet holes last; the wall goes under them
 	var/list/damage_images = list()
@@ -214,28 +213,28 @@
 
 /// /turf/simulated/wall/prepainted in the source: the dark gunmetal of the SEV Torch
 /turf/closed/wall/bay/prepainted
-	color = COLOR_WALL_GUNMETAL
+	icon_state = "preview_steel_prepainted"
 	paint_color = COLOR_WALL_GUNMETAL
 	stripe_color = COLOR_GUNMETAL
 
 /// /turf/simulated/wall/prepainted/fleet in the source: the dark blue of the Fleet
 /turf/closed/wall/bay/prepainted/fleet
-	color = COLOR_DARK_BLUE_GRAY
+	icon_state = "preview_steel_fleet"
 	paint_color = COLOR_DARK_BLUE_GRAY
 	stripe_color = COLOR_WALL_GUNMETAL
 
 /// /turf/simulated/wall/r_wall in the source: steel reinforced with plasteel
 /turf/closed/wall/bay/reinforced
-	icon_state = "r_generic"
+	icon_state = "preview_r_steel"
 	reinf_material = MATERIAL_PLASTEEL
 
 /turf/closed/wall/bay/reinforced/prepainted
-	color = COLOR_WALL_GUNMETAL
+	icon_state = "preview_r_steel_prepainted"
 	paint_color = COLOR_WALL_GUNMETAL
 	stripe_color = COLOR_GUNMETAL
 
 /turf/closed/wall/bay/reinforced/prepainted/fleet
-	color = COLOR_DARK_BLUE_GRAY
+	icon_state = "preview_r_steel_fleet"
 	paint_color = COLOR_DARK_BLUE_GRAY
 	stripe_color = COLOR_WALL_GUNMETAL
 
@@ -244,8 +243,8 @@
  * Government, its paint faded on two in five of those that face the outside
  */
 /turf/closed/wall/bay/reinforced/hull
+	icon_state = "preview_r_steel_hull"
 	name = "hull"
-	color = COLOR_SOL
 	paint_color = COLOR_SOL
 	stripe_color = COLOR_SOL
 
@@ -270,93 +269,103 @@
 // The walls of other materials (code/game/turfs/simulated/wall_types.dm in the source)
 
 /turf/closed/wall/bay/titanium
-	icon_state = "titanium"
+	icon_state = "preview_titanium"
 	material = MATERIAL_TITANIUM
 
 /// /turf/simulated/wall/r_titanium in the source
 /turf/closed/wall/bay/titanium/reinforced
-	icon_state = "r_titanium"
+	icon_state = "preview_r_titanium"
 	reinf_material = MATERIAL_TITANIUM
 
 /// /turf/simulated/wall/ocp_wall in the source: osmium-carbide plasteel
 /turf/closed/wall/bay/ocp
-	icon_state = "r_ocp"
+	icon_state = "preview_r_ocp"
 	material = MATERIAL_OSMIUM_CARBIDE_PLASTEEL
 	reinf_material = MATERIAL_OSMIUM_CARBIDE_PLASTEEL
 
 /// /turf/simulated/wall/r_wall/rglass_wall in the source: glass reinforced with steel, which can be seen through
 /turf/closed/wall/bay/reinforced/rglass
+	icon_state = "preview_r_glass"
 	material = MATERIAL_GLASS
 	reinf_material = MATERIAL_STEEL
 
 /turf/closed/wall/bay/iron
+	icon_state = "preview_iron"
 	material = MATERIAL_IRON
 
 /turf/closed/wall/bay/uranium
+	icon_state = "preview_uranium"
 	material = MATERIAL_URANIUM
 
 /turf/closed/wall/bay/diamond
+	icon_state = "preview_diamond"
 	material = MATERIAL_DIAMOND
 
 /turf/closed/wall/bay/gold
+	icon_state = "preview_gold"
 	material = MATERIAL_GOLD
 
 /turf/closed/wall/bay/silver
+	icon_state = "preview_silver"
 	material = MATERIAL_SILVER
 
 /turf/closed/wall/bay/phoron
+	icon_state = "preview_phoron"
 	material = MATERIAL_PHORON
 
 /turf/closed/wall/bay/sandstone
+	icon_state = "preview_sandstone"
 	material = MATERIAL_SANDSTONE
 
 /turf/closed/wall/bay/rutile
+	icon_state = "preview_rutile"
 	material = MATERIAL_RUTILE
 
 /turf/closed/wall/bay/wood
-	icon_state = "woodneric"
-	color = WOOD_COLOR_GENERIC
+	icon_state = "preview_wood"
 	material = BAY_MATERIAL_WOOD
 
 /turf/closed/wall/bay/mahogany
-	icon_state = "woodneric"
-	color = WOOD_COLOR_RICH
+	icon_state = "preview_mahogany"
 	material = MATERIAL_MAHOGANY
 
 /turf/closed/wall/bay/maple
-	icon_state = "woodneric"
-	color = WOOD_COLOR_PALE
+	icon_state = "preview_maple"
 	material = MATERIAL_MAPLE
 
 /turf/closed/wall/bay/ebony
-	icon_state = "woodneric"
-	color = WOOD_COLOR_BLACK
+	icon_state = "preview_ebony"
 	material = MATERIAL_EBONY
 
 /turf/closed/wall/bay/walnut
-	icon_state = "woodneric"
-	color = WOOD_COLOR_CHOCOLATE
+	icon_state = "preview_walnut"
 	material = MATERIAL_WALNUT
 
 /turf/closed/wall/bay/ironphoron
+	icon_state = "preview_r_iron_phoron"
 	material = MATERIAL_IRON
 	reinf_material = MATERIAL_PHORON
 
 /turf/closed/wall/bay/golddiamond
+	icon_state = "preview_r_gold_diamond"
 	material = MATERIAL_GOLD
 	reinf_material = MATERIAL_DIAMOND
 
 /turf/closed/wall/bay/silvergold
+	icon_state = "preview_r_silver_gold"
 	material = MATERIAL_SILVER
 	reinf_material = MATERIAL_GOLD
 
 /turf/closed/wall/bay/sandstone/diamond
+	icon_state = "preview_r_sandstone_diamond"
 	reinf_material = MATERIAL_DIAMOND
 
 /turf/closed/wall/bay/crystal
+	icon_state = "preview_crystal"
 	material = MATERIAL_CRYSTAL
 
 /turf/closed/wall/bay/concrete
+	icon_state = "preview_concrete"
 	material = MATERIAL_CONCRETE
 
 #undef BAY_STEEL_WALL_HEALTH
