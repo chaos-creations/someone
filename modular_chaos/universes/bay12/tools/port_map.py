@@ -11,7 +11,8 @@ code: the contents of closets (WillContain()), random spawners (spawn_choices())
 (startswith) and every other var of a type that names a type (a gun's magazine_type, a rig's modules). It writes a
 TSV with the status of each one (ported, skipped, or still to do) and prints a summary by category.
 
-convert stacks the map's z-levels into one TGM .dmm, from the lowest level up, as the fork's multi-z maps are. Types
+convert stacks the map's z-levels into one TGM .dmm, from the lowest level up, as the fork's multi-z maps are. Doors
+that turn along their walls in the game are mapped with the dir they turn to, which map editors draw. Types
 the table skips are dropped; types it does not cover yet, or whose fork type does not exist, are dropped too and
 reported, so the result always compiles. A tile left without a turf or area gets the fallbacks of the table. Only the
 vars of TRANSFERRED_VARS and those a rule of the table lists are kept from the var edits of the map.
@@ -350,7 +351,24 @@ def inventory(arguments):
     print(f"{len(rows)} types, written to {arguments.out}")
 
 
-def convert_atom(table, fork_tree, atom, dropped):
+# Fork types whose default dir is not Bay's (south): CM doors face east by default. A Bay atom of these mapped without a
+# dir gets the one its Bay type has.
+EAST_FACING_TYPES = ("/obj/structure/machinery/door",)
+DIR_NAMES = {"NORTH": "1", "SOUTH": "2", "EAST": "4", "WEST": "8", "NORTHEAST": "5", "NORTHWEST": "9",
+             "SOUTHEAST": "6", "SOUTHWEST": "10"}
+
+
+def bay_default_dir(bay_tree, path):
+    """The dir a Bay type has unless mapped with another, as a number in a string."""
+    for ancestor in bay_tree.ancestors(path):
+        value = bay_tree.vars.get(ancestor, {}).get("dir")
+        if value:
+            value = value.split("//")[0].strip()
+            return DIR_NAMES.get(value, value)
+    return "2"
+
+
+def convert_atom(table, fork_tree, bay_tree, atom, dropped):
     """The fork atoms for a Bay atom of the map, none if it is dropped (then added to dropped, unless skipped).
 
     The kept var edits go on the first of them.
@@ -365,13 +383,74 @@ def convert_atom(table, fork_tree, atom, dropped):
     kept.update(table.find(path)[2])
     fork_vars = [(kept[name], value) for name, value in bay_vars.items() if name in kept]
     first, *rest = detail.split("+")
+    if "dir" not in bay_vars and is_type(first, EAST_FACING_TYPES):
+        fork_vars.append(("dir", bay_default_dir(bay_tree, path)))
     if fork_vars:
         first += "{" + ";".join(f"{name} = {value}" for name, value in fork_vars) + "}"
     return [first, *rest]
 
 
+# Doors that turn along the walls they are set in on Initialize(): face_bay_walls() in bay_doors.dm, and the
+# Initialize() of the two-tile airlocks, which look for their walls past their second tile
+WALL_FACING_DOORS = ("/obj/structure/machinery/door/airlock/bay", "/obj/structure/machinery/door/firedoor/bay")
+DOUBLE_DOORS = ("/obj/structure/machinery/door/airlock/bay/double",)
+# What such a door turns along: walls, and windows and low walls
+DOOR_FRAMES = ("/turf/closed/wall", "/obj/structure/window/framed", "/obj/structure/window_frame")
+
+
+def is_type(path, roots):
+    return any(path == root or path.startswith(root + "/") for root in roots)
+
+
+def face_doors_along_walls(result):
+    """Sets the dir of the doors that turn along their walls in the game to the one they turn to: a door faces east with
+    walls only north or south of it, south otherwise; a two-tile one west or south. Bay maps give their doors any dir,
+    which Bay ignores; map editors draw the mapped one, as they do not initialize the doors."""
+    neighbours = {1: (0, 1), 2: (0, -1), 4: (1, 0), 8: (-1, 0)}
+
+    def is_frame(atom):
+        return is_type(dmm.parse_map_atom(atom)[0], DOOR_FRAMES)
+
+    def door_kind(atom):
+        path = dmm.parse_map_atom(atom)[0]
+        if is_type(path, DOUBLE_DOORS):
+            return "double"
+        if is_type(path, WALL_FACING_DOORS):
+            return "single"
+        return None
+
+    for coord in list(result.grid):
+        tile = result.get_tile(coord)
+        kinds = {door_kind(atom) for atom in tile} - {None}
+        if not kinds:
+            continue
+        new_dirs = {}
+        for kind in kinds:
+            connections = 0
+            for direction, (dx, dy) in neighbours.items():
+                # A two-tile door looks past its second tile, north or east of it
+                reach = 2 if kind == "double" and direction in (1, 4) else 1
+                neighbour = dmm.Coordinate(coord.x + dx * reach, coord.y + dy * reach, coord.z)
+                if neighbour in result.grid and any(is_frame(atom) for atom in result.get_tile(neighbour)):
+                    connections |= direction
+            along_walls = connections and not connections & (4 | 8)
+            new_dirs[kind] = (8 if kind == "double" else 4) if along_walls else 2
+        new_tile = []
+        for atom in tile:
+            kind = door_kind(atom)
+            if kind:
+                path, atom_vars = dmm.parse_map_atom(atom)
+                # Written even when south, as CM doors default to east
+                atom_vars.pop("dir", None)
+                atom_vars["dir"] = str(new_dirs[kind])
+                atom = path + "{" + ";".join(f"{name} = {value}" for name, value in atom_vars.items()) + "}"
+            new_tile.append(atom)
+        result.set_tile(coord, new_tile)
+
+
 def convert(arguments):
     fork_tree = TypeTree().read(os.path.join(REPOSITORY, root) for root in FORK_CODE)
+    bay_tree = TypeTree().read(os.path.join(arguments.checkout, root) for root in BAY_CODE[arguments.map])
     table = TypesTable(TYPES_TABLE)
     for fallback in ("turf", "area"):
         if fallback not in table.fallbacks or not fork_tree.exists(table.fallbacks[fallback]):
@@ -389,7 +468,8 @@ def convert(arguments):
             bay_tile = level.dictionary[key]
             if bay_tile not in converted_tiles:
                 dropped_atoms = []
-                atoms = [fork_atom for atom in bay_tile for fork_atom in convert_atom(table, fork_tree, atom, dropped_atoms)]
+                atoms = [fork_atom for atom in bay_tile
+                         for fork_atom in convert_atom(table, fork_tree, bay_tree, atom, dropped_atoms)]
                 movables, turfs, areas = dmm.split_atom_groups(atoms)
                 fork_tile = tuple(movables + (turfs[:1] or [table.fallbacks["turf"]])
                                   + (areas[:1] or [table.fallbacks["area"]]))
@@ -397,6 +477,7 @@ def convert(arguments):
             fork_tile, dropped_atoms = converted_tiles[bay_tile]
             dropped.update(dropped_atoms)
             result.set_tile(dmm.Coordinate(x, y, z), fork_tile)
+    face_doors_along_walls(result)
     result.to_file(arguments.out)
 
     print(f"{arguments.out}: {width}x{height}x{len(levels)}, {len(result.dictionary)} keys")

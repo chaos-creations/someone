@@ -69,8 +69,8 @@
  * source; the low wall under it is of a material of its own and may be painted, and shows its stripe colour, else the
  * colour of its material (/obj/structure/wall_frame of the source). Drawn from overlays, one per corner as Bay draws
  * them: the greyscale low wall, then the glass, both from windows.dmi. The map editor shows the preview of the type.
- * The materials and paint pass to the low wall left when the glass breaks, and back to the window made on it. junction
- * is still set the CM way, for the weeds that grow on the window and the frame it leaves.
+ * The material and paint of the low wall pass to the one left when the glass breaks, and back to a window made on it.
+ * junction is still set the CM way, for the weeds that grow on the window and the frame it leaves.
  */
 /obj/structure/window/framed/bay
 	name = "reinforced window"
@@ -103,9 +103,6 @@
 		frame_material = frame.frame_material
 		frame_paint_color = frame.frame_paint_color
 		frame_stripe_color = frame.frame_stripe_color
-		if(frame.glass_material)
-			glass_material = frame.glass_material
-			glass_reinf_material = frame.glass_reinf_material
 	resolve_materials()
 	update_window_material()
 	return ..()
@@ -225,7 +222,11 @@
 
 /**
  * The low wall of a Bay window, /obj/structure/wall_frame of the source: of a material, painted or not, and left when
- * the glass of a window breaks; reinforced glass makes it a window again
+ * the glass of a window breaks
+ *
+ * As in the source, rods put a grille on it, and glass a window: a full one of four sheets, or a pane on one side of one
+ * sheet, of the glass of the sheets. The sheets are CM's plain and reinforced glass, which stand for Bay glass and glass
+ * reinforced with steel until Bay's sheets are ported.
  */
 /obj/structure/window_frame/bay
 	name = "low wall"
@@ -240,10 +241,6 @@
 	var/frame_paint_color
 	/// Colour of its stripe, which it shows; null if it has none
 	var/frame_stripe_color
-	/// The material of the pane of the window that broke into it, which a window made on it gets; null if none did
-	var/material/glass_material
-	/// The material that pane was reinforced with
-	var/material/glass_reinf_material
 
 /obj/structure/window_frame/bay/Initialize(mapload, ...)
 	var/obj/structure/window/framed/bay/window = locate() in loc // The window that broke into this frame
@@ -252,8 +249,6 @@
 		frame_material = window.frame_material
 		frame_paint_color = window.frame_paint_color
 		frame_stripe_color = window.frame_stripe_color
-		glass_material = window.glass_material
-		glass_reinf_material = window.glass_reinf_material
 	resolve_materials()
 	name = "[frame_material.use_name] [initial(name)]"
 	return ..()
@@ -279,6 +274,78 @@
 /obj/structure/window_frame/bay/relativewall_neighbours()
 	..()
 	update_bay_low_walls_around(src)
+
+/obj/structure/window_frame/bay/attackby(obj/item/attacking_item, mob/living/user)
+	if(istype(attacking_item, /obj/item/stack/rods))
+		place_grille(attacking_item, user)
+		return
+	if(istype(attacking_item, /obj/item/stack/sheet/glass))
+		place_window(attacking_item, user)
+		return
+	return ..()
+
+/**
+ * Puts a grille on the low wall from two rods, place_grille() of the source
+ *
+ * * rods - the rods
+ * * user - who puts it
+ */
+/obj/structure/window_frame/bay/proc/place_grille(obj/item/stack/rods/rods, mob/living/user)
+	if(locate(/obj/structure/grille) in loc)
+		to_chat(user, SPAN_WARNING("There is another grille here!"))
+		return
+	if(rods.get_amount() < 2)
+		to_chat(user, SPAN_WARNING("You need at least two rods to do this."))
+		return
+	to_chat(user, SPAN_NOTICE("Assembling grille..."))
+	if(!do_after(user, 1 SECONDS, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD, src) || (locate(/obj/structure/grille) in loc))
+		return
+	if(!rods.use(2))
+		return
+	var/obj/structure/grille/bay/grille = new(loc)
+	grille.add_fingerprint(user)
+	to_chat(user, SPAN_NOTICE("You assemble a grille."))
+
+/**
+ * Puts a window of the glass of the sheets on the low wall, place_window() of the source: a full one, which takes the
+ * place of the low wall, or a pane on the side the user stands at
+ *
+ * * sheets - the glass
+ * * user - who puts it
+ */
+/obj/structure/window_frame/bay/proc/place_window(obj/item/stack/sheet/glass/sheets, mob/living/user)
+	var/window_kind = tgui_input_list(user, "Which type of window to place?", "Window Placement", list("Full Size", "Directional"))
+	if(!window_kind || !user.Adjacent(src))
+		return
+	var/full = window_kind == "Full Size"
+	var/pane_dir = get_dir(src, user)
+	if(!full && (pane_dir & (pane_dir - 1)))
+		to_chat(user, SPAN_WARNING("You can't reach from this angle."))
+		return
+	var/required_amount = full ? 4 : 1
+	if(sheets.get_amount() < required_amount)
+		to_chat(user, SPAN_NOTICE("You do not have enough sheets."))
+		return
+	for(var/obj/structure/window/window in loc)
+		if(full || window.dir == pane_dir)
+			to_chat(user, SPAN_NOTICE("There is already a window there."))
+			return
+	to_chat(user, SPAN_NOTICE("You start placing the window."))
+	if(!do_after(user, 2 SECONDS, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD, src) || !sheets.use(required_amount))
+		return
+	var/reinforced = istype(sheets, /obj/item/stack/sheet/glass/reinforced)
+	if(!full)
+		var/obj/structure/window/bay/pane = reinforced ? new /obj/structure/window/bay/reinforced(loc) : new /obj/structure/window/bay(loc)
+		pane.setDir(pane_dir)
+		to_chat(user, SPAN_NOTICE("You place [pane]."))
+		return
+	var/obj/structure/window/framed/bay/window = new(loc)
+	window.glass_material = get_bay_material(MATERIAL_GLASS)
+	window.glass_reinf_material = reinforced ? get_bay_material(MATERIAL_STEEL) : null
+	window.update_window_material()
+	window.relativewall()
+	to_chat(user, SPAN_NOTICE("You place [window]."))
+	qdel(src)
 
 /// The low wall of a hull window
 /obj/structure/window_frame/bay/hull

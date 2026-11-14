@@ -171,7 +171,9 @@ low walls `frame_paint_color`, `frame_stripe_color` and the colour of theirs, gl
 which give them their name, masks, strength and what takes paint, as in the source. The types are the paints and
 materials of the source (`prepainted`, `fleet`, `hull`, `titanium`, the airlocks of each department) with its colours
 in `code/__DEFINES/colors.dm`; mappers can repaint a placed one through these vars, or through `color` for walls and
-airlocks. Walls and windows keep Bay's smoothing by corners, airlocks and firedoors turn along their walls on their own,
+airlocks. Low walls are built on as in the source: rods put a grille on one, and glass a full window or a pane of that
+glass (CM's plain and reinforced glass stand for Bay's until its sheets are ported). Walls and windows keep Bay's
+smoothing by corners, airlocks and firedoors turn along their walls on their own,
 and the opening of airlocks and firedoors plays at 1 ds a frame instead of Bay's 2.
 
 The layers are converted by `tools/bake_structures.py`, run with the path of a Baystation 12 checkout

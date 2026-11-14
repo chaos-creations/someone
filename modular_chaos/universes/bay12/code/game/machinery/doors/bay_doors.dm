@@ -24,11 +24,11 @@
  *
  * Drawn the way set_airlock_overlays() draws it in the source: the frame in door_file, and over it greyscale layers
  * coloured at runtime: the paint in door_color, the fill (steel, paint, or glass in window_color), the stripe in
- * stripe_color, then the lights. The layers are images without an icon_state, so they show the state the door shows,
- * flicks included; each of their files has every state of the door. Mappers can paint a placed one with door_color and
+ * stripe_color, then the lights. Each layer file has every state of the door, and the layers are set to the state the
+ * door shows, its animations included. Mappers can paint a placed one with door_color and
  * stripe_color, or with color, which becomes door_color on Initialize().
  *
- * In the map editor the door shows icon_state from previews.dmi, its colour scheme baked; on Initialize() it switches
+ * In the map editor the door shows icon_state from previews.dmi, its colour scheme baked; update_icon() switches it
  * to door_file. update_icon() and do_animate() redo the parent's to add the layers; keep them in step with it.
  */
 /obj/structure/machinery/door/airlock/bay
@@ -64,65 +64,83 @@
 	if(color) // Painted in the map editor
 		door_color = color
 		color = null
-	icon = door_file
 	. = ..()
 	if(faces_walls)
 		face_bay_walls()
 	update_icon()
 
+// It switches from its preview to its frame here rather than on Initialize(), for map editors that draw a door by
+// calling this without initializing it (RMD)
 /obj/structure/machinery/door/airlock/bay/update_icon()
+	icon = door_file
 	overlays.Cut()
 	if(!density)
 		icon_state = "door_open"
-		add_paint_overlays()
-		return
-	if(locked && lights)
+	else if(locked && lights)
 		icon_state = "door_locked"
 	else
 		icon_state = "door_closed"
-	add_paint_overlays()
+	add_paint_overlays(icon_state)
+	if(!density)
+		return
 	if(panel_open)
 		overlays += image(icon, "panel_open")
 	if(welded)
 		overlays += image(icon, "welded")
 
+// The layers play the animation along with the door, then go back to its state when it is redrawn
 /obj/structure/machinery/door/airlock/bay/do_animate(animation)
-	if(animation != "opening" && animation != "closing")
-		return ..()
-	// The panel and welds go, the layers stay to play along
+	var/animation_state
+	switch(animation)
+		if("opening", "closing")
+			animation_state = "[panel_open ? "o_" : ""]door_[animation]"
+		if("spark", "deny")
+			if(!density)
+				return
+			animation_state = "door_[animation]"
+		else
+			return ..()
 	overlays.Cut()
-	add_paint_overlays()
-	flick("[panel_open ? "o_" : ""]door_[animation]", src)
-
-/// Adds the coloured layers over the frame, as set_airlock_overlays() stacks them in the source
-/obj/structure/machinery/door/airlock/bay/proc/add_paint_overlays()
-	if(door_color)
-		overlays += paint_layer(color_file, door_color)
-	if(glass)
-		overlays += paint_layer(glass_file, window_color)
-	else if(door_color)
-		overlays += paint_layer(color_fill_file, door_color)
-	else
-		overlays += paint_layer(fill_file)
-	if(stripe_color)
-		overlays += paint_layer(stripe_file, stripe_color)
-		if(!glass)
-			overlays += paint_layer(stripe_fill_file, stripe_color)
-	overlays += paint_layer(lights_file)
+	add_paint_overlays(animation_state)
+	flick(animation_state, src)
+	if(animation == "spark" || animation == "deny")
+		addtimer(CALLBACK(src, PROC_REF(update_icon)), 1 SECONDS, TIMER_UNIQUE|TIMER_OVERRIDE)
 
 /**
- * A layer of a Bay airlock: an image of a whole file without an icon_state, which shows the state of the door
+ * Adds the coloured layers over the frame, as set_airlock_overlays() stacks them in the source
  *
- * The images are cached, as every door of a colour scheme uses the same few.
+ * * state - the state of the door they show; each layer file has every state of the door
+ */
+/obj/structure/machinery/door/airlock/bay/proc/add_paint_overlays(state)
+	if(door_color)
+		overlays += paint_layer(color_file, state, door_color)
+	if(glass)
+		overlays += paint_layer(glass_file, state, window_color)
+	else if(door_color)
+		overlays += paint_layer(color_fill_file, state, door_color)
+	else
+		overlays += paint_layer(fill_file, state)
+	if(stripe_color)
+		overlays += paint_layer(stripe_file, state, stripe_color)
+		if(!glass)
+			overlays += paint_layer(stripe_fill_file, state, stripe_color)
+	overlays += paint_layer(lights_file, state)
+
+/**
+ * A layer of a Bay airlock in a state of the door
+ *
+ * The state is set rather than left to follow the door's, which BYOND does but map editors do not. The images are
+ * cached, as every door of a colour scheme uses the same few.
  * * layer_file - the layer
+ * * state - the state of the door
  * * color - colour it is multiplied by, null for none
  */
-/obj/structure/machinery/door/airlock/bay/proc/paint_layer(layer_file, color)
+/obj/structure/machinery/door/airlock/bay/proc/paint_layer(layer_file, state, color)
 	var/static/list/layer_cache = list()
-	var/key = "[layer_file]-[color]"
+	var/key = "[layer_file]-[state]-[color]"
 	var/image/layer = layer_cache[key]
 	if(!layer)
-		layer = image(layer_file)
+		layer = image(layer_file, state)
 		layer.color = color
 		layer_cache[key] = layer
 	return layer

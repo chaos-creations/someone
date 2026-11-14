@@ -37,6 +37,8 @@ import os
 import re
 import sys
 
+from PIL import Image
+
 from dmi_files import Dmi, blank_state, make_state, multiply, stack
 
 # The icons/ folder of the Baystation 12 checkout, set by main()
@@ -425,6 +427,10 @@ def bake_airlock_frame(frame_name, files):
 	if files["sparks"]:
 		light_states.append(make_state("door_spark", 4, timing["door_spark"][0],
 			lambda d, f: layer(files["sparks"], "closed", d, f), timing["door_spark"][1]))
+	# The states without lights are empty, so a layer set to any state of the door has it, which map editors need
+	for name in ("door_closed", "door_open", "door_spark"):
+		if not any(state.name == name for state in light_states):
+			light_states.append(make_state(name, 4, 1, lambda _d, _f: stack(Image.new("RGBA", size, (0, 0, 0, 0)))))
 	write(Dmi(light_states, *size), folder + "lights.dmi")
 	for key in PAINT_LAYERS:
 		if frame_name != "station" and files[key] == STATION[key]:
