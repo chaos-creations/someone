@@ -42,7 +42,8 @@ Assets are taken only for what the universe needs, not everything the source's m
   coats of paint that repaint them, windows of plain, reinforced, borosilicate and electrochromic glass on low walls of
   every material, panes and grilles, the airlocks of every department, two tiles wide too, vault, crystal and escape pod
   doors, windoors and brig doors, the morgue door, plastic doors, firedoors, blast doors and shutters, its areas, its
-  power grid (see "Power") with its portable generators, solar arrays and power sensors, catwalks,
+  power grid (see "Power") with its portable generators, solar arrays, power sensors, lights and light switches,
+  catwalks,
   lattices, railings, handrails, ladders and stairs, its floors
   (plating, tiles, carpets, wood, linoleum, grass, the pool, mainframe and crystal floors, hull plating) with Bay's
   borders and damage overlays, and its floor decals, signs and logos;
@@ -123,6 +124,11 @@ APC of their area as on any map, so CM maps keep their power as it was.
 Generators there feed their cable knot too, not the APC of their area as CM generators do. Solar panels follow a sun
 of their own (`SSbay_sun`, `code/controllers/subsystem/bay_sun.dm`): with no overmap and no stars, it turns around the
 ship as the source's does on a map without a star. Fuel and glass are CM sheets until Bay materials are ported.
+
+Lights there are CM fixtures, whose status the CM code that breaks, fixes and replaces lights keeps setting, holding
+Bay bulbs of their own colour, the tone of their area (`lighting_tone`). When an APC turns the lights of its area off
+on its own to save its cell, they switch to the red emergency light of their bulbs, run off the environment channel.
+Bay light switches start off, as in the source, so a room with one is dark until someone turns its lights on.
 
 ## Walls, windows and doors
 

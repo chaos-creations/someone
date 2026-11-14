@@ -1,6 +1,7 @@
 //Areas of the SEV Torch (the areas of maps/torch/ and code/game/area/ in the source), written by
 //tools/port_map.py areas, which this should be written by again rather than edited: the area types of the source the
-//map places and their parents, under /area/torch, with their names, icons, sound environments and power.
+//map places and their parents, under /area/torch, with their names, icons, sound environments, power and the tone
+//of their lights.
 
 /// Every area of the SEV Torch: a ship whose power runs along its cables, as in the source
 /area/torch
@@ -33,6 +34,7 @@
 
 /area/torch/aquila/medical
 	name = "\improper SEV Aquila - Medical Compartment"
+	lighting_tone = AREA_LIGHTING_COOL
 
 /area/torch/aquila/power
 	name = "\improper SEV Aquila - Engineering Compartment"
@@ -61,6 +63,7 @@
 
 /area/torch/assembly/robotics/surgery
 	name = "\improper Robotics Operating Theatre"
+	lighting_tone = AREA_LIGHTING_COOL
 
 /area/torch/aux_eva
 	name = "\improper Command EVA Storage"
@@ -99,6 +102,7 @@
 /area/torch/chapel
 	name = "\improper Chapel"
 	icon_state = "chapel"
+	lighting_tone = AREA_LIGHTING_WARM
 
 /area/torch/chapel/main
 	name = "\improper Chapel"
@@ -130,6 +134,7 @@
 	name = "Officer's Mess"
 	icon_state = "bar"
 	sound_environment = SOUND_ENVIRONMENT_LIVINGROOM
+	lighting_tone = AREA_LIGHTING_WARM
 
 /area/torch/command/conference
 	name = "Briefing Room"
@@ -164,6 +169,7 @@
 	name = "\improper Chief Steward's Office"
 	icon_state = "kitchen"
 	sound_environment = SOUND_ENVIRONMENT_BATHROOM
+	lighting_tone = AREA_LIGHTING_WARM
 
 /area/torch/crew_quarters/commissary
 	name = "\improper Commissary"
@@ -176,14 +182,17 @@
 /area/torch/crew_quarters/diplomatic_office
 	name = "\improper Diplomatic Meeting Room"
 	icon_state = "crew_quarters"
+	lighting_tone = AREA_LIGHTING_COOL
 
 /area/torch/crew_quarters/galley
 	name = "\improper Galley"
 	icon_state = "kitchen"
+	lighting_tone = AREA_LIGHTING_COOL
 
 /area/torch/crew_quarters/galleybackroom
 	name = "\improper Galley Cold Storage"
 	icon_state = "kitchen"
+	lighting_tone = AREA_LIGHTING_COOL
 
 /area/torch/crew_quarters/gym
 	name = "\improper Gym"
@@ -211,6 +220,7 @@
 	name = "\improper Command - CO's Quarters"
 	icon_state = "heads_cap"
 	sound_environment = SOUND_ENVIRONMENT_LIVINGROOM
+	lighting_tone = AREA_LIGHTING_WARM
 
 /area/torch/crew_quarters/heads/office/ce
 	name = "\improper Engineering - CE's Office"
@@ -219,6 +229,7 @@
 /area/torch/crew_quarters/heads/office/cl
 	name = "\improper Command - CL's Office"
 	icon_state = "heads_cl"
+	lighting_tone = AREA_LIGHTING_WARM
 
 /area/torch/crew_quarters/heads/office/cl/backroom
 	name = "\improper Command - CL's Backroom"
@@ -227,11 +238,13 @@
 /area/torch/crew_quarters/heads/office/cmo
 	name = "\improper Command - CMO's Office"
 	icon_state = "heads_cmo"
+	lighting_tone = AREA_LIGHTING_COOL
 
 /area/torch/crew_quarters/heads/office/co
 	name = "\improper Command - CO's Office"
 	icon_state = "heads_cap"
 	sound_environment = SOUND_ENVIRONMENT_LIVINGROOM
+	lighting_tone = AREA_LIGHTING_WARM
 
 /area/torch/crew_quarters/heads/office/cos
 	name = "\improper Command - CoS' Office"
@@ -240,6 +253,7 @@
 /area/torch/crew_quarters/heads/office/rd
 	name = "\improper Command - CSO's Office"
 	icon_state = "heads_rd"
+	lighting_tone = AREA_LIGHTING_COOL
 
 /area/torch/crew_quarters/heads/office/sea
 	name = "\improper Command - SEA's Office"
@@ -248,10 +262,12 @@
 /area/torch/crew_quarters/heads/office/sgr
 	name = "\improper Command - SCGR's Office"
 	icon_state = "heads_sr"
+	lighting_tone = AREA_LIGHTING_WARM
 
 /area/torch/crew_quarters/heads/office/xo
 	name = "\improper Command - XO's Office"
 	icon_state = "heads_hop"
+	lighting_tone = AREA_LIGHTING_WARM
 
 /area/torch/crew_quarters/laundry
 	name = "\improper Laundry Room"
@@ -261,10 +277,12 @@
 	name = "\improper Lounge"
 	icon_state = "crew_quarters"
 	sound_environment = SOUND_ENVIRONMENT_LIVINGROOM
+	lighting_tone = AREA_LIGHTING_WARM
 
 /area/torch/crew_quarters/mess
 	name = "\improper Mess Hall"
 	icon_state = "cafeteria"
+	lighting_tone = AREA_LIGHTING_WARM
 
 /area/torch/crew_quarters/observation
 	name = "\improper Observation"
@@ -277,6 +295,7 @@
 /area/torch/crew_quarters/recreation
 	name = "\improper Recreation"
 	icon_state = "crew_quarters"
+	lighting_tone = AREA_LIGHTING_WARM
 
 /area/torch/crew_quarters/safe_room
 	name = "\improper Safe Room"
@@ -299,11 +318,13 @@
 	name = "\improper Service Break Room"
 	icon_state = "fitness"
 	sound_environment = SOUND_ENVIRONMENT_BATHROOM
+	lighting_tone = AREA_LIGHTING_WARM
 
 /area/torch/crew_quarters/sleep/bunk
 	name = "\improper Bunk Room"
 	icon_state = "Sleep"
 	sound_environment = SOUND_ENVIRONMENT_ROOM
+	lighting_tone = AREA_LIGHTING_WARM
 
 /area/torch/crew_quarters/sleep/cryo
 	name = "\improper Third Deck Cryogenic Storage"
@@ -517,6 +538,7 @@
 /area/torch/hydroponics
 	name = "\improper Hydroponics"
 	icon_state = "hydro"
+	lighting_tone = AREA_LIGHTING_COOL
 
 /area/torch/janitor
 	name = "\improper Custodial Closet"
@@ -722,6 +744,7 @@
 	icon_state = "disposal"
 
 /area/torch/medical
+	lighting_tone = AREA_LIGHTING_COOL
 
 /area/torch/medical/chemistry
 	name = "\improper Chemistry"
@@ -735,6 +758,7 @@
 /area/torch/medical/counselor/therapy
 	name = "\improper Counselor's Therapy Room"
 	icon_state = "medbay3"
+	lighting_tone = AREA_LIGHTING_WARM
 
 /area/torch/medical/equipstorage
 	name = "\improper Medical Equipment Storage"
@@ -849,6 +873,7 @@
 	name = "\improper Supply Upper Warehouse"
 
 /area/torch/rnd
+	lighting_tone = AREA_LIGHTING_COOL
 
 /area/torch/rnd/canister
 	name = "\improper Canister Storage"
@@ -928,6 +953,7 @@
 	name = "\improper Security - Investigations Office"
 	icon_state = "detective"
 	sound_environment = SOUND_ENVIRONMENT_LIVINGROOM
+	lighting_tone = AREA_LIGHTING_COOL
 
 /area/torch/security/evidence
 	name = "\improper Security - Evidence Storage"
@@ -1021,6 +1047,7 @@
 
 /area/torch/shuttle/petrov
 	name = "\improper SRV Petrov"
+	lighting_tone = AREA_LIGHTING_COOL
 
 /area/torch/shuttle/petrov/analysis
 	name = "\improper SRV Petrov - Analysis Lab"
@@ -1049,6 +1076,7 @@
 /area/torch/shuttle/petrov/custodial
 	name = "\improper SRV Petrov - Custodial"
 	icon_state = "decontamination"
+	lighting_tone = AREA_LIGHTING_DEFAULT
 
 /area/torch/shuttle/petrov/equipment
 	name = "\improper SRV Petrov - Equipment Storage"
@@ -1069,6 +1097,7 @@
 /area/torch/shuttle/petrov/maint
 	name = "\improper SRV Petrov - Maintenance"
 	icon_state = "engine"
+	lighting_tone = AREA_LIGHTING_DEFAULT
 
 /area/torch/shuttle/petrov/phoron
 	name = "\improper SRV Petrov - Sublimation Lab"
@@ -1120,6 +1149,7 @@
 	name = "Medical Storage"
 	icon_state = "medbay4"
 	sound_environment = SOUND_ENVIRONMENT_BATHROOM
+	lighting_tone = AREA_LIGHTING_COOL
 
 /area/torch/storage/primary
 	name = "Primary Tool Storage"
@@ -1129,6 +1159,7 @@
 	name = "Research Storage"
 	icon_state = "toxstorage"
 	sound_environment = SOUND_ENVIRONMENT_BATHROOM
+	lighting_tone = AREA_LIGHTING_COOL
 
 /area/torch/storage/tech
 	name = "Technical Storage"
@@ -1206,6 +1237,7 @@
 /area/torch/turbolift/medical_lift
 	name = "\improper Medical Lift"
 	icon_state = "shuttle3"
+	lighting_tone = AREA_LIGHTING_COOL
 
 /area/torch/turbolift/robotics_lift
 	name = "\improper Robotics Lift"
@@ -1222,6 +1254,7 @@
 /area/torch/vacant/bar
 	name = "\improper Hidden Bar"
 	icon_state = "bar"
+	lighting_tone = AREA_LIGHTING_WARM
 
 /area/torch/vacant/brig
 	name = "\improper Permanent Brig"
@@ -1242,10 +1275,12 @@
 /area/torch/vacant/infirmary
 	name = "\improper Auxiliary Infirmary"
 	icon_state = "medbay"
+	lighting_tone = AREA_LIGHTING_COOL
 
 /area/torch/vacant/mess
 	name = "\improper Old Mess"
 	icon_state = "bar"
+	lighting_tone = AREA_LIGHTING_WARM
 
 /area/torch/vacant/monitoring
 	name = "\improper Auxiliary Monitoring Room"

@@ -11,7 +11,8 @@ icons/:
 - obj/structures/grille.dmi: grilles, on their own and on low walls;
 - obj/structures/: catwalks, lattices, railings, handrails, ladders and stairs, in doors/ the windoors, the morgue
   door and the plastic door, and in machinery/ breaker boxes, portable generators, solar panels and trackers, the
-  solar control console and power sensors, as they are; and obj/items/circuitboards.dmi, electronics;
+  solar control console and power sensors, as they are, with lighting.dmi (light fixtures, their frames and bulbs) and
+  buttons.dmi (light switches); and obj/items/circuitboards.dmi, electronics;
 - obj/structures/machinery/apc.dmi: APCs, their lights coloured into the states CM draws, and power terminals;
 - obj/structures/machinery/smes.dmi and power_cond_white.dmi: SMES units and power cables, as they are;
 - obj/structures/doors/airlocks/<frame>/: for each airlock frame, door.dmi (the frame, its panel and welds) and the
@@ -165,6 +166,12 @@ COPIED_ICONS = [
 	("obj/machines/computer.dmi", ["computer", "solar", "broken", "solcon-o"], "obj/structures/machinery/computer.dmi"),
 	("obj/structures/floor_magnet.dmi", ["floor_beacon"], "obj/structures/machinery/power_sensor.dmi"),
 	("obj/doors/door_assembly.dmi", ["door_electronics"], "obj/items/circuitboards.dmi"),
+	("obj/structures/lighting.dmi", [f"{fitting}{state}" for fitting in ("tube", "bulb") for state in ("_map", "_empty",
+		"0", "1", "_burned", "_broken", "-construct-stage1", "-construct-stage2")] + [f"{bulb}{state}"
+		for bulb in ("ltube", "lbulb") for state in ("", "_burned", "_broken", "_attachment", "_attachment_broken")],
+		"obj/structures/lighting.dmi"),
+	("obj/structures/buttons.dmi", ["light0", "light1", "light-p", "light0-overlay", "light1-overlay"],
+		"obj/structures/buttons.dmi"),
 ]
 
 

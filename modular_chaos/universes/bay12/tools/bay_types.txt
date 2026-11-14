@@ -180,6 +180,11 @@
 /obj/machinery/power/solar_control  /obj/structure/machinery/power/bay_solar_control  id track
 /obj/machinery/power/solar_control/autostart  /obj/structure/machinery/power/bay_solar_control/autostart  id
 /obj/machinery/power/sensor  /obj/structure/machinery/power/bay_sensor  name_tag long_range
+/obj/machinery/light/*  /obj/structure/machinery/light/bay/*
+/obj/machinery/light_construct/*  /obj/structure/machinery/light_construct/bay/*
+/obj/machinery/light_switch  /obj/structure/machinery/light_switch/bay  on other_area
+/obj/item/light/tube/*  /obj/item/light_bulb/bay/tube/*
+/obj/item/light/bulb/*  /obj/item/light_bulb/bay/bulb/*
 
 # Not ported: the overmap
 

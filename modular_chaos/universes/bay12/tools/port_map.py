@@ -17,8 +17,8 @@ reported, so the result always compiles. A tile left without a turf or area gets
 vars of TRANSFERRED_VARS and those a rule of the table lists are kept from the var edits of the map.
 
 areas writes the DM of the map's areas: the Bay area types it places and their parents, under a root of their own
-(AREA_ROOTS), with the name, icon, sound environment and power the source gives them. It adds the icons of the areas
-the fork's icons/turf/areas.dmi lacks, and reports the ones it has with other sprites.
+(AREA_ROOTS), with the name, icon, sound environment, power and lighting tone the source gives them. It adds the icons
+of the areas the fork's icons/turf/areas.dmi lacks, and reports the ones it has with other sprites.
 
 Needs bidict (for tools/mapmerge2) and Python 3.10 or newer; areas also needs Pillow.
 """
@@ -424,7 +424,8 @@ def areas(arguments):
 
     blocks = [f"""//Areas of the {root_name} (the areas of maps/{arguments.map}/ and code/game/area/ in the source), written by
 //tools/port_map.py areas, which this should be written by again rather than edited: the area types of the source the
-//map places and their parents, under {root}, with their names, icons, sound environments and power.
+//map places and their parents, under {root}, with their names, icons, sound environments, power and the tone
+//of their lights.
 
 /// Every area of the {root_name}: a ship whose power runs along its cables, as in the source
 {root}
@@ -457,6 +458,8 @@ def areas(arguments):
             lines += ["requires_power = FALSE", "unlimited_power = TRUE"]
         if bay_vars.get("always_unpowered") in ("1", "TRUE"):
             lines.append("always_unpowered = TRUE")
+        if "lighting_tone" in bay_vars:
+            lines.append(f"lighting_tone = {bay_vars['lighting_tone']}")
         if not lines and not bay_tree.exists(path):
             continue  # a node of the tree only, which DM makes from its subtypes
         blocks.append("\n".join([root + path[len("/area"):]] + [f"\t{line}" for line in lines]))

@@ -41,3 +41,10 @@
 
 /obj/structure/machinery/power/apc/bay/hyper
 	cell_type = /obj/item/cell/hyper
+
+// When it turns the lights of its area off on its own to save its cell, their emergency lighting comes on, as in the source
+/obj/structure/machinery/power/apc/bay/update()
+	var/had_light = area.power_light
+	. = ..()
+	if(area.power_light != had_light)
+		area.set_emergency_lighting(operating && !shorted && lighting == 1)
