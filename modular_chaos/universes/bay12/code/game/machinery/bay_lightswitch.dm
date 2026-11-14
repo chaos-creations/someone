@@ -34,13 +34,6 @@
 	on = FALSE
 	/// The type of the area it switches instead of its own, other_area in the source
 	var/other_area
-	/// The sounds it makes when turned, one of them at random
-	var/static/list/switch_sounds = list(
-		'modular_chaos/universes/bay12/sound/machines/switch1.ogg',
-		'modular_chaos/universes/bay12/sound/machines/switch2.ogg',
-		'modular_chaos/universes/bay12/sound/machines/switch3.ogg',
-		'modular_chaos/universes/bay12/sound/machines/switch4.ogg',
-	)
 
 /obj/structure/machinery/light_switch/bay/Initialize()
 	. = ..()
@@ -93,7 +86,7 @@
 /obj/structure/machinery/light_switch/bay/attack_hand(mob/user)
 	if(inoperable())
 		return
-	playsound(src, pick(switch_sounds), 30)
+	playsound(src, pick(GLOB.bay_switch_sounds), 30)
 	set_state(!on)
 
 // Powered by the area it switches

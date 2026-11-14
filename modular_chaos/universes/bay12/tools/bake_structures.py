@@ -12,7 +12,9 @@ icons/:
 - obj/structures/: catwalks, lattices, railings, handrails, ladders and stairs, in doors/ the windoors, the morgue
   door and the plastic door, and in machinery/ breaker boxes, portable generators, solar panels and trackers, the
   solar control console and power sensors, as they are, with lighting.dmi (light fixtures, their frames and bulbs) and
-  buttons.dmi (light switches); and obj/items/circuitboards.dmi, electronics;
+  buttons.dmi (light switches and buttons), fire alarms and cameras; obj/items/circuitboards.dmi, electronics;
+- misc/security_state.dmi: what alarms, status displays and the screen border show for each alert level, the default
+  ones and the Torch's own;
 - obj/structures/machinery/apc.dmi: APCs, their lights coloured into the states CM draws, and power terminals;
 - obj/structures/machinery/smes.dmi and power_cond_white.dmi: SMES units and power cables, as they are;
 - obj/structures/doors/airlocks/<frame>/: for each airlock frame, door.dmi (the frame, its panel and welds) and the
@@ -170,8 +172,12 @@ COPIED_ICONS = [
 		"0", "1", "_burned", "_broken", "-construct-stage1", "-construct-stage2")] + [f"{bulb}{state}"
 		for bulb in ("ltube", "lbulb") for state in ("", "_burned", "_broken", "_attachment", "_attachment_broken")],
 		"obj/structures/lighting.dmi"),
-	("obj/structures/buttons.dmi", ["light0", "light1", "light-p", "light0-overlay", "light1-overlay"],
-		"obj/structures/buttons.dmi"),
+	("obj/structures/buttons.dmi", ["light0", "light1", "light-p", "light0-overlay", "light1-overlay", "launcherbtt",
+		"launcheract", "doorctrl", "doorctrl1", "doorctrl2", "blastctrl", "blastctrl1"], "obj/structures/buttons.dmi"),
+	("obj/machines/firealarm.dmi", ["casing", "fire0", "fire1", "unpowered", "broken", "b0", "b1", "b2"],
+		"obj/structures/machinery/firealarm.dmi"),
+	("obj/structures/cameras.dmi", ["camera", "cameraemp", "camera1", "camerax", "xraycam", "xraycamemp", "xraycam1",
+		"xraycamx"], "obj/structures/machinery/cameras.dmi"),
 ]
 
 
@@ -409,6 +415,19 @@ def bake_power():
 	write(Dmi([state for state in cables.states if state.name]), "obj/structures/machinery/power_cond_white.dmi")
 
 
+# The overlays of the alert levels, of the default ones and of the Torch's own
+SECURITY_STATE_KINDS = ("alarm", "status_display", "alert_border")
+
+
+def bake_security_state():
+	"""The overlays alarms, status displays and the screen border show for each alert level."""
+	default = source("misc/security_state.dmi")
+	torch = source(os.path.join("..", "maps", "torch", "icons", "security_state.dmi"))
+	write(Dmi([default.get(f"{kind}_{level}") for kind in SECURITY_STATE_KINDS for level in ("green", "blue", "red",
+		"delta")] + [torch.get(f"{kind}_{level}") for kind in SECURITY_STATE_KINDS for level in ("violet", "orange")]),
+		"misc/security_state.dmi")
+
+
 # --- Firedoors, blast doors, shutters ------------------------------------------------------------------------------
 
 def bake_firedoor():
@@ -443,6 +462,7 @@ def main():
 	bake_copied_icons()
 	bake_apc()
 	bake_power()
+	bake_security_state()
 	for frame_name, frame_files in FRAMES.items():
 		bake_airlock_frame(frame_name, frame_files)
 	bake_airlock_previews()

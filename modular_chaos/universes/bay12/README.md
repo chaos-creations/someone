@@ -43,7 +43,7 @@ Assets are taken only for what the universe needs, not everything the source's m
   every material, panes and grilles, the airlocks of every department, two tiles wide too, vault, crystal and escape pod
   doors, windoors and brig doors, the morgue door, plastic doors, firedoors, blast doors and shutters, its areas, its
   power grid (see "Power") with its portable generators, solar arrays, power sensors, lights and light switches,
-  catwalks,
+  its door, bolt, blast door and window tint buttons, fire alarms and security cameras, catwalks,
   lattices, railings, handrails, ladders and stairs, its floors
   (plating, tiles, carpets, wood, linoleum, grass, the pool, mainframe and crystal floors, hull plating) with Bay's
   borders and damage overlays, and its floor decals, signs and logos;
@@ -129,6 +129,20 @@ Lights there are CM fixtures, whose status the CM code that breaks, fixes and re
 Bay bulbs of their own colour, the tone of their area (`lighting_tone`). When an APC turns the lights of its area off
 on its own to save its cell, they switch to the red emergency light of their bulbs, run off the environment channel.
 Bay light switches start off, as in the source, so a room with one is dark until someone turns its lights on.
+
+Bay buttons send to the doors with their `id_tag`, as the radio of the source does, which the doors keep in `id`. Bay
+access is not ported yet, so buttons the map limits to some jobs are open to everyone.
+
+## Alert levels
+
+A map can have the alert levels of Bay instead of CM's four: its JSON names their type as `"security_state"`
+(`/datum/security_state/default/torchdept` for the Torch's green, violet, orange, blue, red and delta), and
+`SSbay_security` sets them up in `GLOB.bay_security_state` (`code/datums/security_state.dm`). They announce themselves
+and light the alarms as in the source. CM keeps its own level, which marines, consoles and the self-destruct follow:
+each Bay level sets the CM level it stands for (`cm_level`; violet and orange are blue, and delta is red, so it does not
+start the CM self-destruct), and CM code that sets the CM level switches the map to the level that answers to it
+(`cm_equivalent`), quietly. Admins set any level of the map with "Set Map Alert Level". Maps without one show the CM
+level on Bay alarms.
 
 ## Walls, windows and doors
 

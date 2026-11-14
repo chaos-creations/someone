@@ -183,6 +183,15 @@
 /obj/machinery/light/*  /obj/structure/machinery/light/bay/*
 /obj/machinery/light_construct/*  /obj/structure/machinery/light_construct/bay/*
 /obj/machinery/light_switch  /obj/structure/machinery/light_switch/bay  on other_area
+/obj/machinery/button  /obj/structure/machinery/bay_button  id_tag
+/obj/machinery/button/switch  /obj/structure/machinery/bay_button/switch_sprite  id_tag
+/obj/machinery/button/alternate  /obj/structure/machinery/bay_button/alternate  id_tag
+/obj/machinery/button/alternate/door  /obj/structure/machinery/bay_button/alternate/door  id_tag
+/obj/machinery/button/alternate/door/bolts  /obj/structure/machinery/bay_button/alternate/door/bolts  id_tag
+/obj/machinery/button/blast_door  /obj/structure/machinery/bay_button/blast_door  id_tag
+/obj/machinery/button/windowtint  /obj/structure/machinery/bay_button/windowtint  id range
+/obj/machinery/firealarm  /obj/structure/machinery/firealarm/bay
+/obj/machinery/camera/network/*  /obj/structure/machinery/camera/bay/network/*  c_tag network invisibility
 /obj/item/light/tube/*  /obj/item/light_bulb/bay/tube/*
 /obj/item/light/bulb/*  /obj/item/light_bulb/bay/bulb/*
 

@@ -14,3 +14,19 @@ GLOBAL_LIST_INIT(bay12_player_origins, list(
 	ORIGIN_EARTH, ORIGIN_LUNA, ORIGIN_MARS,
 	ORIGIN_VOX_STARLIGHT_HERALD, ORIGIN_VOX_STALWART_GUARDIAN, ORIGIN_VOX_CURIOUS_ACOLYTE, ORIGIN_VOX_DUTIFUL_BLADE, ORIGIN_VOX_VIGILANT_PROPHET,
 ))
+
+/// The sounds of a Bay button pressed, one of them at random ("button" in the source)
+GLOBAL_LIST_INIT(bay_button_sounds, list(
+	'modular_chaos/universes/bay12/sound/machines/button1.ogg',
+	'modular_chaos/universes/bay12/sound/machines/button2.ogg',
+	'modular_chaos/universes/bay12/sound/machines/button3.ogg',
+	'modular_chaos/universes/bay12/sound/machines/button4.ogg',
+))
+
+/// The sounds of a Bay light switch turned, one of them at random ("switch" in the source)
+GLOBAL_LIST_INIT(bay_switch_sounds, list(
+	'modular_chaos/universes/bay12/sound/machines/switch1.ogg',
+	'modular_chaos/universes/bay12/sound/machines/switch2.ogg',
+	'modular_chaos/universes/bay12/sound/machines/switch3.ogg',
+	'modular_chaos/universes/bay12/sound/machines/switch4.ogg',
+))

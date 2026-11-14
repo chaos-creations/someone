@@ -425,6 +425,21 @@
 	. = ..()
 	face_bay_walls()
 
+// Windows do not stop it closing, as they do not stop Bay doors (/obj/structure/window/blocks_airlock() in the source):
+// CM doors wait for every dense structure on their tile to go, so the windows on it pass for not dense meanwhile, which
+// nothing sees as the close does not sleep
+/obj/structure/machinery/door/firedoor/bay/close(forced = FALSE)
+	var/list/obj/structure/window/windows = list()
+	for(var/turf/door_turf as anything in locs)
+		for(var/obj/structure/window/window in door_turf)
+			if(window.density)
+				windows += window
+				window.density = FALSE
+	. = ..()
+	for(var/obj/structure/window/window as anything in windows)
+		window.density = TRUE
+	return .
+
 /// A Bay blast door; like other blast doors it keeps the dir it is mapped with
 /obj/structure/machinery/door/poddoor/bay
 	name = "blast door"
