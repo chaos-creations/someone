@@ -14,6 +14,8 @@ icons/:
   door and the plastic door, and in machinery/ breaker boxes, portable generators, solar panels and trackers, the
   solar control console and power sensors, as they are, with lighting.dmi (light fixtures, their frames and bulbs) and
   buttons.dmi (light switches and buttons), fire alarms and cameras; obj/items/circuitboards.dmi, electronics;
+- obj/structures/props/wall_decorations/: signs, the signs of the Sol Central Government and the memorial rock of the
+  Torch, bar signs and posters, as they are;
 - obj/structures/tables.dmi and furniture.dmi: tables, racks, chairs, beds and stools, in greyscale for the colours of
   their materials;
 - obj/pipes/disposal.dmi: disposal units, chutes, outlets and pipes, as they are;
@@ -254,6 +256,11 @@ COPIED_ICONS = [
 		"obj/structures/machinery/firealarm.dmi"),
 	("obj/structures/cameras.dmi", ["camera", "cameraemp", "camera1", "camerax", "xraycam", "xraycamemp", "xraycam1",
 		"xraycamx"], "obj/structures/machinery/cameras.dmi"),
+	("obj/structures/decals.dmi", None, "obj/structures/props/wall_decorations/signs.dmi"),
+	("../maps/torch/icons/obj/solgov-decals.dmi", None, "obj/structures/props/wall_decorations/solgov.dmi"),
+	("../maps/torch/icons/obj/solgov-64x.dmi", None, "obj/structures/props/wall_decorations/solgov_64x64.dmi"),
+	("obj/structures/barsigns.dmi", None, "obj/structures/props/wall_decorations/barsigns.dmi"),
+	("obj/structures/contraband.dmi", None, "obj/structures/props/wall_decorations/bay_posters.dmi"),
 	("obj/structures/tables.dmi", None, "obj/structures/tables.dmi"),
 	("obj/structures/furniture.dmi", None, "obj/structures/furniture.dmi"),
 	("obj/pipes/disposal.dmi", ["disposal", "disposal-flush", "dispover-charge", "dispover-full", "dispover-handle",

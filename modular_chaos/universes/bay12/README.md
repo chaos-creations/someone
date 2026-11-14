@@ -44,7 +44,7 @@ Assets are taken only for what the universe needs, not everything the source's m
   and escape pod doors, windoors and brig doors, the morgue door, plastic doors, firedoors, blast doors and shutters, its
   areas, its power grid (see "Power") with its portable generators, solar arrays, power sensors, lights and light
   switches, its door, bolt, blast door and window tint buttons, fire alarms and security cameras, its disposals, its
-  tables, racks, chairs and beds, catwalks, lattices, railings, handrails, ladders and stairs, its floors
+  tables, racks, chairs and beds, its signs and posters, catwalks, lattices, railings, handrails, ladders and stairs, its floors
   (plating, tiles, carpets, wood, linoleum, grass, the pool, mainframe and crystal floors, hull plating) with Bay's
   borders and damage overlays, and its floor decals, signs and logos;
 - Lordania: its clothing, flags, banner, memorial and statues, from Proxi-BoS-Bay12 commit
@@ -138,6 +138,14 @@ access is not ported yet, so buttons the map limits to some jobs are open to eve
 Bay disposals are CM ones with the sprites of the source and CM's pressure, as atmos is not ported. Their pipes up
 and down a deck pass what they carry to the pipe on the deck above or below, as in the source; the CM ones of that kind
 leave it where it is, and only the Almayer's, linked by id, go anywhere.
+
+## Signs and posters
+
+Bay signs are CM signs, which a screwdriver takes down as in the source; the ones two tiles wide are under
+`/obj/structure/sign/double/bay/` so that CM keeps them up. Bay posters are CM posters, ripped, taken down and put up as
+those are, showing the designs of Bay: these are CM designs (`/datum/poster/bay_*`, flat, as CM takes every type of
+`/datum/poster` for a design) with a sprite file of their own (`/datum/poster/var/icon`), so CM's random posters may show
+them too. A Bay poster picks a design at random as the source does: not contraband, or one of the Torch's.
 
 ## Alert levels
 

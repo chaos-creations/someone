@@ -332,3 +332,11 @@
 /obj/structure/bed/chair/*  /obj/structure/bed/chair/bay/*
 /obj/structure/bed/chair/office/*  /obj/structure/bed/chair/office/bay/*
 /obj/structure/bed/chair/wheelchair  /obj/structure/bed/chair/wheelchair/bay
+
+# Signs and posters
+
+/obj/structure/sign/*  /obj/structure/sign/bay/*
+/obj/structure/sign/double/*  /obj/structure/sign/double/bay/*
+/obj/structure/sign/double/barsign  /obj/structure/sign/double/barsign/bay
+/obj/structure/sign/poster  /obj/structure/sign/poster/bay
+/obj/structure/sign/poster/*  /obj/structure/sign/poster/bay/*
