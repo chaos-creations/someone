@@ -405,3 +405,30 @@
 /obj/structure/morgue  /obj/structure/morgue
 /obj/structure/crematorium  /obj/structure/morgue/crematorium/bay
 /obj/machinery/button/crematorium  /obj/structure/machinery/crema_switch/bay
+
+# Cargo, janitorial, gym and shuttle props
+
+/obj/structure/plasticflaps  /obj/structure/plasticflaps/bay
+/obj/structure/plasticflaps/airtight  /obj/structure/plasticflaps/bay/airtight
+/obj/structure/largecrate  /obj/structure/largecrate/bay
+/obj/structure/ore_box  /obj/structure/ore_box/bay
+/obj/structure/janitorialcart  /obj/structure/janitorialcart/bay
+/obj/structure/mopbucket  /obj/structure/bay_mopbucket
+/obj/structure/kitchenspike  /obj/structure/kitchenspike
+/obj/structure/dogbed  /obj/structure/bay_dogbed
+/obj/structure/fitness/*  /obj/structure/bay_fitness/*
+/obj/structure/shuttle/engine/heater  /obj/structure/shuttle/engine/heater/bay
+/obj/structure/shuttle/engine/propulsion  /obj/structure/shuttle/engine/propulsion/bay
+/obj/structure/shuttle/engine/propulsion/burst/*  /obj/structure/shuttle/engine/propulsion/bay/burst/*
+/obj/structure/shuttle/engine/platform  /obj/structure/shuttle/engine/platform
+/obj/structure/shuttle/engine/router  /obj/structure/shuttle/engine/router
+/obj/structure/banner  /obj/structure/bay_banner
+/obj/structure/barricade  /obj/structure/bay_barricade  material
+/obj/structure/barricade/spike  /obj/structure/bay_barricade/spike  material
+/obj/structure/decorative/*  /obj/structure/bay_decorative/*
+/obj/structure/plushie/*  /obj/structure/bay_plushie/*
+
+# Not ported yet: the species of the source
+
+/obj/structure/adherent_bath  skip  adherents
+/obj/structure/adherent_pylon  skip  adherents
