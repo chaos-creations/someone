@@ -279,6 +279,14 @@ COPIED_ICONS = [
 	("obj/structures/structures.dmi", ["linenbin-full", "linenbin-half", "linenbin-empty"],
 		"obj/structures/props/linen_bin.dmi"),
 	("obj/showcases.dmi", ["glassbox", "glassboxb"], "obj/structures/props/furniture/display_case.dmi"),
+	("obj/structures/liquid_tanks.dmi", ["weldtank", "watertank"], "obj/structures/liquid_tanks.dmi"),
+	("obj/structures/chemical_dispensers.dmi", ["peppertank", "acidtank"], "obj/structures/chemical_dispensers.dmi"),
+	("obj/machines/vending.dmi", ["water_cooler", "water_cooler-vend"], "obj/structures/machinery/vending.dmi"),
+	("obj/structures/tank_dispenser.dmi", None, "obj/structures/tank_dispenser.dmi"),
+	("obj/structures/iv_drip.dmi", None, "obj/structures/machinery/iv_drip.dmi"),
+	("obj/rollerbed.dmi", [("roller_down", "down"), ("roller_up", "up"), ("folded", "item")], "obj/structures/rollerbed.dmi"),
+	("obj/rollerbedrack.dmi", None, "obj/structures/rollerbedrack.dmi"),
+	("obj/structures/crematorium.dmi", None, "obj/structures/crematorium.dmi"),
 	("obj/pipes/disposal.dmi", ["disposal", "disposal-flush", "dispover-charge", "dispover-full", "dispover-handle",
 		"dispover-ready", "condisposal", "intake", "intake-closing", "outlet", "outlet-open", "trashcan",
 		*[f"{part}{suffix}" for part in ("pipe-s", "pipe-c", "pipe-j1", "pipe-j2", "pipe-y", "pipe-t", "pipe-j1s",
@@ -290,11 +298,12 @@ COPIED_ICONS = [
 def bake_copied_icons():
 	"""Icons that need no conversion: catwalks, lattices, railings, handrails, ladders, stairs, doors, machines and
 	furniture; those drawn from overlays (catwalks, tables) also get "blank". A list of names of None takes every
-	named state."""
+	named state; a name may be a pair of the fork name and the Bay state it is copied from."""
 	for path, names, out in COPIED_ICONS:
 		states = source(path)
 		blank = [blank_state()] if out in ("obj/structures/catwalks.dmi", "obj/structures/tables.dmi") else []
-		picked = [state for state in states.states if state.name] if names is None else [states.get(name) for name in names]
+		picked = [state for state in states.states if state.name] if names is None else [
+			states.get(name[1]).renamed(name[0]) if isinstance(name, tuple) else states.get(name) for name in names]
 		write(Dmi(blank + picked, states.width, states.height), out)
 
 

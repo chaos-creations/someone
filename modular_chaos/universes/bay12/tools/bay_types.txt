@@ -386,3 +386,22 @@
 /obj/structure/bookcase/manuals/xenoarchaeology  /obj/structure/bookcase/bay/manuals/xenoarchaeology
 /obj/structure/bedsheetbin  /obj/structure/bedsheetbin/bay
 /obj/structure/displaycase  /obj/structure/displaycase/bay
+
+# Tanks, dispensers and medical furniture
+
+/obj/structure/reagent_dispensers/watertank  /obj/structure/reagent_dispensers/tank/water/bay
+/obj/structure/reagent_dispensers/fueltank  /obj/structure/reagent_dispensers/tank/fuel/bay
+/obj/structure/reagent_dispensers/peppertank  /obj/structure/reagent_dispensers/peppertank/bay
+/obj/structure/reagent_dispensers/acid  /obj/structure/reagent_dispensers/bay_acid
+/obj/structure/reagent_dispensers/water_cooler  /obj/structure/reagent_dispensers/water_cooler/bay
+/obj/structure/reagent_dispensers/beerkeg  /obj/structure/reagent_dispensers/beerkeg
+/obj/structure/reagent_dispensers/coolanttank  skip  xenoarchaeology
+/obj/structure/dispenser  /obj/structure/dispenser/bay
+/obj/structure/dispenser/oxygen  /obj/structure/dispenser/bay/oxygen
+/obj/structure/iv_stand  /obj/structure/machinery/iv_drip/bay
+/obj/structure/roller_bed  /obj/structure/bed/roller/bay
+/obj/item/roller_bed  /obj/item/roller/bay
+/obj/structure/roller_rack  /obj/structure/bay_roller_rack
+/obj/structure/morgue  /obj/structure/morgue
+/obj/structure/crematorium  /obj/structure/morgue/crematorium/bay
+/obj/machinery/button/crematorium  /obj/structure/machinery/crema_switch/bay
