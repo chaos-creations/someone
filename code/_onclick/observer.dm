@@ -13,10 +13,6 @@
 
 /mob/dead/observer/do_click(atom/A, location, params)
 	. = ..()
-	// CHAOS-EDIT START: ..() already offers the click to the click intercepts, so a second offer made them act twice (double spawns from the human AI panels, double buildmode actions)
-	// if(check_click_intercept(params, A))
-	// 	return
-	// CHAOS-EDIT END
 
 	if(SEND_SIGNAL(src, COMSIG_OBSERVER_CLICKON, A, params) & COMSIG_MOB_CLICK_CANCELED)
 		return
