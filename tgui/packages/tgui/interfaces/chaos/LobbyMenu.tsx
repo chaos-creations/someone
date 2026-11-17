@@ -38,7 +38,6 @@ type LobbyData = {
   confirmation_message?: string | string[];
 
   upp_enabled: BooleanLike;
-  upp_join_enabled: BooleanLike;
 
   preference_issues: string[];
 };
@@ -273,13 +272,7 @@ const LobbyButtons = (props: { readonly setModal: (_) => void }) => {
 
   const { setModal } = props;
 
-  const {
-    character_name,
-    round_start,
-    round_starting,
-    readied,
-    upp_join_enabled,
-  } = data;
+  const { character_name, round_start, round_starting, readied } = data;
 
   return (
     <Section p={3} className="sectionLoad" minWidth="260px">
@@ -352,26 +345,14 @@ const LobbyButtons = (props: { readonly setModal: (_) => void }) => {
             {readied ? 'Unready' : 'Ready'}
           </LobbyButton>
         ) : (
-          <>
-            <LobbyButton
-              index={3}
-              disabled={!!round_starting}
-              onClick={() => act('late_join')}
-              icon="users"
-            >
-              Join
-            </LobbyButton>
-            {!!upp_join_enabled && (
-              <LobbyButton
-                index={4}
-                disabled={!!round_starting}
-                onClick={() => act('late_join_upp')}
-                icon="users-between-lines"
-              >
-                Join the UPP
-              </LobbyButton>
-            )}
-          </>
+          <LobbyButton
+            index={3}
+            disabled={!!round_starting}
+            onClick={() => act('late_join')}
+            icon="users"
+          >
+            Join
+          </LobbyButton>
         )}
       </Stack>
     </Section>
