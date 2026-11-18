@@ -2,6 +2,7 @@
 // Paths are relative to this folder and mirror code/ (code\modules\foo.dm for an override of code\modules\foo.dm).
 // Keep the includes in the same sorted order as the DME; validate_dme.py checks both.
 #include "code\__DEFINES\__game.dm"
+#include "code\__DEFINES\cutscene.dm"
 #include "code\__DEFINES\cyrillic.dm"
 #include "code\__DEFINES\equipment.dm"
 #include "code\__DEFINES\human_ai.dm"
@@ -65,6 +66,11 @@
 #include "code\modules\cm_marines\m2c.dm"
 #include "code\modules\cm_marines\smartgun_mount.dm"
 #include "code\modules\cm_tech\implements\implants.dm"
+#include "code\modules\cutscene\cutscene.dm"
+#include "code\modules\cutscene\cutscene_demo.dm"
+#include "code\modules\cutscene\cutscene_landmarks.dm"
+#include "code\modules\cutscene\cutscene_screen.dm"
+#include "code\modules\cutscene\cutscene_walls.dm"
 #include "code\modules\defenses\defenses.dm"
 #include "code\modules\gear_presets\_select_equipment.dm"
 #include "code\modules\mob\inventory.dm"
