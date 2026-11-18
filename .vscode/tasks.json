@@ -240,6 +240,27 @@
             "dependsOn": "dm: reparse",
             "label": "Build All (runtime map + unit testing)"
         },
+        // CHAOS-EDIT START: build for the live unit test world (modular_chaos/code/modules/unit_tests/live_world.dm), launched by "Auxtools: live unit test world"
+        {
+            "type": "process",
+            "command": "tools/build/build.sh",
+            "args": ["dm", "-DUNIT_TESTS", "-DUNIT_TESTS_LIVE"],
+            "windows": {
+                "command": ".\\tools\\build\\build.bat"
+            },
+            "options": {
+                "env": {
+                    "DM_EXE": "${config:dreammaker.byondPath}"
+                }
+            },
+            "problemMatcher": [
+                "$dreammaker"
+            ],
+            "group": "build",
+            "dependsOn": "dm: reparse",
+            "label": "Build DM (live unit test world)"
+        },
+        // CHAOS-EDIT END
         {
             "type": "dreammaker",
             "dme": "colonialmarines.dme",

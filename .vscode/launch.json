@@ -1,6 +1,48 @@
 {
     "version": "0.2.0",
     "configurations": [
+        // CHAOS-EDIT START: launches through the sohpea.auxtools extension, whose CLI (auxtools eval, log, hot reload) can attach to the world; defines must match the build task for hot reload, and Juke always adds CBT
+        {
+            "type": "auxtools",
+            "request": "launch",
+            "name": "Auxtools: DreamSeeker",
+            "preLaunchTask": "Build All",
+            "dmb": "${workspaceFolder}/colonialmarines.dmb",
+            "defines": ["CBT"]
+        },
+        {
+            "type": "auxtools",
+            "request": "launch",
+            "name": "Auxtools: DreamSeeker (runtime map)",
+            "preLaunchTask": "Build All (runtime map)",
+            "dmb": "${workspaceFolder}/colonialmarines.dmb",
+            "defines": ["CBT", "RUNTIME_MAP"]
+        },
+        {
+            "type": "auxtools",
+            "request": "launch",
+            "name": "Auxtools: DreamSeeker (quickstart)",
+            "preLaunchTask": "Build All (quickstart)",
+            "dmb": "${workspaceFolder}/colonialmarines.dmb",
+            "defines": ["CBT", "QUICK_START"]
+        },
+        {
+            "type": "auxtools",
+            "request": "launch",
+            "name": "Auxtools: DreamSeeker (runtime map + quickstart)",
+            "preLaunchTask": "Build All (runtime map + quickstart)",
+            "dmb": "${workspaceFolder}/colonialmarines.dmb",
+            "defines": ["CBT", "RUNTIME_MAP", "QUICK_START"]
+        },
+        {
+            "type": "auxtools",
+            "request": "launch",
+            "name": "Auxtools: live unit test world",
+            "preLaunchTask": "Build DM (live unit test world)",
+            "dmb": "${workspaceFolder}/colonialmarines.dmb",
+            "defines": ["CBT", "UNIT_TESTS", "UNIT_TESTS_LIVE"]
+        },
+        // CHAOS-EDIT END
         {
             "type": "byond",
             "request": "launch",
