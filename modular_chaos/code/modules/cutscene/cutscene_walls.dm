@@ -5,6 +5,9 @@
  * or with [CUTSCENE_WALL_DURING] to keep them from leaving while it plays.
  */
 /obj/structure/blocker/invisible_wall/cutscene
+	name = "cutscene wall"
+	icon = 'modular_chaos/icons/landmarks.dmi'
+	icon_state = "cutscene_wall"
 	/// ID of the cutscene whose end removes the wall
 	var/cutscene_id
 	/// When the wall blocks the way, one of the CUTSCENE_WALL_* defines

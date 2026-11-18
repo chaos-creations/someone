@@ -581,10 +581,16 @@
 /**
  * Glides the cameras to the atom and waits until they get there
  *
- * * target - What the cameras point at. null returns them to the participants' own mobs
+ * * target - What the cameras point at: an atom, or the camera_id of a [/obj/effect/landmark/cutscene_camera]. null returns them to the participants' own mobs
  */
 /datum/cutscene/proc/focus(atom/target)
 	check_aborted()
+	if(istext(target))
+		var/camera_id = target
+		target = GLOB.cutscene_cameras[camera_id]
+		if(!target)
+			stack_trace("Cutscene [type] has no camera [camera_id] on the map.")
+			return
 	focus_camera(target)
 	wait(camera_pan_time)
 

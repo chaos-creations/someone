@@ -1,14 +1,15 @@
 /**
  * Starts its [/datum/cutscene] once enough players come close, then deletes itself
  *
- * Players are living humans played by someone. Once enough of them are within range, a bubble saying "Click to talk"
+ * Players are living humans played by someone. Once enough of them are within range, the cutscene starts at once,
+ * or with start_prompt (see [/obj/effect/landmark/cutscene_trigger/dialogue]) a bubble saying "Click to talk"
  * shows up over the NPC of prompt_actor_id (or over the trigger), and the cutscene starts when one of them clicks it.
- * Without start_prompt it starts at once. Walls with the same cutscene_id
- * ([/obj/structure/blocker/invisible_wall/cutscene]) are removed when the cutscene finishes.
+ * Walls with the same cutscene_id ([/obj/structure/blocker/invisible_wall/cutscene]) are removed when the cutscene finishes.
  */
 /obj/effect/landmark/cutscene_trigger
 	name = "cutscene trigger"
-	icon_state = "trigger"
+	icon = 'modular_chaos/icons/landmarks.dmi'
+	icon_state = "cutscene_scene_start"
 	/// ID of the cutscene, shared with its walls. Unique on the map
 	var/cutscene_id
 	/// Type of the [/datum/cutscene] to play
@@ -20,7 +21,7 @@
 	/// Whether players who come within trigger_range while the cutscene plays join it
 	var/join_while_playing = TRUE
 	/// Whether a player starts the cutscene by clicking a bubble. Without it the cutscene starts as soon as enough players are near
-	var/start_prompt = TRUE
+	var/start_prompt = FALSE
 	/// ID of the [/obj/effect/landmark/cutscene_actor] the bubble shows over. Without it the bubble shows over the trigger
 	var/prompt_actor_id
 	/// The cutscene playing, null until it starts
@@ -155,6 +156,41 @@
 	SIGNAL_HANDLER
 	qdel(src)
 
+/// Trigger of a conversation with an NPC: the players start it themselves by clicking the bubble over the NPC of prompt_actor_id
+/obj/effect/landmark/cutscene_trigger/dialogue
+	name = "cutscene dialogue trigger"
+	icon_state = "cutscene_dialogue"
+	start_prompt = TRUE
+
+/**
+ * Point a cutscene's cameras can glide to, found by camera_id: `focus("bridge_window")`
+ *
+ * Unlike a mob or an object on the map, it stays where it is mapped and shows nothing in the game.
+ */
+/obj/effect/landmark/cutscene_camera
+	name = "cutscene camera"
+	icon = 'modular_chaos/icons/landmarks.dmi'
+	icon_state = "cutscene_scene_stage"
+	/// ID the cutscene finds the point by. Unique on the map
+	var/camera_id
+
+/obj/effect/landmark/cutscene_camera/Initialize(mapload, ...)
+	. = ..()
+	// Unit tests create every type without its mapped vars, only a mapped one without them is an error
+	if(!camera_id)
+		if(mapload)
+			stack_trace("Cutscene camera at [AREACOORD(src)] has no camera_id.")
+		return INITIALIZE_HINT_QDEL
+	if(GLOB.cutscene_cameras[camera_id])
+		stack_trace("Cutscene camera at [AREACOORD(src)] has the camera_id [camera_id] of another camera.")
+		return INITIALIZE_HINT_QDEL
+	GLOB.cutscene_cameras[camera_id] = src
+
+/obj/effect/landmark/cutscene_camera/Destroy()
+	if(GLOB.cutscene_cameras[camera_id] == src)
+		GLOB.cutscene_cameras -= camera_id
+	return ..()
+
 /**
  * Marks a mob a cutscene finds by actor_id with [/datum/cutscene/proc/actor]
  *
@@ -163,7 +199,8 @@
  */
 /obj/effect/landmark/cutscene_actor
 	name = "cutscene actor"
-	icon_state = "x3"
+	icon = 'modular_chaos/icons/landmarks.dmi'
+	icon_state = "cutscene_actor"
 	/// ID the cutscene finds the actor by. Unique on the map
 	var/actor_id
 	/// Path of the /datum/equipment_preset a human spawned here at round start gets. Without it the actor is a mob placed on this tile
@@ -188,7 +225,7 @@
 		stack_trace("Cutscene actor at [AREACOORD(src)] has the actor_id [actor_id] of another actor.")
 		return INITIALIZE_HINT_QDEL
 	GLOB.cutscene_actors[actor_id] = src
-	SSticker.OnRoundstart(CALLBACK(src, PROC_REF(set_up_actor)))
+	SSticker.OnRoundstart(CALLBACK(src, PROC_REF(set_up_actor_next_tick)))
 
 /obj/effect/landmark/cutscene_actor/Destroy()
 	if(GLOB.cutscene_actors[actor_id] == src)
@@ -197,6 +234,15 @@
 		UnregisterSignal(actor, COMSIG_PARENT_QDELETING)
 		actor = null
 	return ..()
+
+/**
+ * Sets the actor up a tick later
+ *
+ * After round start the callback runs at once, still inside Initialize(), and a landmark created only to be deleted
+ * (by unit tests, which create every type) would spawn its actor before being deleted.
+ */
+/obj/effect/landmark/cutscene_actor/proc/set_up_actor_next_tick()
+	INVOKE_NEXT_TICK(src, PROC_REF(set_up_actor))
 
 /// Spawns the actor, or finds it on the tile
 /obj/effect/landmark/cutscene_actor/proc/set_up_actor()
