@@ -35,6 +35,7 @@
 #include "code\datums\elements\bloody_feet.dm"
 #include "code\datums\elements\strippable.dm"
 #include "code\datums\keybinding\human.dm"
+#include "code\datums\langchat\langchat.dm"
 #include "code\game\gamemodes\cm_initialize.dm"
 #include "code\game\gamemodes\extended\event.dm"
 #include "code\game\objects\items.dm"

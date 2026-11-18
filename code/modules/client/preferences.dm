@@ -638,6 +638,7 @@ GLOBAL_LIST_INIT(be_special_flags, list(
 			dat += "<b>Ghost Hivemind:</b> <a href='byond://?_src_=prefs;preference=ghost_hivemind'><b>[(toggles_chat & CHAT_GHOSTHIVEMIND) ? "Show Hivemind" : "Hide Hivemind"]</b></a><br>"
 			dat += "<b>Abovehead Chat:</b> <a href='byond://?_src_=prefs;preference=lang_chat_disabled'><b>[lang_chat_disabled ? "Hide" : "Show"]</b></a><br>"
 			dat += "<b>Abovehead Emotes:</b> <a href='byond://?_src_=prefs;preference=langchat_emotes'><b>[(toggles_langchat & LANGCHAT_SEE_EMOTES) ? "Show" : "Hide"]</b></a><br>"
+			dat += get_langchat_typing_entry() // CHAOS-EDIT: toggle for the typed out speech above heads (modular_chaos/code/datums/langchat/langchat.dm), the menu is one monolithic proc
 			if(CLIENT_IS_STAFF(user.client))
 				dat += "<b>FF Log Color:</b> <a href='byond://?_src_=prefs;preference=fflogcolor'><b>[ff_log_color]</b> <table style='display:inline;' bgcolor='[ff_log_color]'><tr><td>__</td></tr></table></a><br>"
 				dat += "<b>FF Log Color (Dead):</b> <a href='byond://?_src_=prefs;preference=ffdlogcolor'><b>[ffd_log_color]</b> <table style='display:inline;' bgcolor='[ffd_log_color]'><tr><td>__</td></tr></table></a><br>"
@@ -1983,6 +1984,11 @@ GLOBAL_LIST_INIT(be_special_flags, list(
 
 				if("langchat_emotes")
 					toggles_langchat ^= LANGCHAT_SEE_EMOTES
+
+				// CHAOS-EDIT START: toggle for the typed out speech above heads (modular_chaos/code/datums/langchat/langchat.dm), the menu is one monolithic proc
+				if("langchat_instant")
+					toggle_langchat_typing()
+				// CHAOS-EDIT END
 
 				if("lang_chat_disabled")
 					lang_chat_disabled = !lang_chat_disabled
