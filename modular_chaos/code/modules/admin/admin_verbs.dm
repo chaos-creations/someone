@@ -14,6 +14,7 @@ GLOBAL_LIST_INIT(admin_verbs_human_ai, list(
 GLOBAL_LIST_INIT(admin_verbs_game_master, list(
 	/client/proc/toggle_admin_only_observe,
 	/client/proc/toggle_nightmare_menu,
+	/client/proc/open_gear_preset_builder,
 ))
 
 /client/add_admin_verbs()
