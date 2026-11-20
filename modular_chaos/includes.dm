@@ -83,7 +83,6 @@
 #include "code\modules\mob\living\carbon\human\human_stripping.dm"
 #include "code\modules\mob\living\carbon\human\inventory.dm"
 #include "code\modules\mob\living\carbon\human\say.dm"
-#include "code\modules\mob\living\carbon\human\update_icons.dm"
 #include "code\modules\mob\living\carbon\human\whisper.dm"
 #include "code\modules\mob\living\carbon\human\ai\ai_management_menu.dm"
 #include "code\modules\mob\living\carbon\human\ai\breach_placer.dm"
