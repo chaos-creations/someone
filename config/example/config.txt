@@ -125,6 +125,23 @@ GUEST_BAN
 ## Uncomment to 1 to jobban, leave commented out to allow these positions for everyone (but see GUEST_JOBBAN above and regular jobbans)
 # USEWHITELIST
 
+# CHAOS-EDIT START: hub listing and entry whitelist of the fork
+## Uncomment to show the server on the BYOND hub. Commented out, the server is hidden from the hub.
+#HUB
+
+## Image shown at the top of the hub entry. The whole entry is limited to 254 characters.
+#HUB_BANNER_URL https://example.com/banner.png
+
+## Extra HTML added to the end of the hub entry.
+#HUB_BODY <br>Discord: example.com/discord
+
+## Uncomment to let in only players listed in config/entry_whitelist.txt (one ckey per line), plus admins and mentors.
+#ENTRY_WHITELIST
+
+## Reason shown to players the entry whitelist turns away.
+#ENTRY_WHITELIST_MESSAGE This server is whitelist-only.
+# CHAOS-EDIT END
+
 ## set a server location for world reboot. Don't include the byond://, just give the address and port.
 #SERVER server.net:port
 

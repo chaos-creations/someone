@@ -1,0 +1,7 @@
+# This document should be placed in /config/ to have effect. Lines starting with # are comments.
+# Ckeys let in while ENTRY_WHITELIST is on in config.txt, one per line. Casing, spaces and underscores do not matter.
+# Admins and mentors from admins.txt / mentors.txt and the database are always let in.
+# The file is read on every connection, so edits apply without a restart.
+#
+# Example:
+# SomeKey
