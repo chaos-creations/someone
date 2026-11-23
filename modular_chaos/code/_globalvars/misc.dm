@@ -9,3 +9,6 @@ GLOBAL_LIST_EMPTY(cutscene_actors)
 GLOBAL_LIST_EMPTY(cutscene_cameras)
 /// Walls removed by cutscenes, as list(cutscene ID = list of /obj/structure/blocker/invisible_wall/cutscene)
 GLOBAL_LIST_EMPTY(cutscene_walls)
+
+/// Every /obj/structure/closet/secure_closet/marine_personal in the world, claimed or free
+GLOBAL_LIST_EMPTY(personal_closets)

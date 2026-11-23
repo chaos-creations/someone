@@ -1,0 +1,5 @@
+This file contains the fork's ship maps, loaded after map_config/shipmaps.txt in the same format.
+Their JSON is in modular_chaos/maps/, see /datum/controller/configuration/var/extra_map_sources.
+
+map rover
+endmap

@@ -1,4 +1,4 @@
-GLOBAL_LIST_INIT(mapless_maps, list(MAP_RUNTIME, MAP_CHINOOK, MAIN_SHIP_DEFAULT_NAME, MAP_ROSTOCK, MAP_HUNTERSHIP))
+GLOBAL_LIST_INIT(mapless_maps, list(MAP_RUNTIME, MAP_CHINOOK, MAIN_SHIP_DEFAULT_NAME, MAP_ROSTOCK, MAP_HUNTERSHIP, "USS Rover")) // CHAOS-EDIT: the fork's USS Rover has no paper map either; global inits are called by path, so they cannot be overridden
 
 /obj/item/map
 	name = "map"

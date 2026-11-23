@@ -31,6 +31,14 @@ cp -r strings/* $1/strings/
 cp -r config/* $1/config/
 cp -r nano/* $1/nano/
 cp -r map_config/* $1/map_config/
+# CHAOS-EDIT START: the fork loads its maps and map lists from modular_chaos/ at runtime
+for folder in maps map_config; do
+	if [ -d "modular_chaos/$folder" ]; then
+		mkdir -p "$1/modular_chaos/$folder"
+		cp -r "modular_chaos/$folder"/* "$1/modular_chaos/$folder/"
+	fi
+done
+# CHAOS-EDIT END
 
 #remove .dm files from _maps
 

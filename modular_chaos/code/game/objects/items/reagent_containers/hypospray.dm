@@ -17,3 +17,10 @@
 /obj/item/reagent_container/hypospray/ai_use(mob/living/carbon/human/user, datum/human_ai_brain/ai_brain, mob/living/carbon/human/target)
 	user.zone_selected = "chest"
 	attack(target, user)
+
+// Ported from cmss13-pve for the USS Rover and its FORECON platoon
+
+/obj/item/reagent_container/hypospray/kilodermlipo
+	name = "Hypospray (temperature stablization)"
+	desc = "Contains leporazine - used to stabilize body temperature, kelotane and dermaline - used to rapidly heal burns. Filled in a 1:3:2 ratio."
+	starting_vial = /obj/item/reagent_container/glass/beaker/vial/kilodermlipo

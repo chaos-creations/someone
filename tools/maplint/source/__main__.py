@@ -103,7 +103,10 @@ def main(args):
             traceback.print_exc()
             any_failed = True
 
-    for map_filename in (args.maps or glob.glob("maps/**/*.dmm", recursive = True)):
+    # CHAOS-EDIT START: also lint the fork's maps, in modular_chaos/maps/
+    # for map_filename in (args.maps or glob.glob("maps/**/*.dmm", recursive = True)):
+    for map_filename in (args.maps or glob.glob("maps/**/*.dmm", recursive = True) + glob.glob("modular_chaos/maps/**/*.dmm", recursive = True)):
+    # CHAOS-EDIT END
         print(map_filename, end = " ")
 
         success = True

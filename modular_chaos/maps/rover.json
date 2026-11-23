@@ -1,0 +1,8 @@
+{
+    "map_name": "USS Rover",
+    "map_root": "modular_chaos/maps/",
+    "map_path": "map_files/rover",
+    "map_file": "rover.dmm",
+    "traits": [{"Marine Main Ship": true}],
+    "platoon": "/datum/squad/marine/forecon"
+}

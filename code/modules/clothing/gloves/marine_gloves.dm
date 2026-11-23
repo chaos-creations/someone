@@ -27,7 +27,7 @@
 
 /obj/item/clothing/gloves/marine/get_mob_overlay(mob/living/carbon/human/current_human, slot, default_bodytype = "Default")
 	var/image/ret = ..()
-	if(!adopts_squad_color || !(current_human?.assigned_squad?.equipment_color))
+	if(!adopts_squad_color || !(current_human?.assigned_squad?.equipment_color) || !current_human.assigned_squad.use_stripe_overlay) // CHAOS-EDIT: squads without stripes (Intel, the ship's platoon) don't colour gloves either; upstream bug, drop the edit once upstream fixes it
 		return ret
 	var/image/glove_overlay = image(squad_overlay_icon, icon_state = "std-gloves")
 	glove_overlay.alpha = current_human.assigned_squad.armor_alpha
