@@ -6,6 +6,9 @@
 /// Extra HTML appended to the end of the hub entry, after the map, mode and round time.
 /datum/config_entry/string/hub_body
 
+/// Shows the server on the BYOND hub. Off by default.
+/datum/config_entry/flag/hub
+
 // Entry whitelist
 
 /// Only lets in players whose ckey is listed in config/entry_whitelist.txt, plus admins, mentors and deadmined staff. Off by default.
